@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import ItemComponent from '../components/ItemComponent';
 
-import { db } from './../../config/db';
+import { db } from '../db';
 
 let itemsRef = db.ref('/items');
 
@@ -33,11 +33,11 @@ export default class ListItem extends Component {
   render() {
     return (
       <View style={styles.container}>
-	{
-	  this.state.items.length > 0
-	  ? <ItemComponent items={this.state.items} />
-	  : <Text>No items</Text>
-	}
+        {
+          this.state.items.length > 0
+          ? <ItemComponent items={this.state.items} />
+          : <Text>No items</Text>
+        }
       </View>
     )
   }

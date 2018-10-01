@@ -1,27 +1,25 @@
 // App.js
 
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
-import Home from './src/screens/Home';
-import AddItem from './src/screens/AddItem';
-import ListItem from './src/screens/ListItem';
+import HomeScreen from './screens/Home';
+import AddItemScreen from './screens/AddItem';
+import ListItemScreen from './screens/ListItem';
 
-const AppNavigator = createStackNavigator(
+const RootStack = createStackNavigator(
   {
-    HomeScreen: { screen: Home },
-    AddItemScreen: { screen: AddItem },
-    ListItemScreen: { screen: ListItem }
+    Home: HomeScreen,
+    AddItem: AddItemScreen,
+    ListItem: ListItemScreen,
   },
   {
-    initialRouteName: 'HomeScreen',
+    initialRouteName: 'Home',
   }
 );
 
 export default class App extends Component {
   render() {
-    return (
-      <AppNavigator />
-    );
+    return <RootStack />;
   }
 }

@@ -6,32 +6,31 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableHighlight,
-  AlertIOS
+  TouchableHighlight
 } from 'react-native';
-
 import { addItem } from '../services/ItemService';
 
-export default class AddItem extends Component {
+export default class AddItemScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: ''
+      name: '',
+      error: false
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
   handleChange(e) {
     this.setState({
       name: e.nativeEvent.text
     });
   }
+
   handleSubmit() {
-    addItem(this.state.name);
-    AlertIOS.alert(
-      'Item saved successfully'
-    );
+    console.log(this.state.name)
   }
+
   render() {
     return (
       <View style={styles.main}>

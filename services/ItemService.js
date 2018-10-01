@@ -1,6 +1,6 @@
 // ItemService.js
 
-import { db } from '../../config/db';
+import { db } from '../db';
 
 export const addItem =  (item) => {
   db.ref('/items').push({
