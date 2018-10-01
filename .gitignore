@@ -13,4 +13,4 @@ node_modules/**/*
 .env.production.local
 
 # config
-/config/db.js
+db.js
