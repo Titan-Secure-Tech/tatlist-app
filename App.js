@@ -1,23 +1,27 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// App.js
 
-export default class App extends React.Component {
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
+import Home from './src/screens/Home';
+import AddItem from './src/screens/AddItem';
+import ListItem from './src/screens/ListItem';
+
+const AppNavigator = createStackNavigator(
+  {
+    HomeScreen: { screen: Home },
+    AddItemScreen: { screen: AddItem },
+    ListItemScreen: { screen: ListItem }
+  },
+  {
+    initialRouteName: 'HomeScreen',
+  }
+);
+
+export default class App extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Tatlist</Text>
-        <Text>Version 0.01</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
+      <AppNavigator />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
