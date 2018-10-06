@@ -26,13 +26,10 @@ export default class ItemList extends Component {
       <View style={styles.container}>
         {
           this.state.products.map((item, index) => {
-            console.log(item);
-
             return (
               <View styles={styles.productlist} key="index">
                 <FlatList
                   data={item}
-                  initialNumToRender="10"
                   keyExtractor={(item,index) => index.toString()}
                   renderItem={ ({item}) => <Text style={styles.itemtext}>{item.name} <Text style={styles.itemprice}>{item.price}</Text></Text> }
                 />
@@ -50,16 +47,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
-    paddingTop: '10%',
   },
   productlist: {
     fontWeight: 'normal',
   },
   itemtext: {
     fontWeight: 'normal',
+    paddingTop: '4%',
   },
   itemprice: {
     fontWeight: 'bold',
+    paddingTop: '4%',
   }
 })
 
