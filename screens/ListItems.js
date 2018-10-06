@@ -1,4 +1,4 @@
-// ListView.js
+// ListItem.js
 // ===========
 
 import React, { Component } from 'react';
@@ -7,7 +7,7 @@ import { db } from '../db';
 
 let productsRef = db.ref('/products/');
 
-export default class ListView extends Component {
+export default class ListItem extends Component {
 
   state = {
     products: []

@@ -5,13 +5,13 @@ import { Text, View } from 'react-native';
 import { createStackNavigator } from 'react-navigation';
 import HomeScreen from './screens/Home';
 import AddItemScreen from './screens/AddItem';
-import ListItemScreen from './screens/ListItem';
+import ListItemsScreen from './screens/ListItems';
 
 const RootStack = createStackNavigator(
   {
     Home: HomeScreen,
     AddItem: AddItemScreen,
-    ListItem: ListItemScreen,
+    ListItems: ListItemsScreen,
   },
   {
     initialRouteName: 'Home',

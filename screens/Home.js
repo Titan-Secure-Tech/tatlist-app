@@ -14,7 +14,7 @@ export default class HomeScreen extends Component {
         />
         <Button
           title="List Items"
-          onPress={() => this.props.navigation.navigate('ListItem')}
+          onPress={() => this.props.navigation.navigate('ListItems')}
         />
       </View>
     );
