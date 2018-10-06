@@ -32,7 +32,7 @@ export default class ListItem extends Component {
               <View key="index">
                 <FlatList
                   data={item}
-                  key={index}
+                  keyExtractor={(item,index) => index.toString()}
                   renderItem={ ({item}) => <Text style={styles.itemtext}>{item.name} <Text style={styles.itemprice}>{item.price}</Text></Text> }
               />
               </View>
