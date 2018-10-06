@@ -1,44 +1,24 @@
-// ListItem.js
+// ListItems.js
 // ===========
 
 import React, { Component } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { db } from '../db';
+import ItemList from '../components/ItemList';
 
 let productsRef = db.ref('/products/');
 
 export default class ListItem extends Component {
 
-  state = {
-    products: []
-  }
 
   componentWillMount() {
-    productsRef.on('value', (snapshot) => {
-      let data = snapshot.val();
-      let products = Object.values(data);
-      this.setState({products});
-    });
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {
-          this.state.products.map((item, index) => {
-            console.log(item);
-
-            return (
-              <View key="index">
-                <FlatList
-                  data={item}
-                  keyExtractor={(item,index) => index.toString()}
-                  renderItem={ ({item}) => <Text style={styles.itemtext}>{item.name} <Text style={styles.itemprice}>{item.price}</Text></Text> }
-              />
-              </View>
-            )}
-          )
-        }
+        <Text>ListItems.js</Text>
+        <ItemList/>
       </View>
     )
   }
@@ -49,13 +29,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
-    paddingTop: '10%',
   },
-  itemtext: {
-    fontWeight: 'normal',
-  },
-  itemprice: {
-    fontWeight: 'bold',
-  }
 })
 
