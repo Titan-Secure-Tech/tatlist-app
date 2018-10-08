@@ -2,7 +2,8 @@
 // ===========
 
 import React, { Component } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList} from 'react-native';
+import {List,  ListItem} from 'react-native-elements';
 import { db } from '../db';
 
 let productsRef = db.ref('/products/');
@@ -23,41 +24,22 @@ export default class ItemList extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <List>
         {
           this.state.products.map((item, index) => {
             return (
-              <View styles={styles.productlist} key="index">
+              <View key="index">
                 <FlatList
                   data={item}
                   keyExtractor={(item,index) => index.toString()}
-                  renderItem={ ({item}) => <Text style={styles.itemtext}>{item.name} <Text style={styles.itemprice}>{item.price}</Text></Text> }
+                  renderItem={ ({item}) => <ListItem title={item.name} subtitle={item.price} /> }
                 />
               </View>
             )}
           )
         }
-      </View>
+      </List>
     )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  productlist: {
-    fontWeight: 'normal',
-  },
-  itemtext: {
-    fontWeight: 'normal',
-    paddingTop: '4%',
-  },
-  itemprice: {
-    fontWeight: 'bold',
-    paddingTop: '4%',
-  }
-})
 

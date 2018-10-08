@@ -1,37 +1,46 @@
+// ProductList.js
+// ===========
+
 import React, { Component } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { getProducts } from '../services/ProductService';
+import { View, FlatList, Text } from 'react-native-elements';
+import { db } from '../db';
+
+let productsRef = db.ref('/products/');
 
 export default class ProductList extends Component {
+
+  state = {
+    products: []
+  }
+
+  componentWillMount() {
+    productsRef.on('value', (snapshot) => {
+      let data = snapshot.val();
+      let products = Object.values(data);
+      this.setState({products});
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <FlatList
-          data={[
-            {key: 'Devin'},
-            {key: 'Jackson'},
-            {key: 'James'},
-            {key: 'Joel'},
-            {key: 'John'},
-            {key: 'Jillian'},
-            {key: 'Jimmy'},
-            {key: 'Julie'},
-          ]}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
-        />
+      <View>
+        {
+          this.state.products.map((item, index) => {
+            return (
+              <View key="index">
+                <List>
+                  <FlatList
+                    data={item}
+                    keyExtractor={(item,index) => index.toString()}
+                    renderItem={({item}) => <Text>{item.name} <Text>{item.price}</Text></Text>}
+                  />
+                </List>
+              </View>
+            )}
+          )
+        }
       </View>
-    );
+    )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-})
