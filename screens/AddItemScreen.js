@@ -1,4 +1,6 @@
-// AddItem.js
+// ================
+// AddItemScreen.js
+// ================
 
 import React, { Component } from 'react';
 import {
