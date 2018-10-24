@@ -3,20 +3,41 @@
 // ==================
 
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
+import { View, Text, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
+import { Icon, List, ListItem } from 'react-native-elements';
 import productList from '../assets/productList.json';
 
 const products = productList;
 
 export default class ListItemsScreen extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      color: 'grey'
+    }
+  }
+
+  onPress = () => {
+    console.log('sonmethign pressed');
+  }
+
+  onLongPress = () => {
+    console.log('sonmethign pressed longly');
+  }
+
   renderRow ({ item }) {
     return (
       <ListItem
         style={styles.titleText}
+        onPress={this.onPress}
+        onLongPress={this.onLongPress}
         title={item.item}
-        rightIcon={{ name: 'heart', type: 'font-awesome', style: { marginRight: 10, fontSize: 20 } }}
+        rightIcon={<Icon
+          name='heart'
+          color='grey'
+          type='font-awesome'
+        />}
         subtitle = {
           <View style={styles.subtitleView}>
             <Text style={styles.priceText}>{'$' + item.price}</Text>
@@ -29,7 +50,7 @@ export default class ListItemsScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <TouchableHighlight onPress={this.onPress}>
         <List key={products.id}>
           <FlatList
             data={products}
@@ -37,7 +58,7 @@ export default class ListItemsScreen extends Component {
             keyExtractor={item => item.id.toString()}
           />
         </List>
-      </View>
+      </TouchableHighlight>
     )
   }
 }
