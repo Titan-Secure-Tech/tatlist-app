@@ -11,6 +11,7 @@ export default class HomeScreen extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.header_text}>Tatlist 1.0</Text>
+        <Text style={styles.paragraph_text}>TODO:</Text>
       </View>
     );
   }
@@ -24,6 +25,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   header_text: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+    color: '#FFF',
+  },
+  paragraph_text: {
     fontSize: 20,
     textAlign: 'center',
     margin: 10,

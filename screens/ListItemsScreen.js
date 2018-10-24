@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
-import { Icon, List, ListItem } from 'react-native-elements';
+import { SearchBar, Icon, List, ListItem } from 'react-native-elements';
 import productList from '../assets/productList.json';
 
 const products = productList;
@@ -14,30 +14,34 @@ export default class ListItemsScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      color: 'grey'
+      data: "",
     }
   }
 
   onPress = () => {
-    console.log('sonmethign pressed');
+    console.log('onPress function');
   }
 
-  onLongPress = () => {
-    console.log('sonmethign pressed longly');
-  }
+  handleDataChange = data =>
+    this.setState(state => ({ ...state, data: data || "" }));
 
-  renderRow ({ item }) {
+  handleSearchCancel = () => this.handleQueryChange("");
+  handleSearchClear = () => this.handleQueryChange(""); // maybe differentiate between cancel and clear
+
+
+  renderRow = ({item}) => {
     return (
       <ListItem
         style={styles.titleText}
         onPress={this.onPress}
-        onLongPress={this.onLongPress}
         title={item.item}
-        rightIcon={<Icon
-          name='heart'
-          color='grey'
-          type='font-awesome'
-        />}
+        rightIcon={
+          <Icon
+            name='plus'
+            color='grey'
+            type='font-awesome'
+          />
+        }
         subtitle = {
           <View style={styles.subtitleView}>
             <Text style={styles.priceText}>{'$' + item.price}</Text>
@@ -50,15 +54,26 @@ export default class ListItemsScreen extends Component {
 
   render() {
     return (
-      <TouchableHighlight onPress={this.onPress}>
-        <List key={products.id}>
+      <View style={styles.container}>
+        <SearchBar
+          placeholder='Search for a product...'
+          round
+          clearIcon
+          onChangeText={data => this.handleDataChange(data)}
+          onCancel={data => this.handleSearchCancel(data)}
+          onClearText={data => this.handleSearchClear(data)}
+          value={this.state.data}
+          autoCorrect={false}
+          ref={data => this.data = data}
+        />
+        <List>
           <FlatList
             data={products}
             renderItem={this.renderRow}
             keyExtractor={item => item.id.toString()}
           />
         </List>
-      </TouchableHighlight>
+      </View>
     )
   }
 }
@@ -67,8 +82,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
-    marginTop: 0,
-    paddingTop: 15
+    marginTop: 25,
+    paddingTop: 25
   },
   subtitleView: {
     flexDirection: 'row',
