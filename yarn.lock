@@ -2625,6 +2625,10 @@ has-values@^1.0.0:
     is-number "^3.0.0"
     kind-of "^4.0.0"
 
+"highlight-words-core@git+https://github.com/fattahmuhyiddeen/highlight-words-core.git#master":
+  version "1.2.0"
+  resolved "git+https://github.com/fattahmuhyiddeen/highlight-words-core.git#10faeca1f058851f0e5be2ef31e5c697688e2cca"
+
 hoist-non-react-statics@^1.0.5:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
@@ -3959,7 +3963,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
   version "15.6.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
   dependencies:
@@ -4040,6 +4044,13 @@ react-native-branch@2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.2.5.tgz#4074dd63b4973e6397d9ce50e97b57c77a518e9d"
 
+react-native-complete-flatlist@^1.1.25:
+  version "1.1.25"
+  resolved "https://registry.yarnpkg.com/react-native-complete-flatlist/-/react-native-complete-flatlist-1.1.25.tgz#5ac456327ce097d4965b5ac4915a9a423b4a3b87"
+  dependencies:
+    prop-types "^15.5.10"
+    react-native-highlight-words "git+https://github.com/fattahmuhyiddeen/react-native-highlight-words.git#master"
+
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-dismiss-keyboard/-/react-native-dismiss-keyboard-1.0.0.tgz#32886242b3f2317e121f3aeb9b0a585e2b879b49"
@@ -4085,6 +4096,13 @@ react-native-gesture-handler@1.0.6:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+"react-native-highlight-words@git+https://github.com/fattahmuhyiddeen/react-native-highlight-words.git#master":
+  version "1.0.1"
+  resolved "git+https://github.com/fattahmuhyiddeen/react-native-highlight-words.git#0d105c534b8138eafee587cc1785aca89c7b175a"
+  dependencies:
+    highlight-words-core "git+https://github.com/fattahmuhyiddeen/highlight-words-core.git#master"
+    prop-types "^15.5.7"
 
 react-native-iphone-x-helper@^1.0.1:
   version "1.2.0"

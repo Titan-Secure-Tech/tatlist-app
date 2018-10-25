@@ -4,53 +4,14 @@
 
 import React, { Component } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
-import { SearchBar, Icon, List, ListItem } from 'react-native-elements';
+import { SearchBar, Icon, List } from 'react-native-elements';
 import productList from '../assets/productList.json';
+import Product from '../components/Product';
+import searchText from '../utils/searchText';
 
 const products = productList;
 
 export default class ListItemsScreen extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      data: "",
-    }
-  }
-
-  onPress = () => {
-    console.log('onPress function');
-  }
-
-  handleDataChange = data =>
-    this.setState(state => ({ ...state, data: data || "" }));
-
-  handleSearchCancel = () => this.handleQueryChange("");
-  handleSearchClear = () => this.handleQueryChange(""); // maybe differentiate between cancel and clear
-
-
-  renderRow = ({item}) => {
-    return (
-      <ListItem
-        style={styles.titleText}
-        onPress={this.onPress}
-        title={item.item}
-        rightIcon={
-          <Icon
-            name='plus'
-            color='grey'
-            type='font-awesome'
-          />
-        }
-        subtitle = {
-          <View style={styles.subtitleView}>
-            <Text style={styles.priceText}>{'$' + item.price}</Text>
-            <Text style={styles.categoryText}>{item.category}</Text>
-          </View>
-        }
-      />
-    )
-  }
 
   render() {
     return (
@@ -62,14 +23,21 @@ export default class ListItemsScreen extends Component {
           onChangeText={data => this.handleDataChange(data)}
           onCancel={data => this.handleSearchCancel(data)}
           onClearText={data => this.handleSearchClear(data)}
-          value={this.state.data}
           autoCorrect={false}
           ref={data => this.data = data}
         />
         <List>
           <FlatList
             data={products}
-            renderItem={this.renderRow}
+            renderItem={ ({ item }) => (
+              <Product
+                name={item.name}
+                price={item.price}
+                category={item.category}
+                favorite={item.favorite}
+              />
+            )
+            }
             keyExtractor={item => item.id.toString()}
           />
         </List>
@@ -84,25 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginTop: 25,
     paddingTop: 25
-  },
-  subtitleView: {
-    flexDirection: 'row',
-    paddingTop: 3
-  },
-  titleText: {
-    paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
-  },
-  priceText: {
-    paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
-  },
-  categoryText: {
-    paddingLeft: 10,
-    color: 'grey',
-    fontWeight: '100'
   },
 })
 

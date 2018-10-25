@@ -1,17 +1,16 @@
-// =============
-// HomeScreen.js
-// =============
+// ================
+// ProfileScreen.js
+// ================
 
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-elements';
 
-export default class HomeScreen extends Component {
+export default class ProfileScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header_text}>Tatlist 1.0</Text>
-        <Text style={styles.paragraph_text}>HomeScreen</Text>
+        <Text style={styles.header_text}>Profile Screen</Text>
       </View>
     );
   }
@@ -37,4 +36,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
 })
+
 
