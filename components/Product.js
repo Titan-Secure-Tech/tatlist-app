@@ -22,14 +22,11 @@ export default class Product extends Component {
     this.setState({ name, price, category, favorite });
   }
 
-  componentWillUpdate() {
-    LayoutAnimation.easeInEaseOut();
-  }
-
   render() {
-    const { name, price, category, favorite } = this.state;
-    return (
 
+    const { name, price, category, favorite } = this.state;
+
+    return (
       <ListItem
         style={styles.titleText}
         title={name}
@@ -59,17 +56,11 @@ const styles = StyleSheet.create({
   },
   titleText: {
     paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
   },
   priceText: {
     paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
   },
   categoryText: {
     paddingLeft: 10,
-    color: 'grey',
-    fontWeight: '100'
   },
 })

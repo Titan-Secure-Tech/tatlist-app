@@ -3,54 +3,42 @@
 // ================
 
 import React, { Component } from 'react';
+
 import {
   View,
   Text,
+  Button,
   StyleSheet,
   TextInput,
   TouchableHighlight
 } from 'react-native';
-import { addItem } from '../services/ItemService';
+
+import * as firebase from 'firebase';
 
 export default class AddItemScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      error: false
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+
+  state = {
+    textInput: '',
+    error: false
   }
 
-  handleChange(e) {
-    this.setState({
-      name: e.nativeEvent.text
-    });
-  }
-
-  handleSubmit() {
-    console.log(this.state.name)
+  handleAddItem = () => {
+    // TODO: Firebase stuff...
+    firebase.firestore().settings({timestampsInSnapshots: true});
+    firebase
+      .firestore()
+      .collection('users')
+      .set({
+        favorites: this.state.textInput
+      })
+      .then(() => console.log(user, "document added successfully!"))
+      .catch(error => this.setState({ errorMessage: error.message}))
   }
 
   render() {
     return (
       <View style={styles.main}>
-        <Text style={styles.title}>Add Item</Text>
-        <TextInput
-          style={styles.itemInput}
-          onChange={this.handleChange}
-        />
-        <TouchableHighlight
-          style = {styles.button}
-          underlayColor= "white"
-          onPress = {this.handleSubmit}
-        >
-          <Text
-            style={styles.buttonText}>
-            Add
-          </Text>
-        </TouchableHighlight>
+        <Text>AddItemScreen.js</Text>
       </View>
     )
   }
@@ -62,7 +50,7 @@ const styles = StyleSheet.create({
     padding: 30,
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#2a8ab7'
+    backgroundColor: '#FFF'
   },
   title: {
     marginBottom: 20,

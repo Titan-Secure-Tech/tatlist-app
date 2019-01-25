@@ -1,49 +1,28 @@
-// ProductList.js
-// ===========
+import React from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import Product from './components/Product';
 
-import React, { Component } from 'react';
-import { View, List, FlatList, ListItem, Text } from 'react-native-elements';
-import productData from '../assets/productList.json';
-
-
-const products = productData;
-
-
-export default class ProductList extends Component {
-
-
-  renderRow = ({item}) => {
-    return (
-      <ListItem
-        style={styles.titleText}
-        onPress={this.onPress}
-        title={item.item}
-        rightIcon={
-          <Icon
-            name='plus'
-            color='grey'
-            type='font-awesome'
-          />
-        }
-        subtitle = {
-          <View style={styles.subtitleView}>
-            <Text style={styles.priceText}>{'$' + item.price}</Text>
-            <Text style={styles.categoryText}>{item.category}</Text>
-          </View>
-        }
-      />
-    )
-  }
-  render() {
-    return (
-      <List>
-        <FlatList
-          data={products}
-          renderItem={this.renderRow}
-          keyExtractor={item => item.id.toString()}
+const ProductList = props => {
+  return (
+    <FlatList
+      style={styles.listContainer}
+      data={props.products}
+      renderItem={ ({ item }) => (
+        <Product
+          name={item.name}
+          price={item.price}
+          category={item.category}
+          favorite={item.favorite}
         />
-      </List>
-    )
-  }
-}
+      )}
+    />
+  )
+};
 
+const styles = StyleSheet.create({
+  listContainer: {
+    width: '100%'
+  }
+});
+
+export default ProductList;

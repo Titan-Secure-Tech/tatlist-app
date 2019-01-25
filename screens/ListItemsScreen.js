@@ -3,44 +3,57 @@
 // ==================
 
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
-import { SearchBar, Icon, List } from 'react-native-elements';
-import productList from '../assets/productList.json';
-import Product from '../components/Product';
-import searchText from '../utils/searchText';
+import * as firebase from 'firebase';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+// import { SearchBar, Icon } from 'react-native-elements';
+// import Product from '../components/Product';
 
-const products = productList;
 
 export default class ListItemsScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      query: "",
+      products: [],
+      arrayholder: []
+    };
+
+    // this.handleQueryChange = this.handleQueryChange.bind(this);
+    // this.handleSearchClear = this.handleSearchClear.bind(this);
+  }
+
+  componentDidMount() {
+    let productsRef =
+      firebase
+      .database()
+      .ref('/Products');
+    productsRef.on('value', (snapshot) => {
+      let data = snapshot.val();
+      let products = Object.values(data);
+      this.setState({products});
+    });
+  }
+
+//   searchFilterFunction = text => {
+//     const newData = this.arrayholder.filter(item => {
+//       const itemData = `${item.name.toUpperCase()} ${item.category.toUpperCase()} ${item.sku.toUpperCase()}`;
+//       const textData = text.toUpperCase();
+//       return itemData.indexOf(textData) > -1;
+//     });
+//     this.setState({data:newData});
+//   };
+
+//   handleQueryChange = query =>
+//     this.setState(state => ({ ...state, query: query || "" }));
+
+//   handleSearchCancel = () => this.handleQueryChange("");
+//   handleSearchClear = () => this.handleQueryChange("");
 
   render() {
     return (
       <View style={styles.container}>
-        <SearchBar
-          placeholder='Search for a product...'
-          round
-          clearIcon
-          onChangeText={data => this.handleDataChange(data)}
-          onCancel={data => this.handleSearchCancel(data)}
-          onClearText={data => this.handleSearchClear(data)}
-          autoCorrect={false}
-          ref={data => this.data = data}
-        />
-        <List>
-          <FlatList
-            data={products}
-            renderItem={ ({ item }) => (
-              <Product
-                name={item.name}
-                price={item.price}
-                category={item.category}
-                favorite={item.favorite}
-              />
-            )
-            }
-            keyExtractor={item => item.id.toString()}
-          />
-        </List>
+        <Text> listItemsScreen.js </Text>
       </View>
     )
   }

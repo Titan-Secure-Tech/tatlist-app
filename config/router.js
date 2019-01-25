@@ -1,39 +1,40 @@
-import React from "react";
-import { Platform, StatusBar } from "react-native";
-import { Icon } from "react-native-elements";
-import { createBottomTabNavigator } from "react-navigation";
-import HomeScreen from "../screens/HomeScreen";
-import ListItemsScreen from "../screens/ListItemsScreen";
-import ProfileScreen from "../screens/ProfileScreen";
-import FavoritesScreen from "../screens/FavoritesScreen";
+import React from 'react';
+import { StyleSheet, Platform, Image, Text, View } from 'react-native';
+import { createSwitchNavigator, createStackNavigator, createAppContainer } from 'react-navigation';
+//
+// import the different screens
+import Loading from '../screens/Loading';
+import Registration from '../screens/Registration';
+import SignUp from '../screens/SignUp';
+import Login from '../screens/Login';
+// import LoadingScreen from '../screens/LoadingScreen';
+// import SignUpScreen from '../screens/SignUpScreen';
+// import LoginScreen from '../screens/LoginScreen';
 
-export const Tabs = createBottomTabNavigator({
-  HomeScreen: {
-    screen: HomeScreen,
-    navigationOptions: {
-      tabBarLabel: 'Home',
-      tabBarIcon: ({ tintColor }) => <Icon name="home" size={35} color={tintColor} />
-    },
+
+import MainTabNavigator from './MainTabNavigator';
+
+// create our app's authentication stack
+const AuthNavigator = createSwitchNavigator(
+  {
+    Loading: Loading,
+    Registration: Registration,
+    SignUp: SignUp,
+    Login: Login
   },
-  FavoritesScreen: {
-    screen: FavoritesScreen,
-    navigationOptions: {
-      tabBarLabel: 'Favorites',
-      tabBarIcon: ({ tintColor }) => <Icon type="font-awesome" name="heart" size={24} color={tintColor} />
-    },
-  },
-  ListItemsScreen: {
-    screen: ListItemsScreen,
-    navigationOptions: {
-      tabBarLabel: 'Product List',
-      tabBarIcon: ({ tintColor }) => <Icon name="list" size={35} color={tintColor} />
-    },
-  },
-  ProfileScreen: {
-    screen: ProfileScreen,
-    navigationOptions: {
-      tabBarLabel: 'Profile',
-      tabBarIcon: ({ tintColor }) => <Icon type='font-awesome' name="user" size={25} color={tintColor} />
-    },
-  },
-});
+  {
+    initialRouteName: 'Loading'
+  }
+)
+
+// create our app's navigation stack
+const AppNavigator = createSwitchNavigator(
+  {
+    Auth: AuthNavigator,
+    Main: MainTabNavigator
+  }
+)
+
+const AppContainer = createAppContainer(AppNavigator);
+
+export default AppContainer;

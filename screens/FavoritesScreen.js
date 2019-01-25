@@ -3,38 +3,30 @@
 // ==================
 
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Button } from 'react-native-elements';
+import { View, Text, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
 
 export default class FavoritesScreen extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header_text}>Tatlist 1.0</Text>
-        <Text style={styles.paragraph_text}>FavoritesScreen</Text>
+        <Text> FavoritesScreen.js </Text>
       </View>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
-  },
-  header_text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-    color: '#FFF',
-  },
-  paragraph_text: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-    color: '#FFF',
+    backgroundColor: '#FFF',
+    marginTop: 25,
+    paddingTop: 25
   },
 })
+
 
