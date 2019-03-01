@@ -1,5 +1,9 @@
 import React from 'react';
 import { Icon } from 'expo';
+<<<<<<< HEAD
+=======
+
+>>>>>>> dbdc6092ea3dfa9d3a06f94b7f64a138746aa269
 import Colors from '../constants/Colors';
 
 export default class TabBarIcon extends React.Component {
@@ -13,4 +17,8 @@ export default class TabBarIcon extends React.Component {
       />
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dbdc6092ea3dfa9d3a06f94b7f64a138746aa269

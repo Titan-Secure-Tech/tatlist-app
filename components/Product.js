@@ -46,14 +46,16 @@ export default class Product extends Component {
     this.setState({ name, price, category, isFavorite });
   }
 
-  componentWillUpdate() {
-    LayoutAnimation.easeInEaseOut();
-  }
-
   render() {
+<<<<<<< HEAD
     const { name, price, category, isFavorite } = this.state;
     return (
+=======
 
+    const { name, price, category, favorite } = this.state;
+>>>>>>> dbdc6092ea3dfa9d3a06f94b7f64a138746aa269
+
+    return (
       <ListItem
         style={styles.titleText}
         onPress={() => this.handleSubmit()}
@@ -84,18 +86,12 @@ const styles = StyleSheet.create({
   },
   titleText: {
     paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
   },
   priceText: {
     paddingLeft: 10,
-    color: 'darkgrey',
-    fontWeight: 'bold'
   },
   categoryText: {
     paddingLeft: 10,
-    color: 'grey',
-    fontWeight: '100'
   },
 })
 

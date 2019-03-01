@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { combineReducers } from  'redux';
 import productReducer, * as fromProducts from './productReducer';
 import cartReducer, * as fromCart from './cartReducer';
@@ -24,3 +25,10 @@ export const getCartProducts = state =>
     ...getProduct(state, id),
     quantity: getQuantity(state, id)
   }))
+=======
+
+const rootReducer = combineReducers({
+  list,
+  user
+});
+>>>>>>> dbdc6092ea3dfa9d3a06f94b7f64a138746aa269
