@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Browsertools MCP
+
+With this MCP server tool, you can enable AI code editors and agents to have access to:
+
+Console logs and errors
+XHR network requests/responses
+Screenshot capabilities w/ optional auto-paste into Cursor
+Currently selected DOM elements
+Run SEO, Performance & Code Quality Scans via Lighthouse
+Run a NextJS-specific SEO audit
+Enter into “Debugger Mode” which uses many tools + prompts to fix bugs
+Enter into “Audit Mode” to perform a comprehensive web app audit

@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-10T20:21:09.899Z",
+    "tasksAnalyzed": 15,
+    "totalTasks": 15,
+    "analysisCount": 15,
+    "thresholdScore": 5,
+    "projectName": "Task Master",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Project Setup with Next.js 15 and Supabase",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the Project Setup task into 4 logical subtasks focusing on: 1) Next.js project initialization, 2) Supabase project configuration, 3) Environment setup and dependencies, and 4) UI framework implementation. For each subtask, include specific steps, commands, and configuration details.",
+      "reasoning": "This task involves multiple technologies (Next.js 15, Supabase, PWA, ShadCN) and requires several configuration steps. While the implementation details are well-documented, coordinating these technologies requires careful planning. The task has clear dependencies and a straightforward testing strategy."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "User Authentication and Management System",
+      "complexityScore": 8,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide the User Authentication task into 5 subtasks: 1) Basic authentication UI components, 2) Supabase Auth middleware and hooks, 3) Role-based access control implementation, 4) Business profile management, and 5) MFA implementation. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "Authentication is a critical system component with security implications. The task involves complex features like role-based access control, MFA, and business verification. It requires both frontend and backend implementation with careful security considerations and extensive testing."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Lucky API Integration for Product Catalog",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Split the Lucky API Integration task into 4 subtasks: 1) API client implementation, 2) Database schema design for products, 3) Server-side data fetching and synchronization, and 4) Product search and filtering functionality. For each subtask, include specific implementation details and testing requirements.",
+      "reasoning": "This task involves external API integration, database design, and implementing complex search functionality. The scheduled sync job adds complexity, and the task requires careful error handling and performance optimization for potentially large datasets."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Inventory List Management",
+      "complexityScore": 6,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the Inventory List Management task into 3 subtasks: 1) Database schema and API endpoints for inventory lists, 2) UI components for list creation and management, and 3) List sharing and reordering functionality. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task has moderate complexity with database design, UI components, and sharing functionality. The drag-and-drop reordering adds some complexity, but the overall scope is well-defined with clear requirements and dependencies."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Shopping Cart Implementation",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down the Shopping Cart Implementation into 4 subtasks: 1) Cart solution evaluation and selection, 2) Cart state management and persistence, 3) Cart UI components and functionality, and 4) Cart synchronization between devices. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves making architectural decisions between Shopify Cart API and custom solutions. It requires state management, persistence across devices, and handling product variants. The cart is a critical component that affects the checkout flow and user experience."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Shopify Integration for Online Checkout",
+      "complexityScore": 8,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the Shopify Integration task into 4 subtasks: 1) Shopify store setup and API configuration, 2) Product synchronization between Lucky API and Shopify, 3) Checkout flow implementation, and 4) Order webhook handling and processing. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves complex integration with an external e-commerce platform, including product synchronization, checkout flow, and webhook handling. It requires careful coordination between multiple systems and has financial implications if implemented incorrectly."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Square POS Integration for In-Person Payments",
+      "complexityScore": 8,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Split the Square POS Integration task into 4 subtasks: 1) Square account setup and API configuration, 2) Payment processing implementation, 3) Webhook handling for payment notifications, and 4) Receipt generation and transaction history. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves integrating with a payment processing system, which has high security requirements and financial implications. It requires handling card-present transactions, webhook processing, and customer data synchronization across systems."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "Order Management System",
+      "complexityScore": 7,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the Order Management System task into 3 subtasks: 1) Database schema and API endpoints for orders, 2) Order creation and management UI, and 3) Order status workflow and history. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves creating a complex workflow system with multiple states and integrations with payment systems. It requires database design, UI components, and webhook handling from multiple sources. The order editing functionality adds complexity to the implementation."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Fulfillment System with Google Maps Integration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the Fulfillment System task into 3 subtasks: 1) Google Maps API integration and address autocomplete, 2) Fulfillment options and pickup location implementation, and 3) Delivery routing and tracking system. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves integrating with external mapping APIs and implementing complex routing algorithms. The delivery optimization and tracking features add significant complexity, requiring both frontend and backend implementation."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Email Notification System with Resend",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Divide the Email Notification System task into 3 subtasks: 1) Resend API setup and email template creation, 2) Email sending service implementation, and 3) Email preference management and analytics. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves integrating with an email service and creating templates for various notifications. While the implementation is relatively straightforward, it requires careful testing to ensure deliverability and proper rendering across email clients."
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "Cross-Selling and Product Recommendations",
+      "complexityScore": 6,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Split the Cross-Selling task into 3 subtasks: 1) Recommendation algorithm and database schema, 2) UI components for product suggestions, and 3) A/B testing and optimization framework. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves creating recommendation algorithms and implementing A/B testing. While not critical for core functionality, it requires data analysis and optimization based on user behavior, adding moderate complexity."
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "PWA Implementation and Offline Functionality",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the PWA Implementation task into 4 subtasks: 1) Service worker and manifest configuration, 2) Offline data caching and storage, 3) Background sync and installation features, and 4) Push notification implementation. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "PWA implementation involves complex browser APIs for offline functionality, push notifications, and background sync. Testing across different devices and network conditions adds complexity, and ensuring a seamless offline experience requires careful implementation."
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "Analytics and Error Tracking Implementation",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the Analytics and Error Tracking task into 3 subtasks: 1) Sentry setup and error boundary implementation, 2) PostHog integration and custom event tracking, and 3) Performance monitoring and dashboard creation. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves integrating third-party services for analytics and error tracking. While the implementation is relatively straightforward, it requires careful configuration to ensure accurate data collection without impacting application performance."
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "Shopify and Square Webhook Integration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide the Webhook Integration task into 4 subtasks: 1) Webhook endpoint implementation for Shopify, 2) Webhook endpoint implementation for Square, 3) Data synchronization and conflict resolution, and 4) Webhook subscription management and monitoring. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves creating secure webhook endpoints for multiple services and implementing complex data synchronization logic. Handling idempotency, retries, and data conflicts adds significant complexity, and the integration affects critical business processes."
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "Performance Optimization and Deployment",
+      "complexityScore": 7,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Split the Performance Optimization task into 4 subtasks: 1) Performance monitoring and metrics collection, 2) Frontend optimization (images, code splitting, lazy loading), 3) Backend optimization (API routes, database queries, caching), and 4) Deployment pipeline and CDN configuration. For each subtask, include detailed implementation steps and testing criteria.",
+      "reasoning": "This task involves optimizing the entire application stack and setting up deployment infrastructure. It requires deep understanding of performance bottlenecks and optimization techniques across frontend, backend, and infrastructure layers."
+    }
+  ]
+}

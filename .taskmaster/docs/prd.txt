@@ -1,0 +1,167 @@
+
+# Tatlist – Revised Product Requirements Document (PRD)
+
+## 1. Executive Summary
+
+Tatlist is a **progressive web application (PWA)** built with **Next.js**, offering a modernized supply ordering experience for tattoo and body art professionals. The app connects users to curated inventory via **Lucky’s API**, integrates **Square POS** for in-person payments, **Shopify** for online transactions, and uses **Google Maps** and **Resend** for logistics and communication. Mobile app development (React Native) is deferred until scale demands it.
+
+---
+
+## 2. Product Overview
+
+### 2.1 Product Vision
+Deliver a responsive, high-performance PWA for inventory management, product discovery, and checkout with flexible fulfillment and secure integrated payments.
+
+### 2.2 Target Audience
+- Professional tattoo and body art professionals
+- Tattoo shop owners & managers
+- Independent artists seeking reliable e-commerce solutions
+
+### 2.3 Key Value Propositions
+- Real-time inventory via Lucky API
+- Inventory list building and quick reordering
+- Secure checkout with Square and Shopify
+- Unified customer data via Square webhooks
+- Optional Shopify sync for inventory/e-commerce
+- Device-agnostic user experience
+
+---
+
+## 3. Business Requirements
+
+### 3.1 Business Objectives
+- Serve as Lucky’s exclusive digital distributor
+- Expand into non-competing inventory partners like Black Eye
+- Streamline checkout and fulfillment
+- Offer personalized ordering tools for loyalty and retention
+- Create flexible integration layers (Shopify, Square, Supabase)
+
+
+---
+
+## 4. Functional Requirements
+
+### 4.1 User Management
+- Account creation with business/tax info upload (Supabase Auth)
+- Role-based access for team members
+- Secure login
+
+### 4.2 Product Catalog
+- Real-time catalog sync via Lucky API
+- Product images, descriptions, tags, and filters
+- Optional Shopify product sync
+
+### 4.3 Inventory Lists
+- “Favorite” or save products into lists
+- One-click reorder
+- Shareable inventory list links
+
+### 4.4 Order Management
+- Shopping cart (Shopify Cart API or custom)
+- Order history, editing (pre-processing only)
+- Delivery or pickup fulfillment
+
+### 4.5 Payment Processing
+- **In-person**: Square POS
+- **Online**: Shopify Checkout
+- Square webhooks sync transaction + customer data to Supabase
+- Email receipts via Square/Shopify
+- Stripe not required in MVP
+
+### 4.6 Fulfillment
+- Pickup (Stigma Ink address) with Google Maps
+
+
+### 4.8 Cross-Selling
+- “Also bought” suggestions
+- Add-on prompts during checkout
+
+---
+
+## 5. Technical Requirements
+
+### 5.1 Platform
+- PWA built on **Next.js 15 (App Router)** with **React**
+- Hosted on **Vercel**; backend via **Supabase** or SST
+- Mobile-optimized, responsive UI (ShadCN UI or Tailwind)
+
+### 5.2 API Integrations
+- **Lucky API** – Inventory/catalog sync
+- **Square** – POS transactions, webhooks
+- **Shopify** – Online checkout, product sync
+- **Google Maps API** – Address autocomplete, routing, maps
+- **Resend** – Transactional emails
+- **Supabase** – Central backend for user/order data
+
+
+---
+
+## 6. User Experience (UX)
+
+### 6.1 Design
+- Modern, minimalist black & white scheme
+- UX modeled after Shopify/Black Eye Products
+- WCAG 2.1 AA accessibility
+
+### 6.2 Flows
+- **Onboarding**: Sign up → Business Info → Add products → Save lists  
+- **Checkout**: Inventory list → Cart → Fulfillment → Pay  
+- **Quick Reorder**: Inventory list → Add to cart → Pay
+
+---
+
+
+---
+
+## 8. Integration Requirements
+
+### 8.1 Third-Party Services
+- **Square POS**: In-person payment + customer sync
+- **Shopify**: Online checkout + product sync
+- **Lucky API**: Product data
+- **Google Maps API**: Routing, address autocomplete, store locator
+- **Resend**: Email notifications
+- **Supabase**: Backend system of record
+
+### 8.2 Data Exchange
+- Square and Shopify webhooks → Supabase for unified data
+- Supabase triggers Resend for email notifications
+- Lucky API → frontend and Supabase inventory
+
+---
+
+
+---
+
+## 10. Timeline & Milestones
+
+| Phase | Days | Deliverables |
+|-------|------|--------------|
+| 1. Setup | 1–10 | Next.js App, Supabase, Lucky API |
+| 2. Core | 11–25 | Inventory, Shopify Checkout, Square Webhooks |
+| 3. Features | 26–40 | Fulfillment logic, maps, Resend setup |
+| 4. QA & Launch | 41–60 | Testing, feedback, launch prep |
+
+---
+
+## 11. Risks
+
+### 11.1 Technical
+- Webhook sync edge cases
+- Shopify/Square API limits
+- Supabase function cold starts
+
+### 11.2 Business
+- Adoption friction from existing habits
+- Fulfillment delays
+- Price undercut by competitors
+
+---
+
+## 12. Next Steps
+
+- Set up Lucky API sandbox
+- Register Google Maps API key
+- Configure Resend domain and templates
+- Confirm Shopify + Square live credentials
+- Define webhooks + schema for Supabase sync

@@ -1,0 +1,43 @@
+{
+    "mcpServers": {
+        "supabase": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@supabase/mcp-server-supabase@latest",
+                "--access-token",
+                "sbp_9458f40f8d7e4d162b1b1e77ce977b75360dd9fb"
+            ]
+        },
+        "stripe": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@stripe/mcp",
+                "--tools=all"
+            ],
+            "env": {
+                "STRIPE_SECRET_KEY": "sk_test_51QPPzuDX6XoiaR6BBgQ7NMhF8VXQIEOxv09VxCoSSdkWBb75L0RWjYMRCJGfSJXtWMLfi7q4FW0TJjZyNnOMELY6000mtrlywp"
+            }
+        },
+        "task-master-ai": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "--package=task-master-ai",
+                "task-master-ai"
+            ],
+            "env": {
+                "ANTHROPIC_API_KEY": "ANTHROPIC_API_KEY_HERE",
+                "PERPLEXITY_API_KEY": "PERPLEXITY_API_KEY_HERE",
+                "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
+                "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
+                "XAI_API_KEY": "XAI_API_KEY_HERE",
+                "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
+                "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
+                "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
+                "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
+            }
+        }
+    }
+}

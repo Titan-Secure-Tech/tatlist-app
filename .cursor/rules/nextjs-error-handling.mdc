@@ -1,0 +1,321 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Next.js Expected Error Handling
+
+## Introduction
+
+Expected errors are those that can occur during normal application operation, such as server-side form validation failures or failed API requests. These errors should be handled explicitly and returned to the client rather than thrown as exceptions.
+
+This rule covers the proper patterns for handling expected errors in Next.js applications using Server Functions, Server Components, and the `notFound()` function.
+
+## Pattern Description
+
+### Server Functions with useActionState
+
+For Server Actions, use the `useActionState` hook to handle expected errors. Model errors as return values rather than throwing exceptions.
+
+**Server Action Pattern:**
+
+```typescript
+'use server'
+
+export async function createPost(prevState: any, formData: FormData) {
+  const title = formData.get('title') as string
+  const content = formData.get('content') as string
+
+  // Validate input
+  if (!title || title.length < 3) {
+    return { 
+      success: false, 
+      message: 'Title must be at least 3 characters long' 
+    }
+  }
+
+  try {
+    const res = await fetch('https://api.example.com/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content }),
+    })
+
+    if (!res.ok) {
+      return { 
+        success: false, 
+        message: 'Failed to create post. Please try again.' 
+      }
+    }
+
+    const post = await res.json()
+    return { 
+      success: true, 
+      message: 'Post created successfully!',
+      data: post 
+    }
+  } catch (error) {
+    console.error('Server error:', error)
+    return { 
+      success: false, 
+      message: 'An unexpected error occurred. Please try again.' 
+    }
+  }
+}
+```
+
+**Client Component with useActionState:**
+
+```typescript
+'use client'
+
+import { useActionState } from 'react'
+import { createPost } from '@/lib/actions/posts'
+
+const initialState = {
+  success: false,
+  message: '',
+}
+
+export function CreatePostForm() {
+  const [state, formAction, pending] = useActionState(createPost, initialState)
+
+  return (
+    <form action={formAction} className="space-y-4">
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          required
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+        />
+      </div>
+      
+      <div>
+        <label htmlFor="content" className="block text-sm font-medium">
+          Content
+        </label>
+        <textarea
+          id="content"
+          name="content"
+          required
+          rows={4}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+        />
+      </div>
+
+      {state?.message && (
+        <div 
+          className={`p-3 rounded-md ${
+            state.success 
+              ? 'bg-green-50 text-green-800 border border-green-200' 
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+          aria-live="polite"
+        >
+          {state.message}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className="bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50"
+      >
+        {pending ? 'Creating...' : 'Create Post'}
+      </button>
+    </form>
+  )
+}
+```
+
+### Server Components Error Handling
+
+When fetching data in Server Components, use the response to conditionally render error messages or redirect users.
+
+```typescript
+// app/posts/[id]/page.tsx
+import { notFound } from 'next/navigation'
+
+interface Post {
+  id: string
+  title: string
+  content: string
+}
+
+export default async function PostPage({ 
+  params 
+}: { 
+  params: { id: string } 
+}) {
+  const { id } = await params
+
+  try {
+    const res = await fetch(`https://api.example.com/posts/${id}`, {
+      next: { revalidate: 60 } // Cache for 60 seconds
+    })
+
+    if (res.status === 404) {
+      notFound() // Triggers not-found.tsx
+    }
+
+    if (!res.ok) {
+      return (
+        <div className="p-6 bg-red-50 border border-red-200 rounded-md">
+          <h2 className="text-lg font-semibold text-red-800">
+            Error Loading Post
+          </h2>
+          <p className="text-red-600">
+            Unable to load the post. Please try again later.
+          </p>
+        </div>
+      )
+    }
+
+    const post: Post = await res.json()
+
+    return (
+      <article className="max-w-2xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+        <div className="prose">{post.content}</div>
+      </article>
+    )
+  } catch (error) {
+    console.error('Failed to fetch post:', error)
+    
+    return (
+      <div className="p-6 bg-red-50 border border-red-200 rounded-md">
+        <h2 className="text-lg font-semibold text-red-800">
+          Something went wrong
+        </h2>
+        <p className="text-red-600">
+          We encountered an error while loading this post.
+        </p>
+      </div>
+    )
+  }
+}
+```
+
+### Not Found Handling
+
+Use the `notFound()` function for 404 scenarios with a corresponding `not-found.tsx` file.
+
+```typescript
+// app/blog/[slug]/page.tsx
+import { notFound } from 'next/navigation'
+import { getPostBySlug } from '@/lib/posts'
+
+export default async function BlogPost({ 
+  params 
+}: { 
+  params: { slug: string } 
+}) {
+  const { slug } = await params
+  const post = await getPostBySlug(slug)
+
+  if (!post) {
+    notFound() // Triggers not-found.tsx in the same directory
+  }
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <div>{post.content}</div>
+    </article>
+  )
+}
+```
+
+```typescript
+// app/blog/[slug]/not-found.tsx
+import Link from 'next/link'
+
+export default function NotFound() {
+  return (
+    <div className="text-center py-12">
+      <h2 className="text-2xl font-bold mb-4">Blog Post Not Found</h2>
+      <p className="text-gray-600 mb-6">
+        The blog post you're looking for doesn't exist.
+      </p>
+      <Link 
+        href="/blog"
+        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+      >
+        Back to Blog
+      </Link>
+    </div>
+  )
+}
+```
+
+## Implementation Guidelines
+
+### Server Actions
+
+1. **Return Values, Don't Throw**
+   - Model expected errors as return values with consistent structure
+   - Use `{ success: boolean, message: string, data?: any }` format
+   - Only use try/catch for unexpected errors that need logging
+
+2. **Validation**
+   - Validate input data before processing
+   - Return specific validation error messages
+   - Use Zod or similar for complex validation schemas
+
+3. **Error Messages**
+   - Provide user-friendly error messages
+   - Avoid exposing internal system details
+   - Be specific about what went wrong and how to fix it
+
+### Server Components
+
+1. **Response Checking**
+   - Always check response status before parsing JSON
+   - Handle different HTTP status codes appropriately
+   - Use `notFound()` for 404 scenarios
+
+2. **Graceful Degradation**
+   - Render fallback UI for error states
+   - Provide actionable error messages
+   - Consider retry mechanisms where appropriate
+
+3. **Error Logging**
+   - Log errors for debugging but don't expose to users
+   - Include relevant context (user ID, request details)
+   - Use structured logging for better monitoring
+
+### Client Components
+
+1. **useActionState Hook**
+   - Use for Server Action error handling
+   - Display errors with proper ARIA attributes (`aria-live="polite"`)
+   - Style error messages distinctly from success messages
+
+2. **Loading States**
+   - Show loading indicators during form submission
+   - Disable form controls to prevent double submission
+   - Provide clear feedback about ongoing operations
+
+## Real-World Examples
+
+* [User Profile Form](mdc:../components/forms/profile-form.tsx) - Server Action with error handling
+* [Post Creation](mdc:../app/dashboard/posts/create/page.tsx) - Form with validation errors
+* [Blog Post Page](mdc:../app/blog/[slug]/page.tsx) - Server Component with notFound()
+
+## Common Pitfalls
+
+* **Don't throw errors in Server Actions** - Use return values instead
+* **Don't expose internal error details** - Provide user-friendly messages
+* **Don't forget ARIA attributes** - Use `aria-live="polite"` for error announcements
+* **Don't skip response status checking** - Always verify API responses before parsing
+* **Don't forget loading states** - Always provide feedback during async operations
+
+## Related Rules
+
+* [Form Implementation](mdc:form-implementation.mdc) - For form-specific error handling patterns
+* [Next.js Guidelines](mdc:nextjs.mdc) - For general Next.js best practices
