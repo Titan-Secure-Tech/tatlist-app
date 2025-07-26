@@ -60,4 +60,21 @@ node_modules/
 # OS specific
 # Task files
 tasks.json
-tasks/ 
+tasks/
+
+# Supabase
+.supabase/
+
+# Scraped data
+/data/
+*.csv
+!public/assets/*.csv
+
+# Bun
+bun.lockb
+
+# Local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 
