@@ -32,8 +32,8 @@ export default function NewInventoryListPage() {
       if (error) throw error
 
       router.push(`/inventory-lists/${data.id}`)
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
       setLoading(false)
     }

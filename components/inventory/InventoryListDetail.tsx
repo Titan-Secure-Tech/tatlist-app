@@ -4,16 +4,17 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
+import { InventoryListWithItems, InventoryListItemWithProduct } from '@/types/inventory'
 import { Trash2, Plus, ShoppingCart } from 'lucide-react'
 import { useShoppingCart } from 'use-shopping-cart'
 
 interface InventoryListDetailProps {
-  inventoryList: any
+  inventoryList: InventoryListWithItems
   favoriteProducts: Product[]
 }
 
 export default function InventoryListDetail({ inventoryList, favoriteProducts }: InventoryListDetailProps) {
-  const [items, setItems] = useState(inventoryList.inventory_list_items || [])
+  const [items, setItems] = useState<InventoryListItemWithProduct[]>(inventoryList.inventory_list_items || [])
   const [showAddProducts, setShowAddProducts] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -28,7 +29,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
       .eq('id', itemId)
 
     if (!error) {
-      setItems(items.map((item: any) => 
+      setItems(items.map((item) => 
         item.id === itemId ? { ...item, quantity: newQuantity } : item
       ))
     }
@@ -41,12 +42,12 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
       .eq('id', itemId)
 
     if (!error) {
-      setItems(items.filter((item: any) => item.id !== itemId))
+      setItems(items.filter((item) => item.id !== itemId))
     }
   }
 
   const addProductToList = async (product: Product) => {
-    const existingItem = items.find((item: any) => item.product.id === product.id)
+    const existingItem = items.find((item) => item.product.id === product.id)
     
     if (existingItem) {
       updateQuantity(existingItem.id, existingItem.quantity + 1)
@@ -73,7 +74,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
   }
 
   const addAllToCart = () => {
-    items.forEach((item: any) => {
+    items.forEach((item) => {
       if (item.product.inStock) {
         addItem({
           id: item.product.id,
@@ -99,7 +100,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
     router.push('/cart')
   }
 
-  const totalPrice = items.reduce((sum: number, item: any) => 
+  const totalPrice = items.reduce((sum, item) => 
     sum + (item.product.price * item.quantity), 0
   )
 
@@ -151,7 +152,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
         <>
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div className="divide-y divide-gray-200">
-              {items.map((item: any) => (
+              {items.map((item) => (
                 <div key={item.id} className="p-4 flex items-center space-x-4">
                   <div className="flex-1">
                     <h3 className="font-semibold text-black">{item.product.name}</h3>

@@ -12,8 +12,7 @@ export default function CartPage() {
     decrementItem,
     clearCart,
     formattedTotalPrice,
-    cartCount,
-    redirectToCheckout
+    cartCount
   } = useShoppingCart()
 
   const handleCheckout = async () => {
@@ -63,6 +62,7 @@ export default function CartPage() {
                   src={item.image}
                   alt={item.name}
                   className="w-20 h-20 object-cover rounded"
+                  loading="lazy"
                 />
               )}
               

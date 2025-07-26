@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { CartProvider } from '@/components/providers/CartProvider'
 import Navigation from '@/components/layout/Navigation'
 

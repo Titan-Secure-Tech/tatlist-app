@@ -1,15 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 
 export default function AdminPage() {
   const [syncing, setSyncing] = useState(false)
   const [message, setMessage] = useState('')
   const [productIds, setProductIds] = useState('')
-  const router = useRouter()
-  const supabase = createClient()
 
   const syncProducts = async () => {
     setSyncing(true)
@@ -41,8 +37,8 @@ export default function AdminPage() {
       } else {
         setMessage(`Successfully synced ${result.products} products!`)
       }
-    } catch (error: any) {
-      setMessage(`Error: ${error.message}`)
+    } catch (error) {
+      setMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setSyncing(false)
     }
@@ -55,8 +51,8 @@ export default function AdminPage() {
     try {
       // For now, we'll run the seed script manually
       setMessage('To seed from CSV, run: bun supabase:seed')
-    } catch (error: any) {
-      setMessage(`Error: ${error.message}`)
+    } catch (error) {
+      setMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setSyncing(false)
     }

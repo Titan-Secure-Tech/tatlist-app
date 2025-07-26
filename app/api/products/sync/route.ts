@@ -133,10 +133,10 @@ export async function POST(request: Request) {
       })
     }
     
-  } catch (error: any) {
+  } catch (error) {
     console.error('Product sync error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to sync products' }, 
+      { error: error instanceof Error ? error.message : 'Failed to sync products' }, 
       { status: 500 }
     )
   }

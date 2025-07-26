@@ -39,7 +39,7 @@ export default async function InventoryListsPage() {
 
       {inventoryLists?.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-600 mb-4">You haven't created any inventory lists yet.</p>
+          <p className="text-gray-600 mb-4">You haven&apos;t created any inventory lists yet.</p>
           <Link
             href="/inventory-lists/new"
             className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
