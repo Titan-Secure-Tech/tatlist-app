@@ -68,8 +68,13 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
       `)
       .single()
 
-    if (!error && data) {
-      setItems([...items, data])
+    if (!error && data && data.product) {
+      const newItem: InventoryListItemWithProduct = {
+        id: data.id,
+        quantity: data.quantity,
+        product: Array.isArray(data.product) ? data.product[0] : data.product
+      }
+      setItems([...items, newItem])
     }
   }
 

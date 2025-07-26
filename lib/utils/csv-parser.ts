@@ -24,7 +24,7 @@ export function parseProductsCSV(filePath: string): CSVProduct[] {
     columns: true,
     skip_empty_lines: true,
     trim: true,
-  })
+  }) as CSVProduct[]
   
   return records
 }

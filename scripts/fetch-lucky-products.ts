@@ -59,7 +59,7 @@ async function fetchProductFromAPI(productId: string): Promise<LuckySupplyProduc
   }
 }
 
-async function processProduct(productId: string, rawData: LuckySupplyProduct): ProcessedProduct {
+async function processProduct(productId: string, rawData: LuckySupplyProduct): Promise<ProcessedProduct> {
   const variants = rawData.variants || []
   const prices = variants.map(v => parseFloat(v.price) || 0).filter(p => p > 0)
   

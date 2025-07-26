@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer'
+import puppeteer, { Page } from 'puppeteer'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -40,7 +40,7 @@ async function fetchSitemapUrls(sitemapUrl: string): Promise<string[]> {
   }
 }
 
-async function scrapeProductPage(page: puppeteer.Page, url: string): Promise<ProductData | null> {
+async function scrapeProductPage(page: Page, url: string): Promise<ProductData | null> {
   try {
     await page.goto(url, {
       waitUntil: 'networkidle2',

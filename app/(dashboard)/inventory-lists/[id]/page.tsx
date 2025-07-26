@@ -35,16 +35,24 @@ export default async function InventoryListDetailPage({ params }: Props) {
     .from('favorites')
     .select(`
       id,
-      product:products(*)
+      products(*)
     `)
     .eq('user_id', user?.id)
 
-  const favoriteProducts = favorites?.map(f => f.product).filter(Boolean) || []
+  type FavoriteWithProduct = {
+    id: string
+    products: Product | null
+  }
+
+  const favoriteProducts: Product[] = (favorites as FavoriteWithProduct[] | null)
+    ?.map(f => f.products)
+    .filter((p): p is Product => p !== null && p !== undefined)
+    || []
 
   return (
     <InventoryListDetail 
       inventoryList={inventoryList} 
-      favoriteProducts={favoriteProducts as Product[]}
+      favoriteProducts={favoriteProducts}
     />
   )
 }

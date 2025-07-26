@@ -3,6 +3,7 @@
 import { useShoppingCart } from 'use-shopping-cart'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function CartPage() {
   const {
@@ -58,11 +59,12 @@ export default function CartPage() {
           {Object.values(cartDetails || {}).map((item) => (
             <div key={item.id} className="p-4 flex items-center space-x-4">
               {item.image && (
-                <img
+                <Image
                   src={item.image}
                   alt={item.name}
-                  className="w-20 h-20 object-cover rounded"
-                  loading="lazy"
+                  width={80}
+                  height={80}
+                  className="object-cover rounded"
                 />
               )}
               

@@ -62,7 +62,7 @@ async function scrapeLuckyProductIds() {
         })
         
         // Wait for new products to load
-        await page.waitForTimeout(2000)
+        await new Promise(resolve => setTimeout(resolve, 2000))
         pageNum++
       } else {
         // Try URL-based pagination as backup

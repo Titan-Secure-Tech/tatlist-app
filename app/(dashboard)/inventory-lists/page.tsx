@@ -2,6 +2,17 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
+type InventoryListItem = {
+  id: string
+  quantity: number
+  product: {
+    id: string
+    name: string
+    sku: string
+    price: number
+  } | null
+}
+
 export default async function InventoryListsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -67,7 +78,7 @@ export default async function InventoryListsPage() {
               
               {list.inventory_list_items && list.inventory_list_items.length > 0 && (
                 <div className="mt-4 space-y-1">
-                  {list.inventory_list_items.slice(0, 3).map((item) => (
+                  {list.inventory_list_items.slice(0, 3).map((item: InventoryListItem) => (
                     <div key={item.id} className="text-sm text-gray-600">
                       {item.product?.name} (x{item.quantity})
                     </div>
