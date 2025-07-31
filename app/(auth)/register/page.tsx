@@ -28,27 +28,37 @@ export default function RegisterPage() {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/api/auth/callback`,
+        },
       })
 
       if (authError) throw authError
 
-      // Create user profile
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: authData.user.id,
-            email: formData.email,
-            business_name: formData.businessName,
-            business_address: formData.businessAddress,
-            tax_exempt_status: formData.taxExempt,
-          })
+      // Check if we have a session (email confirmations disabled)
+      if (authData.session) {
+        // Create user profile
+        if (authData.user) {
+          const { error: profileError } = await supabase
+            .from('users')
+            .insert({
+              id: authData.user.id,
+              email: formData.email,
+              business_name: formData.businessName,
+              business_address: formData.businessAddress,
+              tax_exempt_status: formData.taxExempt,
+            })
 
-        if (profileError) throw profileError
+          if (profileError) throw profileError
+        }
+
+        router.push('/dashboard')
+        router.refresh()
+      } else {
+        // Email confirmations are enabled, show success message
+        setError('Please check your email to confirm your account.')
+        setLoading(false)
       }
-
-      router.push('/dashboard')
-      router.refresh()
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
