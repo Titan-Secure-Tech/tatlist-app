@@ -130,7 +130,7 @@ async function searchProduct(browser: any, productName: string, sku: string) {
     return productData
     
   } catch (error) {
-    console.error(`  ❌ Error: ${error.message}`)
+    console.error(`  ❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     return null
   } finally {
     await page.close()
@@ -186,7 +186,7 @@ async function scrapeLuckyImagesV2() {
   console.log('🚀 Starting Lucky Supply image scraper v2...\n')
   
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   })
   
