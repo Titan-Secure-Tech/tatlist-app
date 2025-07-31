@@ -35,7 +35,7 @@ async function getProductImage(browser: any, productName: string, sku: string): 
     await page.goto(searchUrl, { waitUntil: 'networkidle2', timeout: 30000 })
     
     // Wait for search results
-    await page.waitForTimeout(2000)
+    await new Promise(resolve => setTimeout(resolve, 2000))
     
     // Try to find the product in search results
     const productLink = await page.evaluate((targetName: string) => {
@@ -63,7 +63,7 @@ async function getProductImage(browser: any, productName: string, sku: string): 
     // Navigate to product page
     console.log(`  📄 Found product page`)
     await page.goto(productLink, { waitUntil: 'networkidle2', timeout: 30000 })
-    await page.waitForTimeout(2000)
+    await new Promise(resolve => setTimeout(resolve, 2000))
     
     // Extract main product image
     const imageData = await page.evaluate(() => {
