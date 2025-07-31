@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Minus, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import useCartStore, { CartItem } from '@/lib/store/cart'
+import { toast } from 'sonner'
 
 interface CartItemProps {
   item: CartItem
@@ -18,6 +19,9 @@ export function CartItemComponent({ item }: CartItemProps) {
 
   const handleRemove = () => {
     removeItem(item.id, item.variant)
+    toast.success(`${item.name} removed from cart`, {
+      description: 'Item has been removed from your cart'
+    })
   }
 
   return (

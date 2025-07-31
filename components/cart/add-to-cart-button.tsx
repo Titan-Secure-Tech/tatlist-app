@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import useCartStore, { CartItem } from '@/lib/store/cart'
+import { toast } from 'sonner'
 
 interface AddToCartButtonProps {
   product: Omit<CartItem, 'quantity'>
@@ -29,10 +30,18 @@ export function AddToCartButton({
     addItem(product)
     setIsAdded(true)
     
-    // Show success state briefly, then open cart
+    // Show toast notification
+    toast.success(`${product.name} added to cart!`, {
+      description: 'Continue shopping or view your cart',
+      action: {
+        label: 'View Cart',
+        onClick: () => openCart()
+      }
+    })
+    
+    // Show success state briefly
     setTimeout(() => {
       setIsAdded(false)
-      openCart()
     }, 800)
   }
 

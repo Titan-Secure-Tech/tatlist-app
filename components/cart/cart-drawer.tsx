@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import useCartStore from '@/lib/store/cart'
 import { CartItemComponent } from './cart-item'
+import { toast } from 'sonner'
 
 export function CartDrawer() {
   const { 
@@ -26,6 +27,20 @@ export function CartDrawer() {
 
   const totalItems = getTotalItems()
   const totalPrice = getTotalPrice()
+
+  const handleCheckout = () => {
+    toast.info('Checkout Coming Soon!', {
+      description: 'We\'re working hard to bring you secure checkout functionality. Stay tuned!',
+      duration: 4000
+    })
+  }
+
+  const handleClearCart = () => {
+    clearCart()
+    toast.success('Cart cleared', {
+      description: 'All items have been removed from your cart'
+    })
+  }
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
@@ -80,14 +95,14 @@ export function CartDrawer() {
               </div>
               
               <div className="space-y-2">
-                <Button className="w-full" size="lg">
+                <Button className="w-full" size="lg" onClick={handleCheckout}>
                   Checkout
                 </Button>
                 
                 <Button 
                   variant="outline" 
                   className="w-full" 
-                  onClick={clearCart}
+                  onClick={handleClearCart}
                 >
                   Clear Cart
                 </Button>
