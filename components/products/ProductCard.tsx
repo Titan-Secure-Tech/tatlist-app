@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Heart } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { useShoppingCart } from 'use-shopping-cart'
@@ -82,11 +83,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative w-full h-48 mb-4 bg-gray-100 rounded-lg overflow-hidden group">
           {product.images && product.images.length > 0 && !imageError ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={product.images[0]}
               alt={product.name}
-              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-contain group-hover:scale-105 transition-transform duration-200"
               onError={() => setImageError(true)}
             />
           ) : (

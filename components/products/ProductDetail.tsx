@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Heart, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { Product } from '@/types'
 import { useShoppingCart } from 'use-shopping-cart'
 
@@ -69,23 +70,25 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
             {images.length > 0 ? (
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={images[currentImageIndex]}
                   alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+                  className="object-contain"
+                  priority
                 />
                 {images.length > 1 && (
                   <>
                     <button
                       onClick={previousImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -108,15 +111,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                  className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
                     index === currentImageIndex ? 'border-black' : 'border-gray-200'
                   }`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={image}
                     alt={`${product.name} - Thumbnail ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="80px"
+                    className="object-cover"
                   />
                 </button>
               ))}
