@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 15 application using the App Router, TypeScript, Tailwind CSS v4, and shadcn/ui components. The project appears to be named "tatlist" and is set up with modern React 19.
+Tatlist is a Next.js 15 application using the App Router, TypeScript, Tailwind CSS v4, and shadcn/ui components. The application integrates with Lucky Supply product data and provides authentication and inventory management features.
 
 ## Commands
 
@@ -50,10 +50,18 @@ bunx supabase stop   # Stop local Supabase instance
 - **UI Components**: shadcn/ui (configured in components.json)
 - **Font**: Geist Sans and Geist Mono
 - **Icons**: Lucide React
+- **Authentication**: Supabase Auth with OAuth (Google) and email/password
+- **Database**: Supabase (PostgreSQL)
+- **State Management**: Zustand for client-side state (cart functionality)
 
 ### Key Directories
 - `/app` - Next.js App Router pages and layouts
-- `/lib` - Utility functions (includes `cn()` for className merging)
+  - `/app/(auth)` - Authentication pages (login, register)
+  - `/app/api/auth` - Auth API routes including OAuth callback
+- `/lib` - Utility functions and integrations
+  - `/lib/supabase` - Supabase client configurations (server/client/middleware)
+  - `/lib/store` - Zustand stores (cart state management)
+  - `/lib/utils.ts` - Utility functions including `cn()` for className merging
 - `/public` - Static assets including CSV data files
 - `/components` - React components (shadcn/ui components go to `/components/ui`)
 
@@ -76,9 +84,23 @@ The project includes Shopify product data in CSV format located at:
 
 ## Development Notes
 
-The project uses Tailwind CSS v4 with the new PostCSS-based configuration. When adding shadcn/ui components, they will be placed in the `/components/ui` directory and will use the `cn()` utility from `/lib/utils.ts` for className merging.
+### Authentication Flow
+- Supabase handles authentication with support for email/password and OAuth providers (Google)
+- Authentication state is managed server-side with session cookies
+- Protected routes are handled via middleware that refreshes sessions
+- OAuth callback route at `/api/auth/callback` handles the OAuth flow
 
-The application is currently a fresh Next.js installation with the default landing page intact.
+### Database Integration
+- Using Supabase as the backend (PostgreSQL database)
+- Server components use `createClient` from `/lib/supabase/server.ts`
+- Client components use `createClient` from `/lib/supabase/client.ts`
+- Middleware refreshes sessions automatically on each request
+
+### Styling Conventions
+- Using Tailwind CSS v4 with PostCSS-based configuration
+- Primary color scheme: Black and white with gray accents
+- Form inputs use consistent styling with black focus states
+- Buttons follow a consistent pattern (black primary, white secondary)
 
 ## Port Configuration
 
@@ -93,3 +115,13 @@ This project uses custom ports to avoid conflicts with other local development e
   - Analytics: Port 9527
 
 Environment variables are configured in `.env.local` (not committed to git).
+
+### Required Environment Variables
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Site URL (for OAuth callbacks)
+NEXT_PUBLIC_SITE_URL=http://localhost:7500  # Development
+```
