@@ -8,7 +8,7 @@ export default function AboutPage() {
       <div className="prose prose-gray max-w-none mb-12">
         <p className="text-lg text-gray-700 leading-relaxed">
           Welcome to Tatlist, your premier destination for professional tattoo supplies and equipment. 
-          We're dedicated to providing artists with the highest quality tools and materials to bring 
+          We&apos;re dedicated to providing artists with the highest quality tools and materials to bring 
           their creative visions to life.
         </p>
       </div>
@@ -55,7 +55,7 @@ export default function AboutPage() {
         <h2 className="text-2xl font-semibold text-black mb-4">Our Mission</h2>
         <p className="text-gray-700 leading-relaxed">
           At Tatlist, we believe every tattoo artist deserves access to professional-grade 
-          supplies without the hassle. We're committed to making the procurement process 
+          supplies without the hassle. We&apos;re committed to making the procurement process 
           simple, reliable, and affordable, so you can focus on what you do best - creating art.
         </p>
       </div>
@@ -63,7 +63,7 @@ export default function AboutPage() {
       <div className="mt-12 text-center">
         <h3 className="text-xl font-semibold text-black mb-4">Have Questions?</h3>
         <p className="text-gray-600 mb-6">
-          We're here to help. Reach out to our support team anytime.
+          We&apos;re here to help. Reach out to our support team anytime.
         </p>
         <a 
           href="mailto:support@tatlist.com" 
