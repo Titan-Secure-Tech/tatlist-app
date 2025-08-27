@@ -26,6 +26,7 @@
     "test:production": "vitest run tests/e2e/production-verify.test.ts"
   },
   "dependencies": {
+    "@mendable/firecrawl-js": "^3.2.1",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",

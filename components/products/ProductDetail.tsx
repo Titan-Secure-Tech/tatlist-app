@@ -133,6 +133,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           <div>
             <h1 className="text-3xl font-bold text-black mb-2">{product.name}</h1>
             <p className="text-lg text-gray-600">{product.brand}</p>
+            {product.category && (
+              <p className="text-sm text-gray-500">Category: {product.category}</p>
+            )}
             <p className="text-sm text-gray-500 mt-1">SKU: {product.sku}</p>
           </div>
           
@@ -146,9 +149,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           
           {/* Stock Status */}
           <div className="flex items-center gap-2">
-            <div className={`h-3 w-3 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className={product.inStock ? 'text-green-700' : 'text-red-700'}>
-              {product.inStock ? `In Stock (${product.stockQuantity} available)` : 'Out of Stock'}
+            <div className={`h-3 w-3 rounded-full ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className={product.in_stock ? 'text-green-700' : 'text-red-700'}>
+              {product.in_stock ? `In Stock${product.stock_quantity ? ` (${product.stock_quantity} available)` : ''}` : 'Out of Stock'}
             </span>
           </div>
           
@@ -177,7 +180,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-20 px-3 py-2 border border-gray-300 rounded-lg"
                 min="1"
-                max={product.stockQuantity || 999}
+                max={product.stock_quantity || 999}
               />
             </div>
             
@@ -185,9 +188,9 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <button
                 onClick={handleAddToCart}
                 className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400"
-                disabled={!product.inStock}
+                disabled={!product.in_stock}
               >
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
               </button>
               
               <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50">

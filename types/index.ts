@@ -21,9 +21,11 @@ export interface Product {
   images: string[]
   category: string
   brand: string
-  inStock: boolean
-  stockQuantity?: number
+  in_stock: boolean
+  stock_quantity?: number
   tags?: string[]
+  attachments?: string[]
+  source_url?: string
 }
 
 // Inventory List Types

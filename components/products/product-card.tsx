@@ -8,7 +8,7 @@ import { CartItem } from '@/lib/store/cart'
 
 interface Product extends Omit<CartItem, 'quantity'> {
   description?: string
-  inStock?: boolean
+  in_stock?: boolean
   originalPrice?: number
 }
 
@@ -32,7 +32,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
               className="object-cover transition-transform group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            {!product.inStock && (
+            {!product.in_stock && (
               <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                 <Badge variant="secondary">Out of Stock</Badge>
               </div>
@@ -81,7 +81,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
         <AddToCartButton
           product={product}
           className="w-full"
-          disabled={!product.inStock}
+          disabled={!product.in_stock}
         />
       </CardFooter>
     </Card>

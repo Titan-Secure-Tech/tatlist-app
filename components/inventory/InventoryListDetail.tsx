@@ -80,7 +80,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
 
   const addAllToCart = () => {
     items.forEach((item) => {
-      if (item.product.inStock) {
+      if (item.product.in_stock) {
         addItem({
           id: item.product.id,
           name: item.product.name,

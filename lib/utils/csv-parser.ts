@@ -47,9 +47,9 @@ export function transformCSVToProduct(csvProduct: CSVProduct): Omit<Product, 'id
     price: price,
     images: csvProduct['Image Src'] ? [csvProduct['Image Src']] : [],
     category: csvProduct.Type || 'Uncategorized',
-    brand: csvProduct.Vendor || 'Lucky Supply',
-    inStock: csvProduct.Status === 'active' && stockQty > 0,
-    stockQuantity: stockQty,
+    brand: csvProduct.Vendor === 'Kingpin Supply' ? 'Lucky Supply' : (csvProduct.Vendor || 'Lucky Supply'),
+    in_stock: csvProduct.Status === 'active' && stockQty > 0,
+    stock_quantity: stockQty,
     tags: csvProduct.Tags ? csvProduct.Tags.split(',').map(tag => tag.trim()) : []
   }
 }

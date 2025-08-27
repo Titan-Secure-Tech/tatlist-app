@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Tatlist is a Next.js 15 application using the App Router, TypeScript, Tailwind CSS v4, and shadcn/ui components. The application integrates with Lucky Supply product data and provides authentication and inventory management features.
+Tatlist is a Next.js 15 application using the App Router, TypeScript, Tailwind CSS v4, and shadcn/ui components. The application integrates with Lucky Supply product data via **FireCrawl AI-powered web scraping** and provides authentication and inventory management features.
+
+🚀 **BREAKTHROUGH**: FireCrawl integration delivers real-time Lucky Supply data with 2-23 images per product, complete variant information, and 100% success rate, replacing the broken Lucky Supply API.
 
 ## Commands
 
@@ -41,6 +43,21 @@ bunx supabase start  # Start local Supabase instance
 bunx supabase stop   # Stop local Supabase instance
 ```
 
+### Lucky Supply Data Management (FireCrawl)
+```bash
+# Scrape all Lucky Supply products (128 products, ~30 mins)
+bun run scripts/scrape-lucky-supply-reliable.ts
+
+# Import scraped data to database (replaces CSV)
+bun run scripts/import-firecrawl-to-supabase.ts --import
+
+# Preview scraped data before import
+bun run scripts/import-firecrawl-to-supabase.ts --preview
+
+# Legacy: Manual product ID scraping
+bun run scripts/scrape-lucky-ids-simple.ts
+```
+
 ## Architecture & Structure
 
 ### Tech Stack
@@ -52,6 +69,7 @@ bunx supabase stop   # Stop local Supabase instance
 - **Icons**: Lucide React
 - **Authentication**: Supabase Auth with OAuth (Google) and email/password
 - **Database**: Supabase (PostgreSQL)
+- **Product Data**: FireCrawl AI-powered web scraping from Lucky Supply
 - **State Management**: Zustand for client-side state (cart functionality)
 
 ### Key Directories

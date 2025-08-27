@@ -79,22 +79,29 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-      {/* Product Image */}
+      {/* Product Images - Enhanced for FireCrawl data */}
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative w-full h-48 mb-4 bg-gray-100 rounded-lg overflow-hidden group">
           {product.images && product.images.length > 0 && !imageError ? (
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-contain group-hover:scale-105 transition-transform duration-200"
-              onError={() => setImageError(true)}
-            />
+            <>
+              <Image
+                src={product.images[0]}
+                alt={product.name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-contain group-hover:scale-105 transition-transform duration-200"
+                onError={() => setImageError(true)}
+              />
+              {product.images.length > 1 && (
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                  +{product.images.length - 1} more
+                </div>
+              )}
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
               <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
           )}
@@ -115,8 +122,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         </button>
       </div>
       
-      <p className="text-gray-600 text-sm mb-2">{product.brand}</p>
-      <p className="text-xl font-bold text-black mb-4">${product.price}</p>
+      <p className="text-gray-600 text-sm mb-1">{product.brand}</p>
+      {product.category && (
+        <p className="text-gray-500 text-xs mb-2">{product.category}</p>
+      )}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-xl font-bold text-black">${product.price}</p>
+        {product.stock_quantity && (
+          <p className="text-sm text-gray-600">In stock: {product.stock_quantity}</p>
+        )}
+      </div>
       
       <div className="flex items-center gap-2 mb-4">
         <label htmlFor={`qty-${product.id}`} className="text-sm text-gray-600">Qty:</label>
@@ -133,9 +148,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       <button
         onClick={handleAddToCart}
         className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors"
-        disabled={!product.inStock}
+        disabled={!product.in_stock}
       >
-        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+        {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
       </button>
     </div>
   )

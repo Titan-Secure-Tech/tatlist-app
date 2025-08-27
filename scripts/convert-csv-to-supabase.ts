@@ -100,7 +100,7 @@ async function convertCSVToSupabase() {
           price,
           images,
           category: record.Type || 'Uncategorized',
-          brand: record.Vendor || 'Lucky Supply',
+          brand: record.Vendor === 'Kingpin Supply' ? 'Lucky Supply' : (record.Vendor || 'Lucky Supply'),
           in_stock: record.Published === 'TRUE' && (stockQty === null || stockQty > 0),
           stock_quantity: stockQty,
           tags

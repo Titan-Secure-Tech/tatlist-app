@@ -9,7 +9,7 @@ const sampleProducts = [
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop',
     description: 'Professional tattoo machine kit with everything you need to get started.',
     sku: 'TM-001',
-    inStock: true,
+    in_stock: true,
   },
   {
     id: '2',
@@ -18,7 +18,7 @@ const sampleProducts = [
     image: 'https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400&h=400&fit=crop',
     description: 'High-quality black ink set for professional tattoo work.',
     sku: 'INK-001',
-    inStock: true,
+    in_stock: true,
   },
   {
     id: '3',
@@ -27,7 +27,7 @@ const sampleProducts = [
     image: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=400&h=400&fit=crop',
     description: 'Sterile needle cartridges for precise tattoo work.',
     sku: 'NC-001',
-    inStock: false,
+    in_stock: false,
   },
   {
     id: '4',
@@ -36,7 +36,7 @@ const sampleProducts = [
     image: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop',
     description: 'Latex-free tattoo gloves for safe and comfortable work.',
     sku: 'GLV-001',
-    inStock: true,
+    in_stock: true,
     variant: 'Medium',
   }
 ]
