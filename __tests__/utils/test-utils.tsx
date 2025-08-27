@@ -9,6 +9,7 @@ export const mockProduct = {
   name: 'Test Tattoo Machine',
   description: 'A high-quality test tattoo machine for professional use',
   price: 299.99,
+  image: 'https://example.com/image1.jpg', // Added for AddToCartButton compatibility
   images: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'],
   category: 'Tattoo Machines',
   brand: 'Lucky Supply',
@@ -75,3 +76,11 @@ export const createMockCartItem = (overrides = {}) => ({
 export const setMockCartState = (cartState: any) => {
   Object.assign(global.mockCartContext, cartState)
 }
+
+// Simple test to prevent empty test suite error
+describe('Test Utils', () => {
+  it('should export mock product data', () => {
+    expect(mockProduct).toBeDefined()
+    expect(mockProduct.id).toBe('test-product-1')
+  })
+})

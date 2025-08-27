@@ -17,8 +17,9 @@ describe('CartIcon', () => {
     const cartIcon = screen.getByText('Open cart (0 items)')
     expect(cartIcon).toBeInTheDocument()
     
-    // Should not show badge when cart is empty
-    expect(screen.queryByText('0')).not.toBeInTheDocument()
+    // Should not show badge element when cart is empty
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('cart-badge')).not.toBeInTheDocument()
   })
 
   it('renders cart icon with badge when cart has items', () => {

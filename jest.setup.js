@@ -58,3 +58,34 @@ beforeEach(() => {
 
 // Make mock available globally for tests
 global.mockCartContext = mockCartContext
+
+// Mock Supabase client
+jest.mock('./lib/supabase/client', () => ({
+  createClient: () => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } } }),
+      signOut: jest.fn().mockResolvedValue({ error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  }),
+}))
+
+// Mock Supabase SSR
+jest.mock('@supabase/ssr', () => ({
+  createBrowserClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } } }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+    })),
+  })),
+}))

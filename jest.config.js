@@ -29,6 +29,15 @@ const customJestConfig = {
     '<rootDir>/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/**/*.(test|spec).{js,jsx,ts,tsx}',
   ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(isows|@supabase|use-shopping-cart|lucide-react)/)',
+  ],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
+  },
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
