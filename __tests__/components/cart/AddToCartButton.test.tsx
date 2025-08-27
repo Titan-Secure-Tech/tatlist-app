@@ -42,14 +42,14 @@ describe('AddToCartButton', () => {
         name: mockProduct.name,
         price: mockProduct.price * 100, // converted to cents
         currency: 'USD',
-        image: mockProduct.images[0],
+        image: mockProduct.image,
         description: mockProduct.description,
         price_data: {
           currency: 'USD',
           product_data: {
             name: mockProduct.name,
             description: mockProduct.description,
-            images: mockProduct.images,
+            images: [mockProduct.image],
           },
           unit_amount: mockProduct.price * 100,
         },
@@ -118,6 +118,7 @@ describe('AddToCartButton', () => {
   it('handles products without images gracefully', async () => {
     const productWithoutImages = {
       ...mockProduct,
+      image: undefined,
       images: [],
     }
     

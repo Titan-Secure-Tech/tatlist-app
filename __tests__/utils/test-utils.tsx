@@ -63,7 +63,7 @@ export * from '@testing-library/react'
 export { customRender as render }
 
 // Helper functions for testing
-export const createMockCartItem = (overrides = {}) => ({
+export const createMockCartItem = (overrides: Record<string, unknown> = {}) => ({
   id: 'test-item-1',
   name: 'Test Item',
   price: 2999, // price in cents for use-shopping-cart
@@ -73,7 +73,7 @@ export const createMockCartItem = (overrides = {}) => ({
   ...overrides
 })
 
-export const setMockCartState = (cartState: any) => {
+export const setMockCartState = (cartState: Record<string, unknown>) => {
   Object.assign(global.mockCartContext, cartState)
 }
 
