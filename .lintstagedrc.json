@@ -1,0 +1,11 @@
+{
+  "*.{js,jsx,ts,tsx}": [
+    "eslint --fix",
+    "jest --testPathPatterns=cart-basic --passWithNoTests",
+    "git add"
+  ],
+  "*.{js,jsx,ts,tsx,json,css,md}": [
+    "prettier --write",
+    "git add"
+  ]
+}
