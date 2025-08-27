@@ -3,16 +3,26 @@
 import { useState } from 'react'
 import { Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import useCartStore, { CartItem } from '@/lib/store/cart'
+import { useShoppingCart } from 'use-shopping-cart'
 import { toast } from 'sonner'
 
+interface Product {
+  id: string
+  name: string
+  price: number
+  image?: string
+  sku?: string
+  description?: string
+}
+
 interface AddToCartButtonProps {
-  product: Omit<CartItem, 'quantity'>
+  product: Product
   variant?: 'default' | 'outline' | 'secondary'
   size?: 'default' | 'sm' | 'lg' | 'icon'
   className?: string
   disabled?: boolean
   showIcon?: boolean
+  quantity?: number
 }
 
 export function AddToCartButton({ 
@@ -21,13 +31,31 @@ export function AddToCartButton({
   size = 'default',
   className,
   disabled = false,
-  showIcon = true
+  showIcon = true,
+  quantity = 1
 }: AddToCartButtonProps) {
-  const { addItem, openCart } = useCartStore()
+  const { addItem } = useShoppingCart()
   const [isAdded, setIsAdded] = useState(false)
 
   const handleAddToCart = () => {
-    addItem(product)
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price * 100, // use-shopping-cart expects price in cents
+      currency: 'USD',
+      image: product.image,
+      description: product.description,
+      price_data: {
+        currency: 'USD',
+        product_data: {
+          name: product.name,
+          description: product.description,
+          images: product.image ? [product.image] : []
+        },
+        unit_amount: product.price * 100
+      }
+    }, { count: quantity })
+    
     setIsAdded(true)
     
     // Show toast notification
@@ -35,7 +63,7 @@ export function AddToCartButton({
       description: 'Continue shopping or view your cart',
       action: {
         label: 'View Cart',
-        onClick: () => openCart()
+        onClick: () => window.location.href = '/cart'
       }
     })
     

@@ -3,7 +3,8 @@
 import { ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import useCartStore from '@/lib/store/cart'
+import { useShoppingCart } from 'use-shopping-cart'
+import Link from 'next/link'
 
 interface CartIconProps {
   className?: string
@@ -16,26 +17,27 @@ export function CartIcon({
   variant = 'outline',
   size = 'icon'
 }: CartIconProps) {
-  const { openCart, getTotalItems } = useCartStore()
-  const totalItems = getTotalItems()
+  const { cartCount } = useShoppingCart()
 
   return (
     <Button 
       variant={variant} 
       size={size}
       className={`relative ${className}`}
-      onClick={openCart}
+      asChild
     >
-      <ShoppingCart className="h-4 w-4" />
-      {totalItems > 0 && (
-        <Badge 
-          variant="destructive" 
-          className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 text-xs"
-        >
-          {totalItems > 99 ? '99+' : totalItems}
-        </Badge>
-      )}
-      <span className="sr-only">Open cart ({totalItems} items)</span>
+      <Link href="/cart">
+        <ShoppingCart className="h-4 w-4" />
+        {cartCount && cartCount > 0 && (
+          <Badge 
+            variant="destructive" 
+            className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 text-xs"
+          >
+            {cartCount > 99 ? '99+' : cartCount}
+          </Badge>
+        )}
+        <span className="sr-only">Open cart ({cartCount || 0} items)</span>
+      </Link>
     </Button>
   )
 }

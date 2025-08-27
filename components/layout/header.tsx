@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CartDrawer } from '@/components/cart/cart-drawer'
+import { CartIcon } from '@/components/cart/cart-icon'
 
 export function Header() {
   return (
@@ -26,7 +26,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          <CartDrawer />
+          <CartIcon />
         </div>
       </div>
     </header>

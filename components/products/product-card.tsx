@@ -4,12 +4,17 @@ import Image from 'next/image'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
-import { CartItem } from '@/lib/store/cart'
 
-interface Product extends Omit<CartItem, 'quantity'> {
+interface Product {
+  id: string
+  name: string
+  price: number
+  image?: string
+  sku?: string
   description?: string
   in_stock?: boolean
   originalPrice?: number
+  variant?: string
 }
 
 interface ProductCardProps {
