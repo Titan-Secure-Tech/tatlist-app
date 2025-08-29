@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 // import { Header } from "@/components/layout/header";
@@ -21,9 +21,6 @@ export const metadata: Metadata = {
   description:
     'Professional tattoo supply ordering platform with integrated inventory management and seamless Lucky Supply integration',
   manifest: '/manifest.json',
-  themeColor: '#FFB347',
-  viewport:
-    'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -32,6 +29,15 @@ export const metadata: Metadata = {
   icons: {
     apple: '/icons/icon-192x192.png',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#FFB347',
 }
 
 export default function RootLayout({

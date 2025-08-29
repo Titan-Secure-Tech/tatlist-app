@@ -3,14 +3,16 @@ import { createClient } from '@/lib/supabase/server'
 
 export default async function Navigation() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   const { data: profile } = await supabase
     .from('users')
     .select('role')
     .eq('id', user?.id)
-    .single()
-  
+    .maybeSingle()
+
   const isAdmin = profile?.role === 'admin'
 
   return (

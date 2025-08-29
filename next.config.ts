@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
@@ -21,8 +21,14 @@ const nextConfig: NextConfig = {
         port: '9521',
         pathname: '/storage/v1/object/public/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'luckysupplyusa.com',
+        port: '',
+        pathname: '/cdn/shop/**',
+      },
     ],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

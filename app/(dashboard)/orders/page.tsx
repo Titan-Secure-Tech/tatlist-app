@@ -67,10 +67,10 @@ export default function OrdersPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-black mb-6">My Orders</h1>
-      
+
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="divide-y divide-gray-200">
-          {orders.map((order) => (
+          {orders.map(order => (
             <div key={order.id} className="p-6 hover:bg-gray-50 transition-colors">
               <div className="flex justify-between items-start">
                 <div>
@@ -81,7 +81,9 @@ export default function OrdersPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-black mb-1">${order.total.toFixed(2)}</p>
-                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(order.status)}`}>
+                  <span
+                    className={`inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(order.status)}`}
+                  >
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </span>
                 </div>
