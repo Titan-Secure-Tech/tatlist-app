@@ -9,26 +9,26 @@ export async function GET(request: NextRequest) {
   console.log('OAuth callback received:', { code: !!code, origin, next })
 
   if (code) {
-    try {
-      const response = NextResponse.redirect(`${origin}${next}`)
+    const response = NextResponse.redirect(`${origin}${next}`)
 
-      const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll()
-            },
-            setAll(cookiesToSet) {
-              cookiesToSet.forEach(({ name, value, options }) => {
-                response.cookies.set(name, value, options)
-              })
-            },
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
           },
-        }
-      )
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              response.cookies.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
 
+    try {
       console.log('Attempting to exchange code for session...')
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
@@ -46,6 +46,5 @@ export async function GET(request: NextRequest) {
   }
 
   console.log('No code provided, redirecting to login')
-  // If there was an error or no code, redirect to login
   return NextResponse.redirect(`${origin}/login`)
 }
