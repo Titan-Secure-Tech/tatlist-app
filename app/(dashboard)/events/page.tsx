@@ -7,10 +7,10 @@ export default function EventsPage() {
       </div>
 
       {/* Content Container */}
-      <div className="flex-1 bg-blue-600/80 backdrop-blur-sm mx-4 rounded-t-3xl mt-4 p-6">
+      <div className="flex-1 bg-white/90 backdrop-blur-sm mx-4 rounded-t-3xl mt-4 p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">EVENTS</h2>
-          <p className="text-white">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">EVENTS</h2>
+          <p className="text-gray-700">
             Stay tuned for upcoming tattoo industry events and conventions!
           </p>
         </div>
