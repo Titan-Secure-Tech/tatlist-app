@@ -55,28 +55,22 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   const handleAddToCart = () => {
-    addItem(
-      {
+    try {
+      const cartItem = {
         id: product.id,
         name: product.name,
-        price: product.price * 100, // use-shopping-cart expects price in cents
+        price: Math.round(product.price * 100), // use-shopping-cart expects price in cents
         currency: 'USD',
         image: product.images?.[0],
         description: product.description,
-        price_data: {
-          currency: 'USD',
-          product_data: {
-            name: product.name,
-            description: product.description,
-            images: product.images,
-          },
-          unit_amount: product.price * 100,
-        },
-      },
-      {
-        count: quantity,
       }
-    )
+
+      addItem(cartItem, { count: quantity })
+
+      console.log('Product added to cart:', { product: product.name, quantity })
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   return (

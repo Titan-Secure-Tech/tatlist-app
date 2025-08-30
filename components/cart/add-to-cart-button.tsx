@@ -39,26 +39,24 @@ export function AddToCartButton({
 
   const handleAddToCart = () => {
     try {
-      addItem(
-        {
-          id: product.id,
-          name: product.name,
-          price: Math.round(product.price * 100), // use-shopping-cart expects price in cents, rounded to avoid precision issues
-          currency: 'USD',
-          image: product.image,
-          description: product.description,
-          price_data: {
-            currency: 'USD',
-            product_data: {
-              name: product.name,
-              description: product.description,
-              images: product.image ? [product.image] : [],
-            },
-            unit_amount: Math.round(product.price * 100),
-          },
-        },
-        { count: quantity }
-      )
+      console.log('Adding item to cart:', {
+        product,
+        quantity,
+        stripeKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 10) + '...',
+      })
+
+      const cartItem = {
+        id: product.id,
+        name: product.name,
+        price: Math.round(product.price * 100), // use-shopping-cart expects price in cents
+        currency: 'USD',
+        image: product.image,
+        description: product.description,
+      }
+
+      console.log('Cart item:', cartItem)
+
+      addItem(cartItem, { count: quantity })
 
       setIsAdded(true)
 
@@ -78,7 +76,9 @@ export function AddToCartButton({
     } catch (error) {
       // Handle add to cart errors
       console.error('Failed to add item to cart:', error)
-      toast.error('Failed to add item to cart. Please try again.')
+      toast.error(
+        `Failed to add item to cart: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 

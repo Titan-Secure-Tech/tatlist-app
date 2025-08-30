@@ -20,15 +20,6 @@ export const metadata: Metadata = {
   title: 'Tatlist - Tattoo Supply Ordering Platform',
   description:
     'Professional tattoo supply ordering platform with integrated inventory management and seamless Lucky Supply integration',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Tatlist',
-  },
-  icons: {
-    apple: '/icons/icon-192x192.png',
-  },
 }
 
 export const viewport: Viewport = {
@@ -47,9 +38,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <CartProvider>
           <PWAInstaller />
