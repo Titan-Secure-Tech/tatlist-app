@@ -50,7 +50,7 @@ export default async function Home() {
                 ? product.images
                     .replace(/[{}]/g, '')
                     .split(',')
-                    .map(img => img.trim())
+                    .map((img: string) => img.trim())
                 : []
 
             return (
