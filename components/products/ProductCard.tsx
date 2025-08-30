@@ -31,7 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         .from('favorites')
         .select('id')
         .match({ user_id: user.id, product_id: product.id })
-        .single()
+        .maybeSingle()
 
       if (data) setIsFavorited(true)
     }

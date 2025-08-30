@@ -12,7 +12,7 @@ export function CartProvider({ children }: CartProviderProps) {
     <USCProvider
       mode="payment"
       cartMode="client-only"
-      stripe={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}
+      stripe={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
       successUrl="/orders/success"
       cancelUrl="/cart"
       currency="USD"
