@@ -42,22 +42,34 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {productList.map(product => (
-            <ProductCard
-              key={product.id}
-              product={{
-                handle: product.sku,
-                title: product.name,
-                body: '',
-                vendor: product.brand,
-                type: product.category,
-                tags: '',
-                price: product.price.toString(),
-                imageSrc: product.images?.[0] || '',
-                imageAlt: product.name,
-              }}
-            />
-          ))}
+          {productList.map(product => {
+            // Handle images array - it might be a string or array from database
+            const images = Array.isArray(product.images)
+              ? product.images
+              : typeof product.images === 'string'
+                ? product.images
+                    .replace(/[{}]/g, '')
+                    .split(',')
+                    .map(img => img.trim())
+                : []
+
+            return (
+              <ProductCard
+                key={product.id}
+                product={{
+                  handle: product.sku,
+                  title: product.name,
+                  body: '',
+                  vendor: product.brand,
+                  type: product.category,
+                  tags: '',
+                  price: product.price.toString(),
+                  imageSrc: images[0] || '',
+                  imageAlt: product.name,
+                }}
+              />
+            )
+          })}
         </div>
       </div>
     </div>
