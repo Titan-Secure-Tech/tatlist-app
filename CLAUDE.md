@@ -44,11 +44,58 @@ bun add <package>  # Add a new dependency
 bun remove <package> # Remove a dependency
 ```
 
-### Supabase Local Development
+### Supabase Development & Management
 
 ```bash
+# Local Development
 bunx supabase start  # Start local Supabase instance
 bunx supabase stop   # Stop local Supabase instance
+bunx supabase status # Show status of local containers
+
+# Database Management
+bunx supabase db reset              # Reset local database
+bunx supabase db push               # Push local migrations to remote
+bunx supabase db pull               # Pull remote schema to local
+bunx supabase migration new <name>  # Create new migration
+
+# Configuration Management
+bunx supabase config push --project-ref <project-id>  # Push config to production
+bunx supabase config diff --project-ref <project-id>  # Show config differences
+bunx supabase link --project-ref <project-id>         # Link to remote project
+
+# Production Management
+bunx supabase secrets set <key> <value> --project-ref <project-id>  # Set production secrets
+bunx supabase projects list                                          # List all projects
+```
+
+### Vercel Deployment & Management
+
+```bash
+# Authentication
+vercel login                    # Login to Vercel
+vercel logout                   # Logout from Vercel
+
+# Deployment
+vercel                         # Deploy to preview environment
+vercel --prod                  # Deploy to production
+vercel build                   # Build project locally
+
+# Environment Variables
+vercel env pull .env.local --environment production   # Pull production env vars
+vercel env pull .env.local --environment preview      # Pull preview env vars
+vercel env add                                         # Add new environment variable
+vercel env ls                                          # List environment variables
+vercel env rm <name>                                   # Remove environment variable
+
+# Project Management
+vercel projects ls             # List all projects
+vercel domains ls              # List custom domains
+vercel logs                    # View deployment logs
+vercel inspect <url>           # Inspect deployment details
+
+# Aliases & URLs
+vercel alias                   # Manage domain aliases
+vercel alias set <deployment-url> <domain>  # Set custom domain alias
 ```
 
 ### Lucky Supply Data Management (FireCrawl)
@@ -66,6 +113,21 @@ bun run scripts/import-firecrawl-to-supabase.ts --preview
 # Legacy: Manual product ID scraping
 bun run scripts/scrape-lucky-ids-simple.ts
 ```
+
+### Project-Specific Configuration
+
+This project is configured with the following remote services:
+
+**Supabase Project**:
+
+- Project ID: `yzpiadsnllrycdfxlneb`
+- Use `--project-ref yzpiadsnllrycdfxlneb` for Supabase CLI commands
+
+**Vercel Project**:
+
+- Project: `tatlist`
+- Organization: `titan-tech-9d2bd055`
+- Production URL: `https://tatlist.vercel.app`
 
 ## Architecture & Structure
 
