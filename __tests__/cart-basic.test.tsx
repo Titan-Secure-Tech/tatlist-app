@@ -6,26 +6,20 @@
 import { render, screen } from '@testing-library/react'
 import { CartProvider } from '@/components/providers/CartProvider'
 
-// Mock use-shopping-cart for basic tests
-jest.mock('use-shopping-cart', () => ({
-  useShoppingCart: () => ({
-    cartCount: 0,
-    cartDetails: {},
-    addItem: jest.fn(),
-    removeItem: jest.fn(),
-    clearCart: jest.fn(),
-    formattedTotalPrice: '$0.00',
-  }),
-  CartProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}))
-
 // Mock Next.js components
 jest.mock('next/link', () => {
-  return ({ children, ...props }: any) => <a {...props}>{children}</a>
+  // eslint-disable-next-line react/display-name
+  return ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
+    <a {...props}>{children}</a>
+  )
 })
 
 jest.mock('next/image', () => {
-  return ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />
+  // eslint-disable-next-line react/display-name
+  return ({ src, alt, ...props }: { src: string; alt: string; [key: string]: unknown }) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt} {...props} />
+  }
 })
 
 describe('Cart Basic Functionality', () => {
@@ -35,7 +29,7 @@ describe('Cart Basic Functionality', () => {
         <div>Test content</div>
       </CartProvider>
     )
-    
+
     expect(screen.getByText('Test content')).toBeInTheDocument()
   })
 

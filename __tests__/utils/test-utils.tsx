@@ -2,6 +2,22 @@ import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { CartProvider } from '@/components/providers/CartProvider'
 
+// Global type declaration for mock context
+declare global {
+  var mockCartContext: {
+    cartCount: number
+    cartDetails: Record<string, unknown>
+    addItem: jest.Mock
+    removeItem: jest.Mock
+    incrementItem: jest.Mock
+    decrementItem: jest.Mock
+    clearCart: jest.Mock
+    formattedTotalPrice: string
+    totalPrice: number
+    [key: string]: unknown
+  }
+}
+
 // Mock product data
 export const mockProduct = {
   id: 'test-product-1',
@@ -17,7 +33,7 @@ export const mockProduct = {
   stock_quantity: 10,
   tags: ['professional', 'tattoo', 'machine'],
   attachments: [],
-  source_url: 'https://luckysupplyusa.com/products/test-product'
+  source_url: 'https://luckysupplyusa.com/products/test-product',
 }
 
 export const mockProductWithVariants = {
@@ -28,13 +44,13 @@ export const mockProductWithVariants = {
   images: [
     'https://example.com/ink1.jpg',
     'https://example.com/ink2.jpg',
-    'https://example.com/ink3.jpg'
+    'https://example.com/ink3.jpg',
   ],
   variants: [
     { title: 'Black', sku: 'INK-BLACK', price: 49.99, available: true },
     { title: 'Blue', sku: 'INK-BLUE', price: 49.99, available: true },
-    { title: 'Red', sku: 'INK-RED', price: 49.99, available: false }
-  ]
+    { title: 'Red', sku: 'INK-RED', price: 49.99, available: false },
+  ],
 }
 
 export const mockOutOfStockProduct = {
@@ -42,22 +58,16 @@ export const mockOutOfStockProduct = {
   id: 'test-product-3',
   name: 'Out of Stock Item',
   in_stock: false,
-  stock_quantity: 0
+  stock_quantity: 0,
 }
 
 // Custom render function that includes providers
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <CartProvider>
-      {children}
-    </CartProvider>
-  )
+  return <CartProvider>{children}</CartProvider>
 }
 
-const customRender = (
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
+  render(ui, { wrapper: AllTheProviders, ...options })
 
 export * from '@testing-library/react'
 export { customRender as render }
@@ -70,10 +80,23 @@ export const createMockCartItem = (overrides: Record<string, unknown> = {}) => (
   currency: 'USD',
   image: 'https://example.com/image.jpg',
   quantity: 1,
-  ...overrides
+  ...overrides,
 })
 
 export const setMockCartState = (cartState: Record<string, unknown>) => {
+  if (!global.mockCartContext) {
+    global.mockCartContext = {
+      cartCount: 0,
+      cartDetails: {},
+      addItem: jest.fn(),
+      removeItem: jest.fn(),
+      incrementItem: jest.fn(),
+      decrementItem: jest.fn(),
+      clearCart: jest.fn(),
+      formattedTotalPrice: '$0.00',
+      totalPrice: 0,
+    }
+  }
   Object.assign(global.mockCartContext, cartState)
 }
 

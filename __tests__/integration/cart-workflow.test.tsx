@@ -18,7 +18,7 @@ describe('Cart Workflow Integration', () => {
     global.mockCartContext.incrementItem = mockIncrementItem
     global.mockCartContext.decrementItem = mockDecrementItem
     global.mockCartContext.clearCart = mockClearCart
-    
+
     setMockCartState({
       cartCount: 0,
       cartDetails: {},
@@ -34,22 +34,23 @@ describe('Cart Workflow Integration', () => {
   describe('Empty Cart State', () => {
     it('shows empty cart icon and allows adding items', async () => {
       const user = userEvent.setup()
-      
+
       render(
         <div>
           <CartIcon />
           <AddToCartButton product={mockProduct} />
         </div>
       )
-      
-      // Initially empty cart
-      expect(screen.queryByText('0')).not.toBeInTheDocument()
-      expect(screen.getByLabelText(/open cart \(0 items\)/i)).toBeInTheDocument()
-      
+
+      // Initially empty cart - badge should not be visible for empty cart
+      expect(screen.queryByTestId('cart-badge')).not.toBeInTheDocument()
+      // Screen reader text should show 0 items
+      expect(screen.getByText(/open cart \(0 items\)/i)).toBeInTheDocument()
+
       // Add item to cart
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       await user.click(addButton)
-      
+
       expect(mockAddItem).toHaveBeenCalledWith(
         expect.objectContaining({
           id: mockProduct.id,
@@ -65,18 +66,21 @@ describe('Cart Workflow Integration', () => {
     it('updates cart icon when items are added', () => {
       // Simulate having items in cart
       setMockCartState({ cartCount: 3 })
-      
+
       render(<CartIcon />)
-      
-      expect(screen.getByText('3')).toBeInTheDocument()
-      expect(screen.getByLabelText(/open cart \(3 items\)/i)).toBeInTheDocument()
+
+      // Badge should display count
+      expect(screen.getByTestId('cart-badge')).toBeInTheDocument()
+      expect(screen.getByTestId('cart-badge')).toHaveTextContent('3')
+      // Screen reader text should show 3 items
+      expect(screen.getByText(/open cart \(3 items\)/i)).toBeInTheDocument()
     })
 
     it('handles large cart counts correctly', () => {
       setMockCartState({ cartCount: 150 })
-      
+
       render(<CartIcon />)
-      
+
       expect(screen.getByText('99+')).toBeInTheDocument()
     })
   })
@@ -84,22 +88,25 @@ describe('Cart Workflow Integration', () => {
   describe('Product Card Integration', () => {
     it('integrates product card with cart system', async () => {
       const user = userEvent.setup()
-      
+
       render(<ProductCard product={mockProduct} />)
-      
+
       // Product should display correctly
       expect(screen.getByText(mockProduct.name)).toBeInTheDocument()
       expect(screen.getByText(`$${mockProduct.price}`)).toBeInTheDocument()
-      
-      // Adjust quantity
-      const quantityInput = screen.getByLabelText(/qty/i)
-      await user.clear(quantityInput)
-      await user.type(quantityInput, '2')
-      
+
+      // Adjust quantity - use selectAll + type to ensure proper replacement
+      const quantityInput = screen.getByLabelText(/qty/i) as HTMLInputElement
+      await user.click(quantityInput)
+      await user.keyboard('{Control>}a{/Control}')
+      await user.keyboard('2')
+      // Verify input value is correct
+      expect(quantityInput.value).toBe('2')
+
       // Add to cart with quantity
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       await user.click(addButton)
-      
+
       expect(mockAddItem).toHaveBeenCalledWith(
         expect.objectContaining({
           id: mockProduct.id,
@@ -124,24 +131,24 @@ describe('Cart Workflow Integration', () => {
           quantity: 1,
         }),
       }
-      
+
       setMockCartState({
         cartCount: 3,
         cartDetails: cartItems,
         formattedTotalPrice: '$59.97',
         totalPrice: 5997,
       })
-      
+
       render(
         <div>
           <CartIcon />
           <AddToCartButton product={mockProduct} />
         </div>
       )
-      
+
       // Cart icon should reflect total count
       expect(screen.getByText('3')).toBeInTheDocument()
-      
+
       // Add button should still be functional
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       expect(addButton).not.toBeDisabled()
@@ -151,19 +158,19 @@ describe('Cart Workflow Integration', () => {
   describe('Error Handling', () => {
     it('handles add to cart failures gracefully', async () => {
       const user = userEvent.setup()
-      
+
       // Mock addItem to throw error
       mockAddItem.mockImplementationOnce(() => {
         throw new Error('Failed to add item')
       })
-      
+
       render(<AddToCartButton product={mockProduct} />)
-      
+
       const addButton = screen.getByRole('button', { name: /add to cart/i })
-      
+
       // Should not crash when error occurs
       await user.click(addButton)
-      
+
       expect(mockAddItem).toHaveBeenCalled()
       // Button should still be functional after error
       expect(addButton).not.toBeDisabled()
@@ -177,12 +184,12 @@ describe('Cart Workflow Integration', () => {
         ...mockProduct,
         price: 1299.99,
       }
-      
+
       render(<AddToCartButton product={expensiveProduct} />)
-      
+
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       await user.click(addButton)
-      
+
       expect(mockAddItem).toHaveBeenCalledWith(
         expect.objectContaining({
           price: 129999, // $1299.99 * 100 = 129999 cents
@@ -200,12 +207,12 @@ describe('Cart Workflow Integration', () => {
         ...mockProduct,
         price: 19.99,
       }
-      
+
       render(<AddToCartButton product={decimalProduct} />)
-      
+
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       await user.click(addButton)
-      
+
       expect(mockAddItem).toHaveBeenCalledWith(
         expect.objectContaining({
           price: 1999, // $19.99 * 100 = 1999 cents
@@ -218,17 +225,17 @@ describe('Cart Workflow Integration', () => {
   describe('Accessibility', () => {
     it('maintains proper ARIA attributes across cart components', () => {
       setMockCartState({ cartCount: 5 })
-      
+
       render(
         <div>
           <CartIcon />
           <AddToCartButton product={mockProduct} />
         </div>
       )
-      
-      // Cart icon should have proper labels
-      expect(screen.getByLabelText(/open cart \(5 items\)/i)).toBeInTheDocument()
-      
+
+      // Cart icon should have proper labels (screen reader text)
+      expect(screen.getByText(/open cart \(5 items\)/i)).toBeInTheDocument()
+
       // Add button should be accessible
       const addButton = screen.getByRole('button', { name: /add to cart/i })
       expect(addButton).toBeInTheDocument()
@@ -238,17 +245,23 @@ describe('Cart Workflow Integration', () => {
   describe('Performance Considerations', () => {
     it('handles rapid successive clicks without issues', async () => {
       const user = userEvent.setup()
-      
+
       render(<AddToCartButton product={mockProduct} />)
-      
+
       const addButton = screen.getByRole('button', { name: /add to cart/i })
-      
-      // Click rapidly multiple times
+
+      // Click multiple times - the button becomes temporarily disabled after each click
       await user.click(addButton)
+      expect(mockAddItem).toHaveBeenCalledTimes(1)
+
+      // Wait for button to reset and click again
+      await screen.findByText('Add to Cart', undefined, { timeout: 1000 })
       await user.click(addButton)
+      expect(mockAddItem).toHaveBeenCalledTimes(2)
+
+      // Wait and click once more
+      await screen.findByText('Add to Cart', undefined, { timeout: 1000 })
       await user.click(addButton)
-      
-      // Should handle multiple clicks (though button becomes disabled briefly)
       expect(mockAddItem).toHaveBeenCalledTimes(3)
     })
   })

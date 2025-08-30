@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
 
+// Ensure DOM environment is available
+if (typeof document === 'undefined') {
+  throw new Error('JSDOM environment not properly configured')
+}
+
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter() {
@@ -22,7 +27,7 @@ jest.mock('next/navigation', () => ({
 
 // Mock Next.js Image component
 jest.mock('next/image', () => {
-  // eslint-disable-next-line @next/next/no-img-element
+   
   return function Image({ src, alt, ...props }) {
     return <img src={src} alt={alt} {...props} />
   }
@@ -42,14 +47,14 @@ const mockCartContext = {
 }
 
 jest.mock('use-shopping-cart', () => ({
-  useShoppingCart: () => mockCartContext,
+  useShoppingCart: () => global.mockCartContext || mockCartContext,
   CartProvider: ({ children }) => children,
 }))
 
 // Reset mocks before each test
 beforeEach(() => {
   jest.clearAllMocks()
-  
+
   // Reset cart context to default values
   mockCartContext.cartCount = 0
   mockCartContext.cartDetails = {}
@@ -59,6 +64,17 @@ beforeEach(() => {
 
 // Make mock available globally for tests
 global.mockCartContext = mockCartContext
+
+// Mock toast notifications
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    loading: jest.fn(),
+    info: jest.fn(),
+  },
+  Toaster: () => null,
+}))
 
 // Mock Supabase client
 jest.mock('./lib/supabase/client', () => ({
@@ -73,6 +89,7 @@ jest.mock('./lib/supabase/client', () => ({
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
+      match: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({ data: null, error: null }),
     })),
   }),

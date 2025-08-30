@@ -36,6 +36,7 @@
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@stripe/stripe-js": "^7.9.0",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.52.1",
     "@types/pg": "^8.15.5",
@@ -49,12 +50,14 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sonner": "^2.0.6",
+    "stripe": "^18.5.0",
     "tailwind-merge": "^3.3.0",
     "use-shopping-cart": "^3.2.0",
-    "zustand": "^5.0.7"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@jest/globals": "^30.1.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -71,6 +74,7 @@
     "husky": "^9.1.7",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.1",
+    "jsdom": "^26.1.0",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "puppeteer": "^24.15.0",

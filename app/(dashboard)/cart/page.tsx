@@ -4,6 +4,7 @@ import { useShoppingCart } from 'use-shopping-cart'
 import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { toast } from 'sonner'
 
 export default function CartPage() {
   const {
@@ -13,7 +14,7 @@ export default function CartPage() {
     decrementItem,
     clearCart,
     formattedTotalPrice,
-    cartCount
+    cartCount,
   } = useShoppingCart()
 
   const handleCheckout = async () => {
@@ -21,7 +22,7 @@ export default function CartPage() {
       // For now, we'll just log the cart
       // Later we'll integrate with Square
       console.log('Checkout with cart:', cartDetails)
-      alert('Square payment integration coming soon!')
+      toast.info('Square payment integration coming soon!')
     } catch (error) {
       console.error('Checkout error:', error)
     }
@@ -46,17 +47,14 @@ export default function CartPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-black">Shopping Cart</h1>
-        <button
-          onClick={clearCart}
-          className="text-red-600 hover:text-red-700 text-sm"
-        >
+        <button onClick={clearCart} className="text-red-600 hover:text-red-700 text-sm">
           Clear Cart
         </button>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <div className="divide-y divide-gray-200">
-          {Object.values(cartDetails || {}).map((item) => (
+          {Object.values(cartDetails || {}).map(item => (
             <div key={item.id} className="p-4 flex items-center space-x-4">
               {item.image && (
                 <Image
@@ -67,7 +65,7 @@ export default function CartPage() {
                   className="object-cover rounded"
                 />
               )}
-              
+
               <div className="flex-1">
                 <h3 className="font-semibold text-black">{item.name}</h3>
                 <p className="text-gray-600">${(item.price / 100).toFixed(2)} each</p>
@@ -96,6 +94,7 @@ export default function CartPage() {
               <button
                 onClick={() => removeItem(item.id)}
                 className="text-red-600 hover:text-red-700"
+                aria-label={`Remove ${item.name} from cart`}
               >
                 <Trash2 className="h-5 w-5" />
               </button>
