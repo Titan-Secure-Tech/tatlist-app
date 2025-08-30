@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ProductCard } from '@/components/product-card'
 import { OAuthHandler } from '@/components/OAuth-handler'
 
 export default async function Home() {
@@ -14,20 +13,16 @@ export default async function Home() {
     redirect('/dashboard')
   }
 
-  // Get products from Lucky Supply database
-  const { data: products } = await supabase.from('products').select('*').limit(12)
-  const productList = products || []
-
   return (
     <div className="min-h-screen bg-white">
       <OAuthHandler />
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center mb-12">
+        <div className="text-center">
           <h1 className="text-5xl font-bold text-black mb-4">Welcome to Tatlist</h1>
           <p className="text-xl text-gray-600 mb-8">
             Your trusted partner for tattoo and body art supplies
           </p>
-          <div className="flex gap-4 justify-center mb-8">
+          <div className="flex gap-4 justify-center">
             <Link
               href="/register"
               className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
@@ -41,37 +36,6 @@ export default async function Home() {
               Sign In
             </Link>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {productList.map(product => {
-            // Handle images array - it might be a string or array from database
-            const images = Array.isArray(product.images)
-              ? product.images
-              : typeof product.images === 'string'
-                ? product.images
-                    .replace(/[{}]/g, '')
-                    .split(',')
-                    .map((img: string) => img.trim())
-                : []
-
-            return (
-              <ProductCard
-                key={product.id}
-                product={{
-                  handle: product.sku,
-                  title: product.name,
-                  body: '',
-                  vendor: product.brand,
-                  type: product.category,
-                  tags: '',
-                  price: product.price.toString(),
-                  imageSrc: images[0] || '',
-                  imageAlt: product.name,
-                }}
-              />
-            )
-          })}
         </div>
       </div>
     </div>
