@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ProductCard } from '@/components/product-card'
+import { OAuthHandler } from '@/components/OAuth-handler'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -19,6 +20,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-white">
+      <OAuthHandler />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-black mb-4">Welcome to Tatlist</h1>
