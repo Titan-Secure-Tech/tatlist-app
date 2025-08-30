@@ -15,12 +15,12 @@ This project uses **Bun** as the package manager and runtime. All commands can b
 ### Development
 
 ```bash
-bun dev            # Start development server (standard webpack) on port 7500
+bun dev            # Start development server with Turbopack on port 7500
 # or
-bun run dev        # Same as above
+bun run dev        # Same as above (aligned with shadcn/ui v4 patterns)
 
-# Alternative Turbopack build (faster but may have cache issues):
-bun run dev:turbo  # Start development server with Turbopack on port 7500
+# Formatting & Code Quality
+bun run format:write  # Format all TypeScript, JavaScript, and MDX files
 ```
 
 ### Build & Production
