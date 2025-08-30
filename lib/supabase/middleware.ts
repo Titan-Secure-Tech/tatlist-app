@@ -35,7 +35,7 @@ export async function updateSession(request: NextRequest) {
   // Protect routes that require authentication
   const protectedRoutes = ['/dashboard', '/profile', '/orders', '/cart']
   const authRoutes = ['/login', '/register']
-  
+
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
   const isAuthRoute = authRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
@@ -44,7 +44,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    const dashboardUrl = new URL('/dashboard', request.url)
+    return NextResponse.redirect(dashboardUrl)
   }
 
   return supabaseResponse
