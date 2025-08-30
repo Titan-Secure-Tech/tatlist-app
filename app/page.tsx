@@ -14,7 +14,8 @@ export default async function Home() {
   }
 
   // Get products from Lucky Supply database
-  const { data: products = [] } = await supabase.from('products').select('*').limit(12)
+  const { data: products } = await supabase.from('products').select('*').limit(12)
+  const productList = products || []
 
   return (
     <div className="min-h-screen bg-white">
@@ -41,7 +42,7 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map(product => (
+          {productList.map(product => (
             <ProductCard
               key={product.id}
               product={{

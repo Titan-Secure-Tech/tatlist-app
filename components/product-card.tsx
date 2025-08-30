@@ -1,5 +1,16 @@
 import Image from 'next/image'
-import { Product } from '@/lib/products'
+
+interface Product {
+  handle: string
+  title: string
+  body: string
+  vendor: string
+  type: string
+  tags: string
+  price: string
+  imageSrc: string
+  imageAlt: string
+}
 
 interface ProductCardProps {
   product: Product
