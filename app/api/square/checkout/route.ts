@@ -109,12 +109,12 @@ export async function POST(request: NextRequest) {
       idempotencyKey: randomUUID(),
     }
 
-    const { data: orderResult, error: orderError } =
+    const { result: orderResult, ...orderResponse } =
       await squareClient.orders.createOrder(orderRequest)
 
-    if (orderError || !orderResult?.order) {
-      console.error('Order creation error:', orderError)
-      throw new Error(orderError?.message || 'Failed to create order')
+    if (orderResponse.statusCode !== 200 || !orderResult?.order) {
+      console.error('Order creation error:', orderResponse)
+      throw new Error('Failed to create order')
     }
 
     // Create payment link for the order
@@ -146,12 +146,12 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    const { data: paymentLinkResult, error: paymentLinkError } =
+    const { result: paymentLinkResult, ...paymentResponse } =
       await squareClient.checkout.createPaymentLink(paymentLinkRequest)
 
-    if (paymentLinkError || !paymentLinkResult?.paymentLink) {
-      console.error('Payment link error:', paymentLinkError)
-      throw new Error(paymentLinkError?.message || 'Failed to create payment link')
+    if (paymentResponse.statusCode !== 200 || !paymentLinkResult?.paymentLink) {
+      console.error('Payment link error:', paymentResponse)
+      throw new Error('Failed to create payment link')
     }
 
     return NextResponse.json({

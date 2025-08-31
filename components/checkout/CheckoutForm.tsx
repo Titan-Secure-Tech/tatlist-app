@@ -265,7 +265,10 @@ export default function CheckoutForm() {
               <span>
                 $
                 {(
-                  ((item.price_data?.unit_amount || item.price || 0) / 100) *
+                  (((item as { price_data?: { unit_amount?: number } }).price_data?.unit_amount ||
+                    item.price ||
+                    0) /
+                    100) *
                   item.quantity
                 ).toFixed(2)}
               </span>

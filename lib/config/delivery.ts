@@ -95,7 +95,7 @@ export function getEstimatedDeliveryTime(): string {
 
 export function isDeliveryAvailable(): boolean {
   const now = new Date()
-  const dayOfWeek = now.toLocaleLowerCase('en-US', {
+  const dayOfWeek = now.toLocaleDateString('en-US', {
     weekday: 'long',
   }) as keyof typeof DELIVERY_CONFIG.businessHours
   const hours = DELIVERY_CONFIG.businessHours[dayOfWeek]

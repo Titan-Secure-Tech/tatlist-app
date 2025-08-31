@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { result } = await squareClient.inventoryApi.batchRetrieveInventoryCounts({
+    const { result } = await squareClient.inventory.batchRetrieveInventoryCounts({
       catalogObjectIds,
       locationIds: [SQUARE_LOCATION_ID],
     })
@@ -24,7 +24,10 @@ export async function GET(request: Request) {
     const counts = result.counts || []
 
     const inventoryMap = counts.reduce(
-      (acc, count) => {
+      (
+        acc: Record<string, InventoryItem>,
+        count: { catalogObjectId?: string; quantity?: string; state?: string; locationId?: string }
+      ) => {
         if (count.catalogObjectId) {
           acc[count.catalogObjectId] = {
             quantity: Number(count.quantity || 0),

@@ -3,10 +3,10 @@ import { SquareClient, SquareEnvironment } from 'square'
 const isProduction = process.env.NODE_ENV === 'production'
 
 export const squareClient = new SquareClient({
-  accessToken: isProduction
+  token: isProduction
     ? process.env.SQUARE_PRODUCTION_ACCESS_TOKEN!
     : process.env.SQUARE_SANDBOX_ACCESS_TOKEN!,
-  environment: isProduction ? SquareEnvironment.PRODUCTION : SquareEnvironment.SANDBOX,
+  environment: isProduction ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
 })
 
 export const SQUARE_LOCATION_ID = isProduction

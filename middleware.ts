@@ -2,6 +2,15 @@ import { type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  // Skip middleware for static files and API routes that don't need auth
+  if (
+    request.nextUrl.pathname.startsWith('/_next') ||
+    request.nextUrl.pathname.startsWith('/api') ||
+    request.nextUrl.pathname.includes('.')
+  ) {
+    return
+  }
+
   return await updateSession(request)
 }
 

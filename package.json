@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack -p 7500",
+    "dev": "next dev -p 7500",
     "build": "next build",
+    "type-check": "tsc --noEmit",
     "start": "next start -p 7500",
     "lint": "next lint",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\"",

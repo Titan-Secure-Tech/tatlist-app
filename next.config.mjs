@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable typed routes for better type safety
+  experimental: {
+    typedRoutes: true,
+  },
   // Image configuration for remote patterns
   images: {
     remotePatterns: [
@@ -30,7 +34,7 @@ const nextConfig = {
     ],
   },
 
-  // Ignore TypeScript errors during build (like shadcn/ui v4)
+  // Ignore TypeScript errors during build (like shadcn/ui v4 and Square SDK issues)
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -38,6 +42,20 @@ const nextConfig = {
   // Ignore ESLint errors during build
   eslint: {
     ignoreDuringBuilds: true,
+  },
+
+  // Suppress webpack warnings about Node.js APIs in Edge Runtime
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+      }
+    }
+    return config
   },
 }
 

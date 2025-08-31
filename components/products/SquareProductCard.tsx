@@ -55,7 +55,7 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
           unit_amount: Math.round(selectedVariation.price * 100),
         },
       },
-      quantity
+      { count: quantity }
     )
 
     toast.success(`Added ${quantity} ${product.name} to cart`)
