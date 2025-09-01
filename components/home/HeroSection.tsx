@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, Truck, MapPin, Clock, Shield } from 'lucide-react'
 import { useRef } from 'react'
+import Image from 'next/image'
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -166,18 +167,29 @@ export default function HeroSection() {
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden relative">
-                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                    <Truck className="w-20 h-20 text-gray-500 mb-2" />
-                    <span className="text-sm font-medium text-gray-600">Delivery Van</span>
-                    <span className="text-xs text-gray-500 mt-1">Tampa Streets</span>
+                <div className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative group">
+                  <Image
+                    src="/assets/images/benjamin-lehman-5t4qCgtaLGU-unsplash.jpg"
+                    alt="Tattoo artwork"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    priority
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                    <p className="text-white text-xs">Photo by Benjamin Lehman</p>
                   </div>
                 </div>
-                <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl overflow-hidden relative">
-                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                    <Shield className="w-16 h-16 text-gray-600 mb-2" />
-                    <span className="text-sm font-medium text-gray-700">Professional</span>
-                    <span className="text-xs text-gray-600 mt-1">Supplies</span>
+                <div className="aspect-square bg-gray-200 rounded-2xl overflow-hidden relative group">
+                  <Image
+                    src="/assets/images/fallon-michael-EQucs66pts0-unsplash.jpg"
+                    alt="Tattoo art supplies"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                    <p className="text-white text-xs">Photo by Fallon Michael</p>
                   </div>
                 </div>
               </motion.div>
@@ -188,18 +200,28 @@ export default function HeroSection() {
                 animate={{ y: [10, -10, 10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-square bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl overflow-hidden relative">
-                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                    <MapPin className="w-16 h-16 text-gray-700 mb-2" />
-                    <span className="text-sm font-medium text-gray-800">Tampa Bay</span>
-                    <span className="text-xs text-gray-700 mt-1">Coverage</span>
+                <div className="aspect-square bg-gray-200 rounded-2xl overflow-hidden relative group">
+                  <Image
+                    src="/assets/images/maxim-hopman-52Kf36w124Y-unsplash.jpg"
+                    alt="Professional tattoo studio"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                    <p className="text-white text-xs">Photo by Maxim Hopman</p>
                   </div>
                 </div>
-                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden relative">
-                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                    <Clock className="w-20 h-20 text-gray-500 mb-2" />
-                    <span className="text-sm font-medium text-gray-600">Fast Delivery</span>
-                    <span className="text-xs text-gray-500 mt-1">Same Day</span>
+                <div className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative group">
+                  <Image
+                    src="/assets/images/siednji-leon-j5FVVaCkxq4-unsplash.jpg"
+                    alt="Tattoo artist at work"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                    <p className="text-white text-xs">Photo by Siednji Leon</p>
                   </div>
                 </div>
               </motion.div>
