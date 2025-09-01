@@ -5,6 +5,7 @@ import { ShoppingBag, Plus, Minus, Trash2, ShoppingCart } from 'lucide-react'
 import { useShoppingCart } from 'use-shopping-cart'
 import Image from 'next/image'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import {
   Sheet,
   SheetContent,
@@ -97,7 +98,10 @@ function CartContent({ onClose }: { onClose: () => void }) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 -mr-2"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => {
+                          removeItem(item.id)
+                          toast.success(`${item.name} removed from cart`)
+                        }}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -142,7 +146,10 @@ function CartContent({ onClose }: { onClose: () => void }) {
             <Button
               variant="ghost"
               className="w-full text-destructive hover:text-destructive"
-              onClick={clearCart}
+              onClick={() => {
+                clearCart()
+                toast.success('Cart cleared')
+              }}
             >
               Clear all items
             </Button>

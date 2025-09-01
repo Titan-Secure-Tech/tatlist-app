@@ -31,14 +31,8 @@ export default function CartPage() {
   }, [])
 
   const handleCheckout = async () => {
-    try {
-      // For now, we'll just log the cart
-      // Later we'll integrate with Square
-      console.log('Checkout with cart:', cartDetails)
-      toast.info('Square payment integration coming soon!')
-    } catch (error) {
-      console.error('Checkout error:', error)
-    }
+    // Navigate to the checkout page
+    window.location.href = '/checkout'
   }
 
   // Debug logging
@@ -97,7 +91,14 @@ export default function CartPage() {
             </p>
           </div>
         </div>
-        <Button variant="destructive" size="sm" onClick={clearCart}>
+        <Button 
+          variant="destructive" 
+          size="sm" 
+          onClick={() => {
+            clearCart()
+            toast.success('Cart cleared')
+          }}
+        >
           Clear Cart
         </Button>
       </div>
@@ -142,7 +143,10 @@ export default function CartPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => {
+                              removeItem(item.id)
+                              toast.success(`${item.name} removed from cart`)
+                            }}
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>

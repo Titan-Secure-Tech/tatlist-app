@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { useShoppingCart } from 'use-shopping-cart'
+import { toast } from 'sonner'
 
 interface AnimatedProductCardProps {
   product: Product
@@ -57,28 +58,68 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return
-
-    if (isFavorited) {
-      await supabase.from('favorites').delete().match({ user_id: user.id, product_id: product.id })
-    } else {
-      await supabase.from('favorites').insert({ user_id: user.id, product_id: product.id })
+    
+    if (!user) {
+      toast.error('Please sign in to add favorites')
+      return
     }
 
-    setIsFavorited(!isFavorited)
+    try {
+      if (isFavorited) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .match({ user_id: user.id, product_id: product.id })
+        
+        if (error) throw error
+        
+        setIsFavorited(false)
+        toast.success('Removed from favorites')
+      } else {
+        // Use upsert to handle potential duplicates
+        const { error } = await supabase
+          .from('favorites')
+          .upsert(
+            { user_id: user.id, product_id: product.id },
+            { onConflict: 'user_id,product_id' }
+          )
+        
+        if (error) {
+          // If upsert fails, it might already exist, so just set as favorited
+          if (error.code === '23505' || error.message?.includes('duplicate')) {
+            setIsFavorited(true)
+            toast.info('Already in favorites')
+          } else {
+            throw error
+          }
+        } else {
+          setIsFavorited(true)
+          toast.success('Added to favorites!')
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      toast.error('Failed to update favorites')
+    }
   }
 
   const handleAddToCart = () => {
-    const cartItem = {
-      id: product.id,
-      name: product.name,
-      price: Math.round(product.price * 100),
-      currency: 'USD',
-      image: product.images?.[0],
-      description: product.description,
-    }
+    try {
+      const cartItem = {
+        id: product.id,
+        name: product.name,
+        price: Math.round(product.price * 100),
+        currency: 'USD',
+        image: product.images?.[0],
+        description: product.description,
+      }
 
-    addItem(cartItem)
+      addItem(cartItem)
+      toast.success(`${product.name} added to cart`)
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      toast.error('Failed to add to cart')
+    }
   }
 
   const cardVariants = {

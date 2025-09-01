@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Home, ShoppingBag, Package, List, User, Settings, LogOut } from 'lucide-react'
 import { AnimatedCartIcon } from '@/components/cart/AnimatedCartIcon'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface NavItem {
   href: string
@@ -18,6 +20,43 @@ interface AnimatedNavigationProps {
 
 export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigationProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      
+      // Clear only auth-related storage, keep cart data
+      // Remove Supabase auth tokens
+      const keysToRemove = []
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.includes('supabase') || key.includes('auth'))) {
+          keysToRemove.push(key)
+        }
+      }
+      keysToRemove.forEach(key => localStorage.removeItem(key))
+      
+      // Clear session storage (but not announcement banner preference)
+      for (let i = sessionStorage.length - 1; i >= 0; i--) {
+        const key = sessionStorage.key(i)
+        if (key && !key.includes('announcementBannerClosed') && (key.includes('supabase') || key.includes('auth'))) {
+          sessionStorage.removeItem(key)
+        }
+      }
+      
+      toast.success('Signed out successfully')
+      router.push('/login')
+      router.refresh()
+    } catch (error) {
+      console.error('Sign out error:', error)
+      toast.error('Failed to sign out. Please try again.')
+      // Force redirect to login even if signout fails
+      router.push('/login')
+    }
+  }
 
   const navItems: NavItem[] = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
@@ -92,16 +131,15 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
             <AnimatedCartIcon />
 
             {/* Sign Out Button */}
-            <form action="/api/auth/signout" method="post">
-              <motion.button
-                type="submit"
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <LogOut className="w-5 h-5" />
-              </motion.button>
-            </form>
+            <motion.button
+              onClick={handleSignOut}
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </motion.button>
           </div>
         </div>
 

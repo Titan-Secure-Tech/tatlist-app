@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { useShoppingCart } from 'use-shopping-cart'
+import { toast } from 'sonner'
 
 interface ProductCardProps {
   product: Product
@@ -43,15 +44,49 @@ export default function ProductCard({ product }: ProductCardProps) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return
-
-    if (isFavorited) {
-      await supabase.from('favorites').delete().match({ user_id: user.id, product_id: product.id })
-    } else {
-      await supabase.from('favorites').insert({ user_id: user.id, product_id: product.id })
+    
+    if (!user) {
+      toast.error('Please sign in to add favorites')
+      return
     }
 
-    setIsFavorited(!isFavorited)
+    try {
+      if (isFavorited) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .match({ user_id: user.id, product_id: product.id })
+        
+        if (error) throw error
+        
+        setIsFavorited(false)
+        toast.success('Removed from favorites')
+      } else {
+        // Use upsert to handle potential duplicates
+        const { error } = await supabase
+          .from('favorites')
+          .upsert(
+            { user_id: user.id, product_id: product.id },
+            { onConflict: 'user_id,product_id' }
+          )
+        
+        if (error) {
+          // If upsert fails, it might already exist, so just set as favorited
+          if (error.code === '23505' || error.message?.includes('duplicate')) {
+            setIsFavorited(true)
+            toast.info('Already in favorites')
+          } else {
+            throw error
+          }
+        } else {
+          setIsFavorited(true)
+          toast.success('Added to favorites!')
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      toast.error('Failed to update favorites')
+    }
   }
 
   const handleAddToCart = () => {
@@ -66,10 +101,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       }
 
       addItem(cartItem, { count: quantity })
-
+      toast.success(`${product.name} added to cart`)
       console.log('Product added to cart:', { product: product.name, quantity })
     } catch (error) {
       console.error('Failed to add product to cart:', error)
+      toast.error('Failed to add to cart')
     }
   }
 

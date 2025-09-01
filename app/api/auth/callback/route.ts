@@ -56,11 +56,24 @@ export async function GET(request: NextRequest) {
       if (exchangeError) {
         console.error('OAuth exchange error:', exchangeError)
 
-        // Check if it's a PKCE error
-        if (exchangeError.message?.includes('code verifier')) {
+        // Check if it's a PKCE error or code already used
+        if (
+          exchangeError.message?.includes('code verifier') ||
+          exchangeError.message?.includes('Authorization code') ||
+          exchangeError.message?.includes('already been used')
+        ) {
+          // This might be a duplicate callback or expired code
+          // Try to check if user is already authenticated
+          const { data: { session } } = await supabase.auth.getSession()
+          
+          if (session) {
+            console.log('User already has session, redirecting to dashboard')
+            return NextResponse.redirect(`${origin}/dashboard`)
+          }
+          
           // Clear auth cookies and redirect to login
           const errorResponse = NextResponse.redirect(
-            `${origin}/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`
+            `${origin}/login?error=${encodeURIComponent('Authentication expired. Please try again.')}`
           )
 
           // Clear any stale auth cookies
