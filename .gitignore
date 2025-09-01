@@ -79,3 +79,6 @@ bun.lockb
 .env.test.local
 .env.production.local .DS_Store
 .env*.local
+
+# Claude Code
+.claude/

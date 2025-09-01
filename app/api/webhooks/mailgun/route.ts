@@ -1,0 +1,157 @@
+import { createClient } from '@/lib/supabase/server'
+import { NextRequest, NextResponse } from 'next/server'
+import crypto from 'crypto'
+
+// Type for Mailgun webhook event
+interface MailgunEvent {
+  event?: string
+  'event-type'?: string
+  recipient?: string
+  domain?: string
+  'message-id'?: string
+  timestamp?: number | string
+  reason?: string
+  severity?: string
+  code?: number
+  error?: string
+  notification?: string
+  'delivery-status'?: {
+    code?: number
+    message?: string
+    description?: string
+  }
+  message?: {
+    headers?: {
+      'message-id'?: string
+    }
+  }
+  sending?: {
+    domain?: string
+  }
+}
+
+// Mailgun webhook event types we want to track
+const TRACKED_EVENTS = [
+  'delivered',
+  'opened',
+  'clicked',
+  'unsubscribed',
+  'complained',
+  'failed',
+  'bounced',
+]
+
+// Verify Mailgun webhook signature
+function verifyWebhookSignature(
+  timestamp: string,
+  token: string,
+  signature: string,
+  signingKey: string
+): boolean {
+  const encodedToken = crypto
+    .createHmac('sha256', signingKey)
+    .update(timestamp.concat(token))
+    .digest('hex')
+
+  return encodedToken === signature
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    // Parse the form data from Mailgun
+    const formData = await request.formData()
+
+    // Extract signature fields
+    const timestamp = formData.get('timestamp') as string
+    const token = formData.get('token') as string
+    const signature = formData.get('signature') as string
+
+    // Get the signing key from environment
+    const signingKey = process.env.MAILGUN_WEBHOOK_SIGNING_KEY || process.env.MAILGUN_SENDING_KEY
+
+    if (!signingKey) {
+      console.error('Mailgun webhook signing key not configured')
+      return NextResponse.json({ error: 'Webhook configuration error' }, { status: 500 })
+    }
+
+    // Verify the webhook signature
+    if (!verifyWebhookSignature(timestamp, token, signature, signingKey)) {
+      console.error('Invalid Mailgun webhook signature')
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+    }
+
+    // Extract event data
+    const eventData = formData.get('event-data')
+    let event: MailgunEvent = {}
+
+    if (eventData) {
+      // Newer Mailgun format sends event-data as JSON string
+      event = JSON.parse(eventData as string)
+    } else {
+      // Legacy format sends fields directly
+      event = {
+        event: formData.get('event'),
+        recipient: formData.get('recipient'),
+        domain: formData.get('domain'),
+        'message-id': formData.get('Message-Id'),
+        timestamp: formData.get('timestamp'),
+        reason: formData.get('reason'),
+        'delivery-status': {
+          code: formData.get('code'),
+          message: formData.get('error') || formData.get('notification'),
+        },
+      }
+    }
+
+    const eventType = event.event || event['event-type']
+
+    // Only track specific events
+    if (!TRACKED_EVENTS.includes(eventType)) {
+      return NextResponse.json({ received: true })
+    }
+
+    // Initialize Supabase client with service role
+    const supabase = await createClient()
+
+    // Prepare event record
+    const eventRecord = {
+      event_type: eventType,
+      recipient: event.recipient || event['recipient'],
+      message_id: event['message-id'] || event.message?.headers?.['message-id'],
+      domain: event.domain || event.sending?.domain,
+      timestamp: event.timestamp
+        ? new Date(event.timestamp * 1000).toISOString()
+        : new Date().toISOString(),
+      event_data: event,
+      severity: event.severity || (eventType === 'failed' ? 'permanent' : null),
+      reason: event.reason || event['delivery-status']?.description,
+      delivery_status_code: event['delivery-status']?.code || event.code,
+      delivery_status_message:
+        event['delivery-status']?.message || event.error || event.notification,
+    }
+
+    // Store event in database
+    const { error } = await supabase.from('email_events').insert(eventRecord)
+
+    if (error) {
+      console.error('Error storing email event:', error)
+      // Still return 200 to Mailgun to prevent retries
+      return NextResponse.json({ received: true, stored: false })
+    }
+
+    // Log important events
+    if (['complained', 'failed', 'bounced'].includes(eventType)) {
+      console.warn(`Email ${eventType} event:`, {
+        recipient: eventRecord.recipient,
+        reason: eventRecord.reason,
+        severity: eventRecord.severity,
+      })
+    }
+
+    return NextResponse.json({ received: true, stored: true })
+  } catch (error) {
+    console.error('Mailgun webhook error:', error)
+    // Return 200 to prevent Mailgun from retrying
+    return NextResponse.json({ received: true, error: 'Processing error' })
+  }
+}
