@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -10,7 +10,16 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    // Check for error from OAuth callback
+    const errorParam = searchParams.get('error')
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam))
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,17 +44,32 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = async () => {
+    setError(null)
+    setLoading(true)
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('OAuth initiation error:', error)
+        throw error
+      }
+
+      // The browser will redirect to Google OAuth
+      console.log('OAuth initiated, redirecting to provider...')
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
+      console.error('Google login error:', error)
+      setError(error instanceof Error ? error.message : 'Failed to initiate Google login')
+      setLoading(false)
     }
   }
 
@@ -105,7 +129,8 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="mt-4 w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-2 px-4 rounded-md border border-gray-300 flex items-center justify-center space-x-2"
+              disabled={loading}
+              className="mt-4 w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-2 px-4 rounded-md border border-gray-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path

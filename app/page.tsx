@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import HeroSection from '@/components/home/HeroSection'
+import FeaturedSection from '@/components/home/FeaturedSection'
+import ProductGrid from '@/components/products/ProductGrid'
 import { OAuthHandler } from '@/components/OAuth-handler'
 
 export default async function Home() {
@@ -13,31 +15,34 @@ export default async function Home() {
     redirect('/dashboard')
   }
 
+  // Fetch featured products for the home page
+  const { data: featuredProducts } = await supabase
+    .from('products')
+    .select('*')
+    .limit(8)
+    .order('created_at', { ascending: false })
+
   return (
     <div className="min-h-screen bg-white">
       <OAuthHandler />
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="text-5xl font-bold text-black mb-4">Welcome to Tatlist</h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Your trusted partner for tattoo and body art supplies
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/register"
-              className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="/login"
-              className="px-6 py-3 border border-black text-black rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Sign In
-            </Link>
+
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Featured Categories */}
+      <FeaturedSection />
+
+      {/* Featured Products */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">New Arrivals</h2>
+            <p className="text-lg text-gray-600">Latest additions to our collection</p>
           </div>
+
+          <ProductGrid products={featuredProducts || []} columns={4} />
         </div>
-      </div>
+      </section>
     </div>
   )
 }

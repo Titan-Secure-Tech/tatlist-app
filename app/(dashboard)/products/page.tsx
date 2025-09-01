@@ -1,23 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
-import ProductCard from '@/components/products/ProductCard'
+import ProductGrid from '@/components/products/ProductGrid'
 
 export default async function ProductsPage() {
   const supabase = await createClient()
-  
-  const { data: products } = await supabase
-    .from('products')
-    .select('*')
-    .order('name')
+
+  const { data: products } = await supabase.from('products').select('*').order('name')
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-black mb-6">Products</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products?.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-light text-gray-900 mb-2">All Products</h1>
+        <p className="text-gray-500">Discover our curated collection</p>
       </div>
+
+      <ProductGrid products={products || []} showFilters={true} />
     </div>
   )
 }
