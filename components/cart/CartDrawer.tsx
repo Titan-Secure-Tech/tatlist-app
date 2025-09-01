@@ -1,18 +1,36 @@
 'use client'
 
-import { Fragment } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ShoppingBag, Plus, Minus, Trash2, ShoppingCart } from 'lucide-react'
 import { useShoppingCart } from 'use-shopping-cart'
 import Image from 'next/image'
 import Link from 'next/link'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Card, CardContent } from '@/components/ui/card'
+import { useMediaQuery } from '@/hooks/use-media-query'
 
 interface CartDrawerProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+function CartContent({ onClose }: { onClose: () => void }) {
   const {
     cartDetails,
     cartCount,
@@ -21,237 +39,198 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     decrementItem,
     removeItem,
     clearCart,
+    formattedTotalPrice,
   } = useShoppingCart()
-
-  const drawerVariants = {
-    closed: {
-      x: '100%',
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-    open: {
-      x: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-  }
-
-  const backdropVariants = {
-    closed: { opacity: 0 },
-    open: { opacity: 1 },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.3,
-      },
-    }),
-  }
 
   const cartItems = cartDetails ? Object.values(cartDetails) : []
 
+  // Debug logging
+  console.log('CartDrawer - Cart items:', cartItems)
+  console.log('CartDrawer - Cart count:', cartCount)
+  console.log('CartDrawer - Total price:', totalPrice)
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[400px] text-center px-6">
+        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
+          <ShoppingCart className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold mb-2">Your cart is empty</h3>
+        <p className="text-muted-foreground mb-6">Add some products to get started</p>
+        <Button asChild onClick={onClose}>
+          <Link href="/products">Browse Products</Link>
+        </Button>
+      </div>
+    )
+  }
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-            variants={backdropVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-            onClick={onClose}
-          />
-
-          {/* Drawer */}
-          <motion.div
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50"
-            variants={drawerVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
-          >
-            <div className="flex flex-col h-full">
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b">
-                <div className="flex items-center gap-3">
-                  <ShoppingBag className="w-5 h-5" />
-                  <h2 className="text-lg font-semibold">Shopping Cart</h2>
-                  {cartCount && cartCount > 0 && (
-                    <span className="text-sm text-gray-500">({cartCount} items)</span>
-                  )}
-                </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Cart Items */}
-              <div className="flex-1 overflow-y-auto">
-                {cartItems.length > 0 ? (
-                  <div className="p-6 space-y-4">
-                    {cartItems.map((item, index) => (
-                      <motion.div
-                        key={item.id}
-                        custom={index}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        variants={itemVariants}
-                        className="flex gap-4 p-4 bg-gray-50 rounded-lg"
-                      >
-                        {/* Product Image */}
-                        <div className="relative w-20 h-20 bg-white rounded-lg overflow-hidden flex-shrink-0">
-                          {item.image ? (
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              fill
-                              className="object-contain"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              <ShoppingBag className="w-8 h-8" />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Product Details */}
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 line-clamp-1">{item.name}</h3>
-                          <p className="text-sm text-gray-500 mt-1">
-                            ${(item.price / 100).toFixed(2)} each
-                          </p>
-
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-2 mt-3">
-                            <button
-                              onClick={() => decrementItem(item.id)}
-                              className="p-1 hover:bg-gray-200 rounded transition-colors"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="px-3 py-1 bg-white rounded text-sm font-medium">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => incrementItem(item.id)}
-                              className="p-1 hover:bg-gray-200 rounded transition-colors"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Price and Remove */}
-                        <div className="flex flex-col items-end justify-between">
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-1 hover:bg-gray-200 rounded transition-colors text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                          <p className="font-semibold text-gray-900">
-                            ${((item.price * item.quantity) / 100).toFixed(2)}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
-
-                    {/* Clear Cart Button */}
-                    <motion.button
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      onClick={clearCart}
-                      className="w-full py-2 text-sm text-gray-500 hover:text-red-500 transition-colors"
-                    >
-                      Clear all items
-                    </motion.button>
+    <>
+      {/* Cart Items */}
+      <ScrollArea className="flex-1 px-6">
+        <div className="py-4 space-y-4">
+          {cartItems.map(item => (
+            <Card key={item.id} className="overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex gap-4">
+                  {/* Product Image */}
+                  <div className="relative w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                    {item.image ? (
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBag className="w-8 h-8 text-gray-400" />
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col items-center justify-center h-full p-6"
-                  >
-                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                      <ShoppingBag className="w-12 h-12 text-gray-400" />
+
+                  {/* Product Details */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium text-sm line-clamp-2">{item.name}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ${(item.price / 100).toFixed(2)} each
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 -mr-2"
+                        onClick={() => removeItem(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-                    <p className="text-gray-500 text-center mb-6">
-                      Add some products to get started
-                    </p>
-                    <Link href="/products">
-                      <motion.button
-                        onClick={onClose}
-                        className="px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Browse Products
-                      </motion.button>
-                    </Link>
-                  </motion.div>
-                )}
-              </div>
 
-              {/* Footer with Total and Checkout */}
-              {cartItems.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border-t p-6"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="text-xl font-semibold text-gray-900">
-                      ${(totalPrice / 100).toFixed(2)}
-                    </span>
+                    {/* Quantity Controls */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => decrementItem(item.id)}
+                          disabled={item.quantity <= 1}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="w-12 text-center text-sm font-medium">
+                          {item.quantity}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => incrementItem(item.id)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <p className="font-semibold text-sm">
+                        ${((item.price * item.quantity) / 100).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
 
-                  <Link href="/cart">
-                    <motion.button
-                      onClick={onClose}
-                      className="w-full py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors mb-3"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      View Cart
-                    </motion.button>
-                  </Link>
+          {/* Clear Cart Button */}
+          <div className="pt-4">
+            <Button
+              variant="ghost"
+              className="w-full text-destructive hover:text-destructive"
+              onClick={clearCart}
+            >
+              Clear all items
+            </Button>
+          </div>
+        </div>
+      </ScrollArea>
 
-                  <Link href="/checkout">
-                    <motion.button
-                      onClick={onClose}
-                      className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Continue Shopping
-                    </motion.button>
-                  </Link>
-                </motion.div>
+      {/* Footer with Total and Checkout */}
+      <div className="border-t px-6 py-4">
+        <div className="w-full space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-base font-medium">Subtotal</span>
+            <span className="text-xl font-semibold">
+              {formattedTotalPrice || `$${(totalPrice / 100).toFixed(2)}`}
+            </span>
+          </div>
+
+          <div className="grid gap-2">
+            <Button asChild className="w-full" onClick={onClose}>
+              <Link href="/cart">View Cart</Link>
+            </Button>
+
+            <Button variant="outline" asChild className="w-full" onClick={onClose}>
+              <Link href="/products">Continue Shopping</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
+  const [mounted, setMounted] = useState(false)
+  const { cartCount } = useShoppingCart()
+  const isMobile = useMediaQuery('(max-width: 640px)')
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
+  // Mobile - Use Drawer
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={onClose}>
+        <DrawerContent className="max-h-[90vh] flex flex-col">
+          <DrawerHeader className="border-b">
+            <div className="flex items-center gap-3">
+              <ShoppingCart className="h-5 w-5" />
+              <DrawerTitle>Shopping Cart</DrawerTitle>
+              {cartCount && cartCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {cartCount} items
+                </Badge>
               )}
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+            <DrawerDescription>Review your items before checkout</DrawerDescription>
+          </DrawerHeader>
+
+          <CartContent onClose={onClose} />
+        </DrawerContent>
+      </Drawer>
+    )
+  }
+
+  // Desktop - Use Sheet
+  return (
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="w-full sm:max-w-lg flex flex-col h-full p-0">
+        <SheetHeader className="px-6 py-4 border-b">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ShoppingCart className="h-5 w-5" />
+              <SheetTitle>Shopping Cart</SheetTitle>
+              {cartCount && cartCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {cartCount} items
+                </Badge>
+              )}
+            </div>
+          </div>
+          <SheetDescription>Review your items before checkout</SheetDescription>
+        </SheetHeader>
+
+        <CartContent onClose={onClose} />
+      </SheetContent>
+    </Sheet>
   )
 }

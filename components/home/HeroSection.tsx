@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, ShoppingBag } from 'lucide-react'
+import { ArrowRight, Truck, MapPin, Clock, Shield } from 'lucide-react'
 import { useRef } from 'react'
 
 export default function HeroSection() {
@@ -65,8 +65,8 @@ export default function HeroSection() {
               variants={textVariants}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
-              <ShoppingBag className="w-4 h-4" />
-              Premium Tattoo Supplies
+              <Truck className="w-4 h-4" />
+              Tampa Bay Exclusive Delivery
             </motion.div>
 
             <motion.h1
@@ -76,8 +76,8 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight"
             >
-              Elevate Your
-              <span className="block font-normal">Craft</span>
+              Tatlist Mobile
+              <span className="block font-normal">Direct to Your Shop</span>
             </motion.h1>
 
             <motion.p
@@ -87,8 +87,8 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-lg text-gray-600 mb-8 max-w-md mx-auto lg:mx-0"
             >
-              Discover professional-grade tattoo supplies from Lucky Supply Co. Quality tools for
-              artists who demand excellence.
+              Exclusive tattoo supply delivery service for licensed shops in Tampa Bay. Fast,
+              reliable, and trusted by Tampa&apos;s premier tattoo artists.
             </motion.p>
 
             <motion.div
@@ -98,24 +98,24 @@ export default function HeroSection() {
               variants={textVariants}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Link href="/products">
+              <Link href="/login">
                 <motion.button
                   className="group px-8 py-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Shop Collection
+                  Get Started
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
               </Link>
 
-              <Link href="/categories">
+              <Link href="/about">
                 <motion.button
                   className="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Browse Categories
+                  Learn More
                 </motion.button>
               </Link>
             </motion.div>
@@ -128,17 +128,26 @@ export default function HeroSection() {
               variants={textVariants}
               className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-gray-200"
             >
-              <div>
-                <div className="text-2xl font-semibold text-gray-900">100+</div>
-                <div className="text-sm text-gray-600">Products</div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <div>
+                  <div className="text-2xl font-semibold text-gray-900">Tampa</div>
+                  <div className="text-sm text-gray-600">Bay Area</div>
+                </div>
               </div>
-              <div>
-                <div className="text-2xl font-semibold text-gray-900">24/7</div>
-                <div className="text-sm text-gray-600">Support</div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-gray-400" />
+                <div>
+                  <div className="text-2xl font-semibold text-gray-900">Same Day</div>
+                  <div className="text-sm text-gray-600">Delivery</div>
+                </div>
               </div>
-              <div>
-                <div className="text-2xl font-semibold text-gray-900">Fast</div>
-                <div className="text-sm text-gray-600">Shipping</div>
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-gray-400" />
+                <div>
+                  <div className="text-2xl font-semibold text-gray-900">Licensed</div>
+                  <div className="text-sm text-gray-600">Shops Only</div>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -157,14 +166,18 @@ export default function HeroSection() {
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="w-20 h-20 text-gray-400" />
+                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden relative">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                    <Truck className="w-20 h-20 text-gray-500 mb-2" />
+                    <span className="text-sm font-medium text-gray-600">Delivery Van</span>
+                    <span className="text-xs text-gray-500 mt-1">Tampa Streets</span>
                   </div>
                 </div>
-                <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="w-16 h-16 text-gray-500" />
+                <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 rounded-2xl overflow-hidden relative">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                    <Shield className="w-16 h-16 text-gray-600 mb-2" />
+                    <span className="text-sm font-medium text-gray-700">Professional</span>
+                    <span className="text-xs text-gray-600 mt-1">Supplies</span>
                   </div>
                 </div>
               </motion.div>
@@ -175,14 +188,18 @@ export default function HeroSection() {
                 animate={{ y: [10, -10, 10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-square bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="w-16 h-16 text-gray-600" />
+                <div className="aspect-square bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl overflow-hidden relative">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                    <MapPin className="w-16 h-16 text-gray-700 mb-2" />
+                    <span className="text-sm font-medium text-gray-800">Tampa Bay</span>
+                    <span className="text-xs text-gray-700 mt-1">Coverage</span>
                   </div>
                 </div>
-                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="w-20 h-20 text-gray-400" />
+                <div className="aspect-[4/5] bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl overflow-hidden relative">
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                    <Clock className="w-20 h-20 text-gray-500 mb-2" />
+                    <span className="text-sm font-medium text-gray-600">Fast Delivery</span>
+                    <span className="text-xs text-gray-500 mt-1">Same Day</span>
                   </div>
                 </div>
               </motion.div>
