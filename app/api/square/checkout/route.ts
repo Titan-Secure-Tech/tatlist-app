@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
 import { randomUUID } from 'crypto'
+import type {
+  SquareCreateOrderRequest,
+  SquarePaymentLinkRequest,
+  SquareOrderResponse,
+  SquarePaymentLinkResponse,
+} from '@/lib/types/square'
 
 interface CartItem {
   id: string
@@ -109,9 +115,8 @@ export async function POST(request: NextRequest) {
       idempotencyKey: randomUUID(),
     }
 
-    const { result: orderResult, ...orderResponse } =
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (squareClient.orders as any).createOrder(orderRequest)
+    const { result: orderResult, ...orderResponse }: SquareOrderResponse =
+      await squareClient.orders.createOrder(orderRequest as SquareCreateOrderRequest)
 
     if (orderResponse.statusCode !== 200 || !orderResult?.order) {
       console.error('Order creation error:', orderResponse)
@@ -147,9 +152,8 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    const { result: paymentLinkResult, ...paymentResponse } =
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (squareClient.checkout as any).createPaymentLink(paymentLinkRequest)
+    const { result: paymentLinkResult, ...paymentResponse }: SquarePaymentLinkResponse =
+      await squareClient.checkout.createPaymentLink(paymentLinkRequest as SquarePaymentLinkRequest)
 
     if (paymentResponse.statusCode !== 200 || !paymentLinkResult?.paymentLink) {
       console.error('Payment link error:', paymentResponse)

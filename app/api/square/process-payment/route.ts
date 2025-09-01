@@ -3,6 +3,7 @@ import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
 import { randomUUID } from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { mailgunService } from '@/lib/email/mailgun'
+import type { SquareCreatePaymentRequest, SquarePaymentResponse } from '@/lib/types/square'
 
 interface CartItem {
   id: string
@@ -77,9 +78,8 @@ export async function POST(request: NextRequest) {
       note: `Order for ${customerInfo.name}`,
     }
 
-    const { result: paymentResult, ...paymentResponse } =
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (squareClient.payments as any).createPayment(paymentRequest)
+    const { result: paymentResult, ...paymentResponse }: SquarePaymentResponse =
+      await squareClient.payments.createPayment(paymentRequest as SquareCreatePaymentRequest)
 
     if (paymentResponse.statusCode !== 200 || !paymentResult?.payment) {
       console.error('Payment error:', paymentResponse)

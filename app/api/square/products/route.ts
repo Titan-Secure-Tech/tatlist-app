@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server'
 import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
+import type {
+  SquareCatalogResponse,
+  SquareRetrieveCatalogObjectResponse,
+  SquareCatalogItemVariation,
+} from '@/lib/types/square'
 
 export async function GET() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const catalogResult = await (squareClient.catalog as any).listCatalog({
+    const catalogResult: SquareCatalogResponse = await squareClient.catalog.listCatalog({
       types: 'ITEM',
     })
 
@@ -28,10 +32,10 @@ export async function GET() {
 
           if (item.itemData?.imageIds && item.itemData.imageIds.length > 0) {
             try {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const imageResponse = await (squareClient.catalog as any).retrieveCatalogObject({
-                objectId: item.itemData.imageIds[0],
-              })
+              const imageResponse: SquareRetrieveCatalogObjectResponse =
+                await squareClient.catalog.retrieveCatalogObject({
+                  objectId: item.itemData.imageIds[0],
+                })
               imageUrl = imageResponse?.object?.imageData?.url || null
             } catch (error) {
               console.error('Error fetching image:', error)
@@ -52,40 +56,18 @@ export async function GET() {
             description: item.itemData?.description || '',
             category: item.itemData?.categoryId || null,
             imageUrl,
-            variations: (
-              activeVariations as {
-                id?: string
-                itemVariationData?: {
-                  name?: string
-                  sku?: string
-                  priceMoney?: { amount?: bigint; currency?: string }
-                  trackInventory?: boolean
-                  availableForSale?: boolean
-                }
-              }[]
-            ).map(
-              (variation: {
-                id?: string
-                itemVariationData?: {
-                  name?: string
-                  sku?: string
-                  priceMoney?: { amount?: bigint; currency?: string }
-                  trackInventory?: boolean
-                  availableForSale?: boolean
-                }
-              }) => ({
-                id: variation.id,
-                name: variation.itemVariationData?.name || 'Default',
-                sku: variation.itemVariationData?.sku || '',
-                price: variation.itemVariationData?.priceMoney
-                  ? Number(variation.itemVariationData.priceMoney.amount) / 100
-                  : 0,
-                currency: variation.itemVariationData?.priceMoney?.currency || 'USD',
-                trackInventory: variation.itemVariationData?.trackInventory || false,
-                availableForSale: variation.itemVariationData?.availableForSale !== false,
-                stockStatus: variation.itemVariationData?.trackInventory ? 'tracked' : 'in_stock',
-              })
-            ),
+            variations: activeVariations.map((variation: SquareCatalogItemVariation) => ({
+              id: variation.id,
+              name: variation.itemVariationData?.name || 'Default',
+              sku: variation.itemVariationData?.sku || '',
+              price: variation.itemVariationData?.priceMoney
+                ? Number(variation.itemVariationData.priceMoney.amount) / 100
+                : 0,
+              currency: variation.itemVariationData?.priceMoney?.currency || 'USD',
+              trackInventory: variation.itemVariationData?.trackInventory || false,
+              availableForSale: variation.itemVariationData?.availableForSale !== false,
+              stockStatus: variation.itemVariationData?.trackInventory ? 'tracked' : 'in_stock',
+            })),
             isDeleted: item.isDeleted || false,
             presentAtLocation: item.presentAtLocationIds?.includes(SQUARE_LOCATION_ID) || false,
           }

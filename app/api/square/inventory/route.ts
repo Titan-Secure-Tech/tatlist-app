@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
+import type { SquareInventoryResponse, SquareInventoryCount } from '@/lib/types/square'
 
 interface InventoryItem {
   quantity: number
@@ -16,19 +17,16 @@ export async function GET(request: Request) {
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { result } = await (squareClient.inventory as any).batchRetrieveInventoryCounts({
-      catalogObjectIds,
-      locationIds: [SQUARE_LOCATION_ID],
-    })
+    const { result }: SquareInventoryResponse =
+      await squareClient.inventory.batchRetrieveInventoryCounts({
+        catalogObjectIds,
+        locationIds: [SQUARE_LOCATION_ID],
+      })
 
-    const counts = result.counts || []
+    const counts = result?.counts || []
 
     const inventoryMap = counts.reduce(
-      (
-        acc: Record<string, InventoryItem>,
-        count: { catalogObjectId?: string; quantity?: string; state?: string; locationId?: string }
-      ) => {
+      (acc: Record<string, InventoryItem>, count: SquareInventoryCount) => {
         if (count.catalogObjectId) {
           acc[count.catalogObjectId] = {
             quantity: Number(count.quantity || 0),

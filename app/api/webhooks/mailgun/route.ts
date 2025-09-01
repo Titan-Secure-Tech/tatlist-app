@@ -1,34 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
-
-// Type for Mailgun webhook event
-interface MailgunEvent {
-  event?: string
-  'event-type'?: string
-  recipient?: string
-  domain?: string
-  'message-id'?: string
-  timestamp?: number | string
-  reason?: string
-  severity?: string
-  code?: number
-  error?: string
-  notification?: string
-  'delivery-status'?: {
-    code?: number
-    message?: string
-    description?: string
-  }
-  message?: {
-    headers?: {
-      'message-id'?: string
-    }
-  }
-  sending?: {
-    domain?: string
-  }
-}
+import type { MailgunEvent, MailgunEmailEventRecord } from '@/lib/types/mailgun'
 
 // Mailgun webhook event types we want to track
 const TRACKED_EVENTS = [
@@ -90,7 +63,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Legacy format sends fields directly
       event = {
-        event: formData.get('event') as string | undefined,
+        event: formData.get('event') as MailgunEvent['event'],
         recipient: formData.get('recipient') as string | undefined,
         domain: formData.get('domain') as string | undefined,
         'message-id': formData.get('Message-Id') as string | undefined,
@@ -114,20 +87,20 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
 
     // Prepare event record
-    const eventRecord = {
+    const eventRecord: MailgunEmailEventRecord = {
       event_type: eventType,
-      recipient: event.recipient || event['recipient'],
-      message_id: event['message-id'] || event.message?.headers?.['message-id'],
-      domain: event.domain || event.sending?.domain,
+      recipient: event.recipient || event['recipient'] || null,
+      message_id: event['message-id'] || event.message?.headers?.['message-id'] || null,
+      domain: event.domain || event.sending?.domain || null,
       timestamp: event.timestamp
         ? new Date(Number(event.timestamp) * 1000).toISOString()
         : new Date().toISOString(),
       event_data: event,
       severity: event.severity || (eventType === 'failed' ? 'permanent' : null),
-      reason: event.reason || event['delivery-status']?.description,
-      delivery_status_code: event['delivery-status']?.code || event.code,
+      reason: event.reason || event['delivery-status']?.description || null,
+      delivery_status_code: event['delivery-status']?.code || event.code || null,
       delivery_status_message:
-        event['delivery-status']?.message || event.error || event.notification,
+        event['delivery-status']?.message || event.error || event.notification || null,
     }
 
     // Store event in database
