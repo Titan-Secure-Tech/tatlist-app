@@ -3,7 +3,8 @@ import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
 
 export async function GET() {
   try {
-    const catalogResult = await squareClient.catalog.listCatalog({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const catalogResult = await (squareClient.catalog as any).listCatalog({
       types: 'ITEM',
     })
 
@@ -27,7 +28,8 @@ export async function GET() {
 
           if (item.itemData?.imageIds && item.itemData.imageIds.length > 0) {
             try {
-              const imageResponse = await squareClient.catalog.retrieveCatalogObject({
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const imageResponse = await (squareClient.catalog as any).retrieveCatalogObject({
                 objectId: item.itemData.imageIds[0],
               })
               imageUrl = imageResponse?.object?.imageData?.url || null
@@ -37,7 +39,9 @@ export async function GET() {
           }
 
           const variations = item.itemData?.variations || []
-          const activeVariations = variations.filter(
+          const activeVariations = (
+            variations as { isDeleted?: boolean; presentAtLocationIds?: string[] }[]
+          ).filter(
             (v: { isDeleted?: boolean; presentAtLocationIds?: string[] }) =>
               !v.isDeleted && v.presentAtLocationIds?.includes(SQUARE_LOCATION_ID)
           )
@@ -48,7 +52,18 @@ export async function GET() {
             description: item.itemData?.description || '',
             category: item.itemData?.categoryId || null,
             imageUrl,
-            variations: activeVariations.map(
+            variations: (
+              activeVariations as {
+                id?: string
+                itemVariationData?: {
+                  name?: string
+                  sku?: string
+                  priceMoney?: { amount?: bigint; currency?: string }
+                  trackInventory?: boolean
+                  availableForSale?: boolean
+                }
+              }[]
+            ).map(
               (variation: {
                 id?: string
                 itemVariationData?: {

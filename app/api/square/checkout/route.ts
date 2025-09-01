@@ -110,7 +110,8 @@ export async function POST(request: NextRequest) {
     }
 
     const { result: orderResult, ...orderResponse } =
-      await squareClient.orders.createOrder(orderRequest)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (squareClient.orders as any).createOrder(orderRequest)
 
     if (orderResponse.statusCode !== 200 || !orderResult?.order) {
       console.error('Order creation error:', orderResponse)
@@ -147,7 +148,8 @@ export async function POST(request: NextRequest) {
     }
 
     const { result: paymentLinkResult, ...paymentResponse } =
-      await squareClient.checkout.createPaymentLink(paymentLinkRequest)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (squareClient.checkout as any).createPaymentLink(paymentLinkRequest)
 
     if (paymentResponse.statusCode !== 200 || !paymentLinkResult?.paymentLink) {
       console.error('Payment link error:', paymentResponse)

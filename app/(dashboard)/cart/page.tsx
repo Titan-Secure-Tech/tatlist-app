@@ -91,9 +91,9 @@ export default function CartPage() {
             </p>
           </div>
         </div>
-        <Button 
-          variant="destructive" 
-          size="sm" 
+        <Button
+          variant="destructive"
+          size="sm"
           onClick={() => {
             clearCart()
             toast.success('Cart cleared')
@@ -202,7 +202,7 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formattedTotalPrice || `$${(totalPrice / 100).toFixed(2)}`}</span>
+                  <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -218,7 +218,7 @@ export default function CartPage() {
 
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
-                <span>{formattedTotalPrice || `$${(totalPrice / 100).toFixed(2)}`}</span>
+                <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">

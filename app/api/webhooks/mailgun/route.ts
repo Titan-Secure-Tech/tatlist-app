@@ -90,15 +90,15 @@ export async function POST(request: NextRequest) {
     } else {
       // Legacy format sends fields directly
       event = {
-        event: formData.get('event'),
-        recipient: formData.get('recipient'),
-        domain: formData.get('domain'),
-        'message-id': formData.get('Message-Id'),
-        timestamp: formData.get('timestamp'),
-        reason: formData.get('reason'),
+        event: formData.get('event') as string | undefined,
+        recipient: formData.get('recipient') as string | undefined,
+        domain: formData.get('domain') as string | undefined,
+        'message-id': formData.get('Message-Id') as string | undefined,
+        timestamp: formData.get('timestamp') as string | undefined,
+        reason: formData.get('reason') as string | undefined,
         'delivery-status': {
-          code: formData.get('code'),
-          message: formData.get('error') || formData.get('notification'),
+          code: Number(formData.get('code')) || undefined,
+          message: (formData.get('error') || formData.get('notification')) as string | undefined,
         },
       }
     }
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     const eventType = event.event || event['event-type']
 
     // Only track specific events
-    if (!TRACKED_EVENTS.includes(eventType)) {
+    if (!eventType || !TRACKED_EVENTS.includes(eventType)) {
       return NextResponse.json({ received: true })
     }
 
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       message_id: event['message-id'] || event.message?.headers?.['message-id'],
       domain: event.domain || event.sending?.domain,
       timestamp: event.timestamp
-        ? new Date(event.timestamp * 1000).toISOString()
+        ? new Date(Number(event.timestamp) * 1000).toISOString()
         : new Date().toISOString(),
       event_data: event,
       severity: event.severity || (eventType === 'failed' ? 'permanent' : null),

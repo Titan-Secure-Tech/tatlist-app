@@ -16,7 +16,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { result } = await squareClient.inventory.batchRetrieveInventoryCounts({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { result } = await (squareClient.inventory as any).batchRetrieveInventoryCounts({
       catalogObjectIds,
       locationIds: [SQUARE_LOCATION_ID],
     })

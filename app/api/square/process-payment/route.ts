@@ -29,7 +29,9 @@ interface CustomerInfo {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     const body = await request.json()
     const {
@@ -75,8 +77,9 @@ export async function POST(request: NextRequest) {
       note: `Order for ${customerInfo.name}`,
     }
 
-    const { result: paymentResult, ...paymentResponse } = 
-      await squareClient.payments.createPayment(paymentRequest)
+    const { result: paymentResult, ...paymentResponse } =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (squareClient.payments as any).createPayment(paymentRequest)
 
     if (paymentResponse.statusCode !== 200 || !paymentResult?.payment) {
       console.error('Payment error:', paymentResponse)
@@ -91,9 +94,9 @@ export async function POST(request: NextRequest) {
       customer_phone: customerInfo.phone,
       delivery_address: deliveryAddress,
       items: items,
-      subtotal: items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-      delivery_fee: 5.00,
-      tax: amount - items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - 5.00,
+      subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+      delivery_fee: 5.0,
+      tax: amount - items.reduce((sum, item) => sum + item.price * item.quantity, 0) - 5.0,
       total: amount,
       payment_id: paymentResult.payment.id,
       payment_status: paymentResult.payment.status,
@@ -123,9 +126,9 @@ export async function POST(request: NextRequest) {
         orderId: order.id || paymentResult.payment.id,
         customerName: customerInfo.name,
         items: items,
-        subtotal: items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        deliveryFee: 5.00,
-        tax: amount - items.reduce((sum, item) => sum + (item.price * item.quantity), 0) - 5.00,
+        subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        deliveryFee: 5.0,
+        tax: amount - items.reduce((sum, item) => sum + item.price * item.quantity, 0) - 5.0,
         total: amount,
         deliveryAddress: deliveryAddress,
       })

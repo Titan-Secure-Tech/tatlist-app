@@ -33,19 +33,19 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
-  
+
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     email: '',
-    phone: ''
+    phone: '',
   })
-  
+
   const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
     line1: '',
     line2: '',
     city: '',
     state: '',
-    postalCode: ''
+    postalCode: '',
   })
 
   useEffect(() => {
@@ -54,32 +54,39 @@ export default function CheckoutPage() {
 
   const handleCustomerInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate form
     if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
       toast.error('Please fill in all customer information fields')
       return
     }
-    
-    if (!deliveryAddress.line1 || !deliveryAddress.city || !deliveryAddress.state || !deliveryAddress.postalCode) {
+
+    if (
+      !deliveryAddress.line1 ||
+      !deliveryAddress.city ||
+      !deliveryAddress.state ||
+      !deliveryAddress.postalCode
+    ) {
       toast.error('Please fill in all required address fields')
       return
     }
-    
+
     setShowPaymentForm(true)
   }
 
   const handlePaymentSuccess = async (paymentToken: string) => {
     setIsProcessing(true)
-    
+
     try {
-      const cartItems = cartDetails ? Object.values(cartDetails).map(item => ({
-        id: item.id,
-        name: item.name,
-        price: item.price / 100, // Convert from cents to dollars
-        quantity: item.quantity,
-        variant: item.variant
-      })) : []
+      const cartItems = cartDetails
+        ? Object.values(cartDetails).map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price / 100, // Convert from cents to dollars
+            quantity: item.quantity,
+            variant: item.variant,
+          }))
+        : []
 
       const response = await fetch('/api/square/process-payment', {
         method: 'POST',
@@ -91,7 +98,7 @@ export default function CheckoutPage() {
           items: cartItems,
           customerInfo,
           deliveryAddress,
-          amount: totalPrice / 100 // Convert from cents to dollars
+          amount: (totalPrice ?? 0) / 100, // Convert from cents to dollars
         }),
       })
 
@@ -103,7 +110,7 @@ export default function CheckoutPage() {
 
       toast.success('Payment successful! Redirecting to order confirmation...')
       clearCart()
-      
+
       // Redirect to success page with order ID
       setTimeout(() => {
         router.push(`/orders/success?orderId=${data.orderId}`)
@@ -147,8 +154,8 @@ export default function CheckoutPage() {
   }
 
   const cartItems = cartDetails ? Object.values(cartDetails) : []
-  const subtotal = totalPrice / 100
-  const deliveryFee = 5.00
+  const subtotal = (totalPrice ?? 0) / 100
+  const deliveryFee = 5.0
   const tax = subtotal * 0.08 // 8% tax rate
   const total = subtotal + deliveryFee + tax
 
@@ -163,9 +170,7 @@ export default function CheckoutPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Checkout</h1>
-          <p className="text-sm text-muted-foreground">
-            Complete your order
-          </p>
+          <p className="text-sm text-muted-foreground">Complete your order</p>
         </div>
       </div>
 
@@ -189,7 +194,7 @@ export default function CheckoutPage() {
                           type="text"
                           placeholder="John Doe"
                           value={customerInfo.name}
-                          onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                          onChange={e => setCustomerInfo({ ...customerInfo, name: e.target.value })}
                           required
                         />
                       </div>
@@ -200,7 +205,9 @@ export default function CheckoutPage() {
                           type="email"
                           placeholder="john@example.com"
                           value={customerInfo.email}
-                          onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                          onChange={e =>
+                            setCustomerInfo({ ...customerInfo, email: e.target.value })
+                          }
                           required
                         />
                       </div>
@@ -212,7 +219,7 @@ export default function CheckoutPage() {
                         type="tel"
                         placeholder="(555) 123-4567"
                         value={customerInfo.phone}
-                        onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                        onChange={e => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
                         required
                       />
                     </div>
@@ -230,7 +237,9 @@ export default function CheckoutPage() {
                         type="text"
                         placeholder="123 Main St"
                         value={deliveryAddress.line1}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, line1: e.target.value})}
+                        onChange={e =>
+                          setDeliveryAddress({ ...deliveryAddress, line1: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -241,7 +250,9 @@ export default function CheckoutPage() {
                         type="text"
                         placeholder="Apt 4B"
                         value={deliveryAddress.line2}
-                        onChange={(e) => setDeliveryAddress({...deliveryAddress, line2: e.target.value})}
+                        onChange={e =>
+                          setDeliveryAddress({ ...deliveryAddress, line2: e.target.value })
+                        }
                       />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -252,7 +263,9 @@ export default function CheckoutPage() {
                           type="text"
                           placeholder="New York"
                           value={deliveryAddress.city}
-                          onChange={(e) => setDeliveryAddress({...deliveryAddress, city: e.target.value})}
+                          onChange={e =>
+                            setDeliveryAddress({ ...deliveryAddress, city: e.target.value })
+                          }
                           required
                         />
                       </div>
@@ -264,7 +277,12 @@ export default function CheckoutPage() {
                           placeholder="NY"
                           maxLength={2}
                           value={deliveryAddress.state}
-                          onChange={(e) => setDeliveryAddress({...deliveryAddress, state: e.target.value.toUpperCase()})}
+                          onChange={e =>
+                            setDeliveryAddress({
+                              ...deliveryAddress,
+                              state: e.target.value.toUpperCase(),
+                            })
+                          }
                           required
                         />
                       </div>
@@ -275,7 +293,9 @@ export default function CheckoutPage() {
                           type="text"
                           placeholder="10001"
                           value={deliveryAddress.postalCode}
-                          onChange={(e) => setDeliveryAddress({...deliveryAddress, postalCode: e.target.value})}
+                          onChange={e =>
+                            setDeliveryAddress({ ...deliveryAddress, postalCode: e.target.value })
+                          }
                           required
                         />
                       </div>
