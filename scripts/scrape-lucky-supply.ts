@@ -12,7 +12,7 @@ interface ProductData {
   category?: string
   vendor?: string
   tags?: string[]
-  variants?: any[]
+  variants?: Array<{ title: string; sku: string; price: string; available: boolean }>
   attachments?: string[]
 }
 
@@ -24,12 +24,12 @@ async function scrapeLuckySupply() {
 
   try {
     const page = await browser.newPage()
-    
+
     // Start from the main catalog page
     console.log('Navigating to Lucky Supply catalog...')
     await page.goto('https://luckysupplyusa.com/collections/all', {
       waitUntil: 'networkidle2',
-      timeout: 60000
+      timeout: 60000,
     })
 
     // Wait for products to load
@@ -39,12 +39,12 @@ async function scrapeLuckySupply() {
     const totalPages = await page.evaluate(() => {
       const pagination = document.querySelector('.pagination')
       if (!pagination) return 1
-      
+
       const lastPageLink = Array.from(pagination.querySelectorAll('a'))
         .map(a => parseInt(a.textContent || '0'))
         .filter(n => !isNaN(n))
         .sort((a, b) => b - a)[0]
-      
+
       return lastPageLink || 1
     })
 
@@ -59,7 +59,7 @@ async function scrapeLuckySupply() {
         console.log(`Navigating to page ${pageNum}...`)
         await page.goto(pageUrl, {
           waitUntil: 'networkidle2',
-          timeout: 60000
+          timeout: 60000,
         })
         await page.waitForSelector('.product-item', { timeout: 30000 })
       }
@@ -78,22 +78,22 @@ async function scrapeLuckySupply() {
       for (const productUrl of productUrls) {
         try {
           console.log(`Scraping: ${productUrl}`)
-          
+
           // Navigate to product page
           await page.goto(productUrl, {
             waitUntil: 'networkidle2',
-            timeout: 60000
+            timeout: 60000,
           })
 
           // Extract product data
-          const productData = await page.evaluate((url) => {
-            const data: any = {
+          const productData = await page.evaluate(url => {
+            const data: LuckyProduct = {
               url,
               id: url.split('/products/')[1]?.split('?')[0] || '',
               title: document.querySelector('h1')?.textContent?.trim() || '',
               description: document.querySelector('.product-description')?.innerHTML || '',
               images: [],
-              attachments: []
+              attachments: [],
             }
 
             // Get price
@@ -115,7 +115,9 @@ async function scrapeLuckySupply() {
             }
 
             // Get all images
-            const imageElements = document.querySelectorAll('.product-images img, .product-photo img, img[data-product-image]')
+            const imageElements = document.querySelectorAll(
+              '.product-images img, .product-photo img, img[data-product-image]'
+            )
             data.images = Array.from(imageElements)
               .map(img => (img as HTMLImageElement).src)
               .filter(src => src && !src.includes('data:image'))
@@ -125,18 +127,22 @@ async function scrapeLuckySupply() {
             data.tags = Array.from(tagElements).map(tag => tag.textContent?.trim() || '')
 
             // Get attachments (PDFs, docs, etc.)
-            const attachmentLinks = document.querySelectorAll('a[href*=".pdf"], a[href*=".doc"], a[download]')
+            const attachmentLinks = document.querySelectorAll(
+              'a[href*=".pdf"], a[href*=".doc"], a[download]'
+            )
             data.attachments = Array.from(attachmentLinks)
               .map(link => (link as HTMLAnchorElement).href)
               .filter(href => href)
 
             // Get variant data if available
-            const variantScript = document.querySelector('script[type="application/json"][data-product-json]')
+            const variantScript = document.querySelector(
+              'script[type="application/json"][data-product-json]'
+            )
             if (variantScript) {
               try {
                 const productJson = JSON.parse(variantScript.textContent || '{}')
                 data.variants = productJson.variants
-              } catch (e) {
+              } catch {
                 console.error('Failed to parse variant data')
               }
             }
@@ -145,10 +151,9 @@ async function scrapeLuckySupply() {
           }, productUrl)
 
           allProducts.push(productData)
-          
+
           // Add delay to avoid rate limiting
           await new Promise(resolve => setTimeout(resolve, 1000))
-          
         } catch (error) {
           console.error(`Failed to scrape ${productUrl}:`, error)
         }
@@ -171,18 +176,21 @@ async function scrapeLuckySupply() {
       vendor: p.vendor,
       category: p.category,
       image_count: p.images.length,
-      has_attachments: p.attachments && p.attachments.length > 0
+      has_attachments: p.attachments && p.attachments.length > 0,
     }))
 
     const csvPath = path.join(process.cwd(), 'data', 'lucky-supply-products.csv')
     const csvContent = [
       Object.keys(csvData[0]).join(','),
-      ...csvData.map(row => Object.values(row).map(v => `"${v}"`).join(','))
+      ...csvData.map(row =>
+        Object.values(row)
+          .map(v => `"${v}"`)
+          .join(',')
+      ),
     ].join('\n')
-    
+
     await fs.writeFile(csvPath, csvContent)
     console.log(`Also saved CSV summary to ${csvPath}`)
-
   } catch (error) {
     console.error('Scraping failed:', error)
   } finally {

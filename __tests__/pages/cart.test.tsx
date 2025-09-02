@@ -1,13 +1,14 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CartPage from '@/app/(dashboard)/cart/page'
 import { setMockCartState, createMockCartItem } from '@//__tests__/utils/test-utils'
 
 describe('Cart Page', () => {
-  const mockRemoveItem = jest.fn()
-  const mockIncrementItem = jest.fn()
-  const mockDecrementItem = jest.fn()
-  const mockClearCart = jest.fn()
+  const mockRemoveItem = vi.fn()
+  const mockIncrementItem = vi.fn()
+  const mockDecrementItem = vi.fn()
+  const mockClearCart = vi.fn()
 
   beforeEach(() => {
     // Ensure global.mockCartContext exists
@@ -15,11 +16,11 @@ describe('Cart Page', () => {
       global.mockCartContext = {
         cartCount: 0,
         cartDetails: {},
-        addItem: jest.fn(),
-        removeItem: jest.fn(),
-        incrementItem: jest.fn(),
-        decrementItem: jest.fn(),
-        clearCart: jest.fn(),
+        addItem: vi.fn(),
+        removeItem: vi.fn(),
+        incrementItem: vi.fn(),
+        decrementItem: vi.fn(),
+        clearCart: vi.fn(),
         formattedTotalPrice: '$0.00',
         totalPrice: 0,
       }
@@ -32,7 +33,7 @@ describe('Cart Page', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Empty Cart', () => {
@@ -197,7 +198,7 @@ describe('Cart Page', () => {
   })
 
   describe('Checkout', () => {
-    let mockConsole: jest.SpyInstance
+    let mockConsole: ReturnType<typeof vi.spyOn>
 
     beforeEach(() => {
       const mockItems = {
@@ -216,7 +217,7 @@ describe('Cart Page', () => {
       })
 
       // Create fresh mock for each test
-      mockConsole = jest.spyOn(console, 'log').mockImplementation(() => {})
+      mockConsole = vi.spyOn(console, 'log').mockImplementation(() => {})
     })
 
     afterEach(() => {

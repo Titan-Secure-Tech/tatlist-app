@@ -57,8 +57,8 @@ async function importLuckySupplyData() {
       throw new Error('No Lucky Supply data file found')
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let data: any
+     
+    let data: unknown
     try {
       data = JSON.parse(rawData)
     } catch {

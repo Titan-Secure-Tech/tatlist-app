@@ -1,17 +1,19 @@
 import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { CartProvider } from '@/components/providers/CartProvider'
+import { vi } from 'vitest'
 
 // Global type declaration for mock context
 declare global {
+  // eslint-disable-next-line no-var
   var mockCartContext: {
     cartCount: number
     cartDetails: Record<string, unknown>
-    addItem: jest.Mock
-    removeItem: jest.Mock
-    incrementItem: jest.Mock
-    decrementItem: jest.Mock
-    clearCart: jest.Mock
+    addItem: ReturnType<typeof vi.fn>
+    removeItem: ReturnType<typeof vi.fn>
+    incrementItem: ReturnType<typeof vi.fn>
+    decrementItem: ReturnType<typeof vi.fn>
+    clearCart: ReturnType<typeof vi.fn>
     formattedTotalPrice: string
     totalPrice: number
     [key: string]: unknown
@@ -88,11 +90,11 @@ export const setMockCartState = (cartState: Record<string, unknown>) => {
     global.mockCartContext = {
       cartCount: 0,
       cartDetails: {},
-      addItem: jest.fn(),
-      removeItem: jest.fn(),
-      incrementItem: jest.fn(),
-      decrementItem: jest.fn(),
-      clearCart: jest.fn(),
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      incrementItem: vi.fn(),
+      decrementItem: vi.fn(),
+      clearCart: vi.fn(),
       formattedTotalPrice: '$0.00',
       totalPrice: 0,
     }
@@ -101,6 +103,8 @@ export const setMockCartState = (cartState: Record<string, unknown>) => {
 }
 
 // Simple test to prevent empty test suite error
+import { describe, it, expect } from 'vitest'
+
 describe('Test Utils', () => {
   it('should export mock product data', () => {
     expect(mockProduct).toBeDefined()

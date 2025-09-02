@@ -1,25 +1,26 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ProductDetail from '@/components/products/ProductDetail'
 import { mockProduct } from '@//__tests__/utils/test-utils'
 
 // Mock next/navigation
-const mockBack = jest.fn()
-jest.mock('next/navigation', () => ({
+const mockBack = vi.fn()
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
     back: mockBack,
   }),
 }))
 
 describe('ProductDetail', () => {
-  const mockAddItem = jest.fn()
+  const mockAddItem = vi.fn()
 
   beforeEach(() => {
     global.mockCartContext.addItem = mockAddItem
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('renders product details correctly', () => {

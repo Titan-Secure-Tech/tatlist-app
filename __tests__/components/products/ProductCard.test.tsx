@@ -1,10 +1,11 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ProductCard from '@/components/products/ProductCard'
 import { mockProduct, mockOutOfStockProduct, setMockCartState } from '@//__tests__/utils/test-utils'
 
 describe('ProductCard', () => {
-  const mockAddItem = jest.fn()
+  const mockAddItem = vi.fn()
 
   beforeEach(() => {
     global.mockCartContext.addItem = mockAddItem
@@ -12,7 +13,7 @@ describe('ProductCard', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('renders product information correctly', () => {

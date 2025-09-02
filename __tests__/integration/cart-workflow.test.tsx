@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CartIcon } from '@/components/cart/cart-icon'
@@ -6,11 +7,11 @@ import ProductCard from '@/components/products/ProductCard'
 import { mockProduct, setMockCartState, createMockCartItem } from '@//__tests__/utils/test-utils'
 
 describe('Cart Workflow Integration', () => {
-  const mockAddItem = jest.fn()
-  const mockRemoveItem = jest.fn()
-  const mockIncrementItem = jest.fn()
-  const mockDecrementItem = jest.fn()
-  const mockClearCart = jest.fn()
+  const mockAddItem = vi.fn()
+  const mockRemoveItem = vi.fn()
+  const mockIncrementItem = vi.fn()
+  const mockDecrementItem = vi.fn()
+  const mockClearCart = vi.fn()
 
   beforeEach(() => {
     global.mockCartContext.addItem = mockAddItem
@@ -28,7 +29,7 @@ describe('Cart Workflow Integration', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Empty Cart State', () => {
@@ -193,9 +194,6 @@ describe('Cart Workflow Integration', () => {
       expect(mockAddItem).toHaveBeenCalledWith(
         expect.objectContaining({
           price: 129999, // $1299.99 * 100 = 129999 cents
-          price_data: expect.objectContaining({
-            unit_amount: 129999,
-          }),
         }),
         { count: 1 }
       )

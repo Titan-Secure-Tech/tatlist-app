@@ -17,56 +17,50 @@ async function testImportLuckyProducts() {
     const dataPath = path.join(process.cwd(), 'data', 'lucky-products-supabase.json')
     const productsContent = await fs.readFile(dataPath, 'utf-8')
     const allProducts = JSON.parse(productsContent)
-    
+
     // Test with just the first 5 products
     const testProducts = allProducts.slice(0, 5)
-    
+
     console.log(`Testing import with ${testProducts.length} products`)
     console.log('\nProducts to import:')
-    testProducts.forEach((p: any) => {
+    testProducts.forEach((p: { name: string; sku: string; price: number }) => {
       console.log(`- ${p.name} (SKU: ${p.sku}, Price: $${p.price})`)
     })
-    
+
     // Clear any existing test products first (optional)
     console.log('\nClearing existing test products...')
-    const testSkus = testProducts.map((p: any) => p.sku)
-    const { error: deleteError } = await supabase
-      .from('products')
-      .delete()
-      .in('sku', testSkus)
-    
+    const testSkus = testProducts.map((p: { sku: string }) => p.sku)
+    const { error: deleteError } = await supabase.from('products').delete().in('sku', testSkus)
+
     if (deleteError) {
       console.warn('Could not clear existing products:', deleteError)
     }
-    
+
     // Import test batch
     console.log('\nImporting test products...')
-    const { data, error } = await supabase
-      .from('products')
-      .insert(testProducts)
-      .select()
-    
+    const { data, error } = await supabase.from('products').insert(testProducts).select()
+
     if (error) {
       console.error('Import error:', error)
       return
     }
-    
+
     console.log(`\n✅ Successfully imported ${data?.length || 0} products!`)
-    
+
     // Verify the import
     console.log('\nVerifying import...')
     const { data: verifyData, error: verifyError } = await supabase
       .from('products')
       .select('*')
       .in('sku', testSkus)
-    
+
     if (verifyError) {
       console.error('Verification error:', verifyError)
       return
     }
-    
+
     console.log(`Found ${verifyData?.length || 0} products in database`)
-    
+
     if (verifyData && verifyData.length > 0) {
       console.log('\nImported products:')
       verifyData.forEach(p => {
@@ -77,7 +71,6 @@ async function testImportLuckyProducts() {
         console.log(`  In Stock: ${p.in_stock}`)
       })
     }
-    
   } catch (error) {
     console.error('Test import failed:', error)
   }

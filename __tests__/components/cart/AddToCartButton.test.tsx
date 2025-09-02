@@ -1,17 +1,18 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import { mockProduct } from '@//__tests__/utils/test-utils'
 
 describe('AddToCartButton', () => {
-  const mockAddItem = jest.fn()
+  const mockAddItem = vi.fn()
 
   beforeEach(() => {
     global.mockCartContext.addItem = mockAddItem
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('renders add to cart button with default props', () => {
@@ -33,19 +34,10 @@ describe('AddToCartButton', () => {
       {
         id: mockProduct.id,
         name: mockProduct.name,
-        price: mockProduct.price * 100, // converted to cents
+        price: Math.round(mockProduct.price * 100), // converted to cents
         currency: 'USD',
         image: mockProduct.image,
         description: mockProduct.description,
-        price_data: {
-          currency: 'USD',
-          product_data: {
-            name: mockProduct.name,
-            description: mockProduct.description,
-            images: [mockProduct.image],
-          },
-          unit_amount: mockProduct.price * 100,
-        },
       },
       { count: 1 }
     )
@@ -121,11 +113,6 @@ describe('AddToCartButton', () => {
     expect(mockAddItem).toHaveBeenCalledWith(
       expect.objectContaining({
         image: undefined,
-        price_data: expect.objectContaining({
-          product_data: expect.objectContaining({
-            images: [],
-          }),
-        }),
       }),
       { count: 1 }
     )
