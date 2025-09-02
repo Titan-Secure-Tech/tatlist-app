@@ -67,7 +67,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
               <Truck className="w-4 h-4" />
-              Tampa Bay Exclusive Delivery
+              Tampa&apos;s Premier Tattoo Supply Partner
             </motion.div>
 
             <motion.h1
@@ -77,8 +77,8 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight"
             >
-              Tatlist Mobile
-              <span className="block font-normal">Direct to Your Shop</span>
+              Tampa Tattoo Supply
+              <span className="block font-normal">Professional Supplies for Tampa Bay Artists</span>
             </motion.h1>
 
             <motion.p
@@ -88,8 +88,9 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-lg text-gray-600 mb-8 max-w-md mx-auto lg:mx-0"
             >
-              Exclusive tattoo supply delivery service for licensed shops in Tampa Bay. Fast,
-              reliable, and trusted by Tampa&apos;s premier tattoo artists.
+              Serving Tampa, St. Petersburg, Clearwater, and all of Hillsborough County. Your
+              trusted source for professional tattoo inks, needles, machines, and studio supplies
+              with same-day delivery to licensed tattoo shops.
             </motion.p>
 
             <motion.div
@@ -132,22 +133,22 @@ export default function HeroSection() {
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-gray-900">Tampa</div>
-                  <div className="text-sm text-gray-600">Bay Area</div>
+                  <div className="text-2xl font-semibold text-gray-900">Tampa Bay</div>
+                  <div className="text-sm text-gray-600">Hillsborough County</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-gray-900">Same Day</div>
-                  <div className="text-sm text-gray-600">Delivery</div>
+                  <div className="text-2xl font-semibold text-gray-900">Fast</div>
+                  <div className="text-sm text-gray-600">Local Delivery</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-gray-900">Licensed</div>
-                  <div className="text-sm text-gray-600">Shops Only</div>
+                  <div className="text-2xl font-semibold text-gray-900">Professional</div>
+                  <div className="text-sm text-gray-600">Artists Only</div>
                 </div>
               </div>
             </motion.div>

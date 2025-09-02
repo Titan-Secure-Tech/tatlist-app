@@ -35,11 +35,11 @@ export class MailgunService {
       formData.append('from', this.from)
       formData.append('to', Array.isArray(config.to) ? config.to.join(',') : config.to)
       formData.append('subject', config.subject)
-      
+
       if (config.text) {
         formData.append('text', config.text)
       }
-      
+
       if (config.html) {
         formData.append('html', config.html)
       }
@@ -51,16 +51,13 @@ export class MailgunService {
         }
       }
 
-      const response = await fetch(
-        `${this.baseUrl}/v3/${this.domain}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${Buffer.from(`api:${this.apiKey}`).toString('base64')}`
-          },
-          body: formData
-        }
-      )
+      const response = await fetch(`${this.baseUrl}/v3/${this.domain}/messages`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${Buffer.from(`api:${this.apiKey}`).toString('base64')}`,
+        },
+        body: formData,
+      })
 
       if (!response.ok) {
         const error = await response.text()
@@ -96,13 +93,17 @@ export class MailgunService {
       }
     }
   ): Promise<boolean> {
-    const itemsHtml = orderData.items.map(item => `
+    const itemsHtml = orderData.items
+      .map(
+        item => `
       <tr>
         <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.name}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">$${item.price.toFixed(2)}</td>
       </tr>
-    `).join('')
+    `
+      )
+      .join('')
 
     const html = `
       <!DOCTYPE html>
@@ -181,7 +182,7 @@ export class MailgunService {
                   <ul>
                     <li>Your order is being prepared</li>
                     <li>You'll receive an update when it's out for delivery</li>
-                    <li>Estimated delivery time: Within 60 minutes</li>
+                    <li>Estimated delivery time: Within 3 hours</li>
                   </ul>
                 </div>
               </div>
@@ -199,7 +200,7 @@ export class MailgunService {
       to,
       subject: `Order Confirmation - #${orderData.orderId.slice(0, 8).toUpperCase()}`,
       html,
-      text: `Order confirmation for order #${orderData.orderId.slice(0, 8).toUpperCase()}. Total: $${orderData.total.toFixed(2)}`
+      text: `Order confirmation for order #${orderData.orderId.slice(0, 8).toUpperCase()}. Total: $${orderData.total.toFixed(2)}`,
     })
   }
 
@@ -218,7 +219,7 @@ export class MailgunService {
       ready: 'Your order is ready for delivery',
       out_for_delivery: 'Your order is out for delivery',
       delivered: 'Your order has been delivered',
-      cancelled: 'Your order has been cancelled'
+      cancelled: 'Your order has been cancelled',
     }
 
     const statusColors = {
@@ -226,7 +227,7 @@ export class MailgunService {
       ready: '#4CAF50',
       out_for_delivery: '#2196F3',
       delivered: '#4CAF50',
-      cancelled: '#F44336'
+      cancelled: '#F44336',
     }
 
     const html = `
@@ -276,26 +277,38 @@ export class MailgunService {
                 ${orderData.estimatedTime ? `<p><strong>Estimated time:</strong> ${orderData.estimatedTime}</p>` : ''}
               </div>
               
-              ${orderData.status === 'out_for_delivery' ? `
+              ${
+                orderData.status === 'out_for_delivery'
+                  ? `
                 <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
                   <p><strong>Your delivery is on the way!</strong></p>
                   <p>Please ensure someone is available to receive the order.</p>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
-              ${orderData.status === 'delivered' ? `
+              ${
+                orderData.status === 'delivered'
+                  ? `
                 <div style="background: #e8f5e9; padding: 15px; border-radius: 5px; margin: 20px 0;">
                   <p><strong>Thank you for your order!</strong></p>
                   <p>We hope you enjoy your products. Feel free to order again anytime.</p>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
               
-              ${orderData.status === 'cancelled' ? `
+              ${
+                orderData.status === 'cancelled'
+                  ? `
                 <div style="background: #ffebee; padding: 15px; border-radius: 5px; margin: 20px 0;">
                   <p><strong>We're sorry your order was cancelled.</strong></p>
                   <p>If you have any questions, please contact our support team.</p>
                 </div>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
             <div class="footer">
               <p>If you have any questions, please contact us at support@tatlist.com</p>
@@ -310,7 +323,7 @@ export class MailgunService {
       to,
       subject: `Order Update - #${orderData.orderId.slice(0, 8).toUpperCase()} - ${statusMessages[orderData.status]}`,
       html,
-      text: `Order #${orderData.orderId.slice(0, 8).toUpperCase()} status: ${statusMessages[orderData.status]}`
+      text: `Order #${orderData.orderId.slice(0, 8).toUpperCase()} status: ${statusMessages[orderData.status]}`,
     })
   }
 }

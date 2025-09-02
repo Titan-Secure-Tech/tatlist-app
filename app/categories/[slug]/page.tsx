@@ -11,6 +11,7 @@ interface CategoryPageProps {
 
 // Map URL slugs to category names
 const categoryMap: Record<string, string> = {
+  // Original categories
   machines: 'Tattoo Machines',
   needles: 'Needles & Cartridges',
   inks: 'Inks & Colors',
@@ -18,6 +19,14 @@ const categoryMap: Record<string, string> = {
   'tattoo-machines': 'Tattoo Machines',
   'needles-cartridges': 'Needles & Cartridges',
   'inks-colors': 'Inks & Colors',
+  // Lucky Supply categories
+  'art-stencil': 'Art and stencil supplies',
+  'art-and-stencil-supplies': 'Art and stencil supplies',
+  'medical-supplies': 'Medical Supplies and Sterilization Equipment',
+  'medical-supplies-sterilization': 'Medical Supplies and Sterilization Equipment',
+  'tattoo-parts': 'Tattoo Parts',
+  'shop-furniture': 'Tattoo Shop Furniture and Supplies',
+  'tattoo-shop-furniture': 'Tattoo Shop Furniture and Supplies',
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

@@ -38,16 +38,19 @@ export default function AnnouncementBanner() {
           <div className="relative">
             {/* Animated background pattern */}
             <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.05) 10px, rgba(255,255,255,.05) 20px)`
-              }} />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.05) 10px, rgba(255,255,255,.05) 20px)`,
+                }}
+              />
             </div>
 
             <div className="relative px-4 py-3">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 <div className="flex-1 flex items-center justify-center space-x-8">
                   {/* Square Payment */}
-                  <motion.div 
+                  <motion.div
                     className="flex items-center space-x-2"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -55,7 +58,10 @@ export default function AnnouncementBanner() {
                   >
                     <div className="bg-white p-1 rounded">
                       <svg viewBox="0 0 44 44" className="w-5 h-5">
-                        <path fill="#000" d="M36.65 0h-29.296c-4.061 0-7.354 3.292-7.354 7.354v29.296c0 4.062 3.293 7.354 7.354 7.354h29.296c4.062 0 7.354-3.292 7.354-7.354v-29.296c.001-4.062-3.291-7.354-7.354-7.354zm-17.969 33.744c0 1.282-1.039 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.039-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624zm10.624 0c0 1.282-1.038 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.038-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624z"/>
+                        <path
+                          fill="#000"
+                          d="M36.65 0h-29.296c-4.061 0-7.354 3.292-7.354 7.354v29.296c0 4.062 3.293 7.354 7.354 7.354h29.296c4.062 0 7.354-3.292 7.354-7.354v-29.296c.001-4.062-3.291-7.354-7.354-7.354zm-17.969 33.744c0 1.282-1.039 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.039-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624zm10.624 0c0 1.282-1.038 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.038-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624z"
+                        />
                       </svg>
                     </div>
                     <span className="text-sm font-medium">Secure payments via Square</span>
@@ -65,7 +71,7 @@ export default function AnnouncementBanner() {
                   <div className="hidden sm:block w-px h-6 bg-white/20" />
 
                   {/* Delivery Area */}
-                  <motion.div 
+                  <motion.div
                     className="flex items-center space-x-2"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -80,7 +86,7 @@ export default function AnnouncementBanner() {
                   <div className="hidden sm:block w-px h-6 bg-white/20" />
 
                   {/* Delivery Time */}
-                  <motion.div 
+                  <motion.div
                     className="hidden md:flex items-center space-x-2"
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
@@ -91,7 +97,9 @@ export default function AnnouncementBanner() {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                       </span>
-                      <span className="text-sm font-medium text-green-400">Under 60 min delivery</span>
+                      <span className="text-sm font-medium text-green-400">
+                        Under 3 hour delivery
+                      </span>
                     </div>
                   </motion.div>
                 </div>
@@ -110,7 +118,7 @@ export default function AnnouncementBanner() {
               </div>
 
               {/* Mobile view - second row */}
-              <motion.div 
+              <motion.div
                 className="md:hidden mt-2 flex items-center justify-center space-x-2"
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}

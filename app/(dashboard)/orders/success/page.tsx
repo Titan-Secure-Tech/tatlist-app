@@ -17,7 +17,7 @@ export default function OrderSuccessPage() {
 
   useEffect(() => {
     setMounted(true)
-    
+
     // Trigger confetti animation
     const duration = 3 * 1000
     const animationEnd = Date.now() + duration
@@ -27,7 +27,7 @@ export default function OrderSuccessPage() {
       return Math.random() * (max - min) + min
     }
 
-    const interval = setInterval(function() {
+    const interval = setInterval(function () {
       const timeLeft = animationEnd - Date.now()
 
       if (timeLeft <= 0) {
@@ -35,16 +35,16 @@ export default function OrderSuccessPage() {
       }
 
       const particleCount = 50 * (timeLeft / duration)
-      
+
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
       })
       confetti({
         ...defaults,
         particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
       })
     }, 250)
 
@@ -79,7 +79,7 @@ export default function OrderSuccessPage() {
             Thank you for your purchase. Your order has been successfully placed.
           </p>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           <div className="bg-muted/50 rounded-lg p-6 space-y-3">
             <div className="flex items-center justify-between">
@@ -97,7 +97,7 @@ export default function OrderSuccessPage() {
             <Separator />
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Estimated Delivery</span>
-              <span className="text-sm">Within 60 minutes</span>
+              <span className="text-sm">Within 3 hours</span>
             </div>
           </div>
 
