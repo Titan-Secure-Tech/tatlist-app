@@ -74,7 +74,7 @@ export default function CheckoutPage() {
     setShowPaymentForm(true)
   }
 
-  const handlePaymentSuccess = async (paymentToken: string) => {
+  const handlePaymentSuccess = async (paymentToken: string, marketingOptIn: boolean) => {
     setIsProcessing(true)
 
     try {
@@ -99,6 +99,7 @@ export default function CheckoutPage() {
           customerInfo,
           deliveryAddress,
           amount: (totalPrice ?? 0) / 100, // Convert from cents to dollars
+          marketingOptIn,
         }),
       })
 
