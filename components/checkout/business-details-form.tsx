@@ -268,8 +268,17 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
               <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertTitle className="text-green-800">Address Validated</AlertTitle>
               <AlertDescription className="text-green-700">
-                Your business is {validationState.distance?.toFixed(1)} miles from our delivery
-                center. Delivery available!
+                {validationState.distance && validationState.distance > 0 ? (
+                  <>
+                    Your business is {validationState.distance.toFixed(1)} miles from our delivery
+                    center. Delivery available!
+                  </>
+                ) : (
+                  <>
+                    Your address is in our Tampa Bay delivery area. Delivery details will be
+                    confirmed after order placement.
+                  </>
+                )}
               </AlertDescription>
             </Alert>
           )}
