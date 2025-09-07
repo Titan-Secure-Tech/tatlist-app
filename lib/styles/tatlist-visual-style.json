@@ -1,0 +1,151 @@
+{
+  "brand": "Tatlist",
+  "visualIdentity": {
+    "name": "Blackeye Natural Tattoo Style",
+    "description": "Classic tattoo flash art inspired by traditional American, Chicano, and Japanese tattoo aesthetics",
+    "established": "2013"
+  },
+  "styleGuide": {
+    "core": {
+      "aesthetic": "Traditional tattoo flash art",
+      "colorPalette": {
+        "primary": "Pure black ink (#000000)",
+        "secondary": "White/negative space (#FFFFFF)",
+        "shading": "Grayscale gradients and crosshatching",
+        "accent": "Subtle gray washes for depth"
+      },
+      "lineWork": {
+        "style": "Bold, confident lines",
+        "weight": "Thick outlines with varied line weights",
+        "technique": "Clean, deliberate strokes reminiscent of hand-poked tattoos",
+        "details": "Fine line details for texture and depth"
+      }
+    },
+    "influences": {
+      "american_traditional": {
+        "characteristics": [
+          "Bold, simplified shapes",
+          "Heavy black outlines",
+          "Iconic symbolism",
+          "Flash sheet aesthetic"
+        ],
+        "elements": ["Eagles", "Anchors", "Hearts", "Roses", "Daggers", "Skulls"]
+      },
+      "chicano": {
+        "characteristics": [
+          "Fine line black and gray",
+          "Photorealistic shading",
+          "Religious and cultural imagery",
+          "Script lettering influence"
+        ],
+        "elements": ["Roses", "Clocks", "Portraits", "Religious icons", "Lowriders", "Masks"]
+      },
+      "japanese_traditional": {
+        "characteristics": [
+          "Flowing, dynamic compositions",
+          "Natural elements",
+          "Mythological creatures",
+          "Wave and wind patterns"
+        ],
+        "elements": ["Koi", "Dragons", "Cherry blossoms", "Waves", "Clouds", "Tigers"]
+      }
+    },
+    "composition": {
+      "layout": "Centered, symmetrical designs suitable for skin placement",
+      "background": "Clean white or parchment texture",
+      "framing": "Optional decorative borders or banners",
+      "spacing": "Generous negative space for clarity"
+    },
+    "shading": {
+      "techniques": ["Stippling/dot work", "Cross-hatching", "Whip shading", "Black and gray wash"],
+      "depth": "High contrast between black and white",
+      "texture": "Organic, hand-drawn feel"
+    }
+  },
+  "imageGenerationPrompt": {
+    "base": "Traditional tattoo flash art design, bold black ink illustration on white background",
+    "style_modifiers": [
+      "vintage tattoo flash sheet style",
+      "hand-drawn illustration",
+      "bold black outlines",
+      "high contrast black and white",
+      "no text or letters",
+      "centered composition",
+      "clean minimalist background",
+      "professional tattoo design"
+    ],
+    "quality_modifiers": [
+      "highly detailed",
+      "professional artwork",
+      "clean lines",
+      "publication quality",
+      "vector-like clarity"
+    ],
+    "avoid": [
+      "color",
+      "realistic photography",
+      "3D rendering",
+      "text",
+      "watermarks",
+      "backgrounds with scenery",
+      "modern digital art style"
+    ]
+  },
+  "categoryIcons": {
+    "needles": {
+      "description": "Crossed tattoo needles with ornate handle details",
+      "elements": ["Traditional tattoo machine", "Needles in formation", "Decorative scrollwork"],
+      "style": "American traditional with fine line details"
+    },
+    "ink": {
+      "description": "Classic ink bottle with flowing ink drops",
+      "elements": ["Vintage ink well", "Ink splatter/drops", "Ornamental label design"],
+      "style": "Chicano fine line with shading"
+    },
+    "tubes_grips": {
+      "description": "Tattoo grips arranged in decorative pattern",
+      "elements": ["Steel tubes", "Textured grips", "Mechanical details"],
+      "style": "Technical illustration with traditional boldness"
+    },
+    "cartridges": {
+      "description": "Cartridge needles in fan arrangement",
+      "elements": ["Modern cartridges", "Geometric patterns", "Technical precision"],
+      "style": "Clean line work with minimal shading"
+    },
+    "machines": {
+      "description": "Classic coil tattoo machine with decorative frame",
+      "elements": ["Coil machine", "Ornate frame", "Mechanical components"],
+      "style": "American traditional with technical detail"
+    },
+    "power_supplies": {
+      "description": "Lightning bolt with power dial motif",
+      "elements": ["Lightning bolts", "Power symbols", "Electrical current"],
+      "style": "Bold traditional with dynamic energy"
+    },
+    "accessories": {
+      "description": "Tattoo tools arranged in mandala pattern",
+      "elements": ["Various tools", "Circular composition", "Balanced layout"],
+      "style": "Japanese-influenced symmetrical design"
+    },
+    "aftercare": {
+      "description": "Healing hands with botanical elements",
+      "elements": ["Caring hands", "Healing herbs", "Protective symbols"],
+      "style": "Chicano fine line with organic flow"
+    },
+    "furniture": {
+      "description": "Classic tattoo chair with ornamental details",
+      "elements": ["Vintage barber chair", "Decorative metalwork", "Strong foundation"],
+      "style": "American traditional with architectural elements"
+    },
+    "hygiene": {
+      "description": "Medical cross with clean geometric patterns",
+      "elements": ["Medical symbols", "Clean lines", "Protective imagery"],
+      "style": "Minimalist traditional with bold shapes"
+    },
+    "stencil": {
+      "description": "Transfer paper with artistic flourishes",
+      "elements": ["Paper rolls", "Stencil patterns", "Creative flow"],
+      "style": "Technical meets artistic traditional"
+    }
+  }
+}

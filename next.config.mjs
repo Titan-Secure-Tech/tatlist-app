@@ -4,6 +4,25 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
   },
+  
+  // Headers for Apple Pay domain verification
+  async headers() {
+    return [
+      {
+        source: '/.well-known/apple-developer-merchantid-domain-association',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
   // Image configuration for remote patterns
   images: {
     remotePatterns: [
@@ -30,6 +49,12 @@ const nextConfig = {
         hostname: 'luckysupplyusa.com',
         port: '',
         pathname: '/cdn/shop/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'items-images-production.s3.us-west-2.amazonaws.com',
+        port: '',
+        pathname: '/files/**',
       },
     ],
   },

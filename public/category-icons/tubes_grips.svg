@@ -1,0 +1,12 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="white"/>
+    <g stroke="black" stroke-width="3" fill="black">
+      <rect x="85" y="40" width="30" height="120" rx="5"/>
+      <rect x="60" y="60" width="30" height="100" rx="5"/>
+      <rect x="110" y="60" width="30" height="100" rx="5"/>
+      <pattern id="grip" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="5" x2="10" y2="5" stroke="white" stroke-width="1"/>
+      </pattern>
+      <rect x="85" y="80" width="30" height="40" fill="url(#grip)"/>
+    </g>
+  </svg>

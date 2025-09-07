@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { CartIcon } from '@/components/cart/cart-icon'
 
 export function Header() {
@@ -9,9 +10,16 @@ export function Header() {
       <div className="container flex h-14 items-center justify-between px-4">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
+            <Image
+              src="/logo.webp"
+              alt="Tatlist - Blackeye Natural"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain"
+            />
             <span className="text-xl font-bold">Tatlist</span>
           </Link>
-          
+
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link href="/products" className="hover:text-foreground/80">
               Products

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="white"/>
+    <g stroke="black" stroke-width="3" fill="none">
+      <rect x="50" y="40" width="100" height="120" fill="black"/>
+      <rect x="60" y="50" width="80" height="100" fill="white"/>
+      <path d="M70 70 Q100 80 130 70" stroke="black" stroke-width="2"/>
+      <path d="M70 90 Q100 100 130 90" stroke="black" stroke-width="2"/>
+      <path d="M70 110 Q100 120 130 110" stroke="black" stroke-width="2"/>
+      <path d="M70 130 Q100 140 130 130" stroke="black" stroke-width="2"/>
+    </g>
+  </svg>

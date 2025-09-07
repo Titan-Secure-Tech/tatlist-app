@@ -1,0 +1,92 @@
+{
+  "tattoo_category_icons": {
+    "brand": "Tatlist",
+    "style": "Blackeye Natural Tattoo Style",
+    "base_prompt": "Traditional tattoo flash art design, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, no text or letters, centered composition",
+
+    "categories": {
+      "needles": {
+        "prompt": "Traditional tattoo flash art design of crossed tattoo needles with ornate handle details, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, decorative needle grips with intricate patterns, classic American tattoo style, no text or letters, centered composition, icon design",
+        "description": "Crossed tattoo needles with ornate handle details"
+      },
+
+      "ink": {
+        "prompt": "Traditional tattoo flash art design of classic ink bottle with flowing ink drops, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, ornamental ink splashes and droplets, traditional glass bottle with decorative label area, no text or letters, centered composition, icon design",
+        "description": "Classic ink bottle with flowing ink drops"
+      },
+
+      "tubes_grips": {
+        "prompt": "Traditional tattoo flash art design of tattoo grips arranged in decorative pattern, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, ornamental arrangement of tube grips with detailed texturing, classic tattoo equipment style, no text or letters, centered composition, icon design",
+        "description": "Tattoo grips arranged in decorative pattern"
+      },
+
+      "cartridges": {
+        "prompt": "Traditional tattoo flash art design of modern cartridge needles in fan arrangement, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, decorative fan pattern of cartridge needles with ornate details, traditional flash art aesthetic, no text or letters, centered composition, icon design",
+        "description": "Modern cartridge needles in fan arrangement"
+      },
+
+      "machines": {
+        "prompt": "Traditional tattoo flash art design of classic coil tattoo machine with decorative frame, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, ornamental border elements, traditional coil machine with detailed mechanical parts, American traditional style, no text or letters, centered composition, icon design",
+        "description": "Classic coil tattoo machine with decorative frame"
+      },
+
+      "power_supplies": {
+        "prompt": "Traditional tattoo flash art design of lightning bolt with power dial motif, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, decorative lightning bolts with ornamental power dial, traditional flash art electrical theme, no text or letters, centered composition, icon design",
+        "description": "Lightning bolt with power dial motif"
+      },
+
+      "accessories": {
+        "prompt": "Traditional tattoo flash art design of tattoo tools arranged in mandala pattern, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, symmetrical mandala of various tattoo accessories, ornamental circular arrangement, traditional flash art style, no text or letters, centered composition, icon design",
+        "description": "Tattoo tools arranged in mandala pattern"
+      },
+
+      "aftercare": {
+        "prompt": "Traditional tattoo flash art design of healing hands with botanical elements, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, ornamental hands with decorative leaves and healing plants, traditional American tattoo style, no text or letters, centered composition, icon design",
+        "description": "Healing hands with botanical elements"
+      },
+
+      "furniture": {
+        "prompt": "Traditional tattoo flash art design of classic tattoo chair with ornamental details, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, decorative vintage tattoo chair with ornate flourishes, traditional shop furniture style, no text or letters, centered composition, icon design",
+        "description": "Classic tattoo chair with ornamental details"
+      },
+
+      "hygiene": {
+        "prompt": "Traditional tattoo flash art design of medical cross with clean geometric patterns, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, ornamental medical cross with decorative geometric elements, traditional flash art health theme, no text or letters, centered composition, icon design",
+        "description": "Medical cross with clean geometric patterns"
+      },
+
+      "stencil": {
+        "prompt": "Traditional tattoo flash art design of transfer paper with artistic flourishes, bold black ink illustration on white background, vintage tattoo flash sheet style, hand-drawn illustration, bold black outlines, high contrast black and white, decorative stencil paper with ornamental border elements, traditional tattoo preparation theme, no text or letters, centered composition, icon design",
+        "description": "Transfer paper with artistic flourishes"
+      }
+    },
+
+    "recommended_api_parameters": {
+      "model": "black-forest-labs/FLUX.1-schnell",
+      "steps": 4,
+      "guidance_scale": 3.5,
+      "width": 1024,
+      "height": 1024,
+      "seed": null,
+      "format": "png"
+    },
+
+    "negative_prompt": "color, realistic photography, 3d render, blurry, text, letters, words, watermark, signature, photorealistic, complex background patterns, gradient fills",
+
+    "prompt_engineering_notes": {
+      "consistency_elements": [
+        "Traditional tattoo flash art design",
+        "Bold black ink illustration on white background",
+        "Vintage tattoo flash sheet style",
+        "Hand-drawn illustration",
+        "Bold black outlines",
+        "High contrast black and white",
+        "No text or letters",
+        "Centered composition",
+        "Icon design"
+      ],
+      "style_emphasis": "Each prompt leads with subject matter for strong emphasis, includes specific tattoo art references Flux recognizes, and maintains consistent visual language",
+      "technical_optimization": "Prompts are structured for clear subject definition, style descriptors, and technical specifications that Flux processes effectively"
+    }
+  }
+}

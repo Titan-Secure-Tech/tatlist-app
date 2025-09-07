@@ -62,6 +62,7 @@ bun run scripts/sync-square-products.ts  # Import Square catalog to Supabase
 ```
 
 **Square Integration Status:**
+
 - ✅ Database schema created and applied (orders, payments, webhooks tables)
 - ✅ Test products created and working
 - ✅ Checkout flow with order creation in database
@@ -69,21 +70,24 @@ bun run scripts/sync-square-products.ts  # Import Square catalog to Supabase
 - ✅ Webhook handler for payment confirmations
 - ✅ Enhanced payment success page with order details
 - ✅ Apple Pay domain verification configured and working
-- ⚠️  Square product sync requires OAuth scope permissions (ITEMS_READ/WRITE)
+- ⚠️ Square product sync requires OAuth scope permissions (ITEMS_READ/WRITE)
 
 **Apple Pay Configuration:**
+
 - ✅ Verification file accessible at: `https://tatlist.com/.well-known/apple-developer-merchantid-domain-association`
 - ✅ File served correctly via Next.js public directory
 - ✅ Ready for Square domain verification in production
 
 **Integration Test Results (Local):**
+
 - ✅ Products API returns 4 test products
-- ✅ Checkout API creates orders in database  
+- ✅ Checkout API creates orders in database
 - ✅ Apple Pay verification file loads correctly
 - ✅ Payment success page shows order details
 - ✅ Mock payment flow works end-to-end
 
 **Required Environment Variables for Square:**
+
 ```bash
 # Square Sandbox
 SQUARE_SANDBOX_ACCESS_TOKEN=your_token
@@ -98,6 +102,37 @@ SQUARE_PRODUCTION_LOCATION_ID=your_location_id
 # Webhook Signature (production only)
 SQUARE_WEBHOOK_SIGNATURE_KEY=your_webhook_key
 ```
+
+### Delivery Zone Validation & Business Verification
+
+**Features:**
+
+- ✅ Mapbox integration for address validation and geocoding
+- ✅ Delivery zone radius check (25 miles from Tampa center)
+- ✅ Business details form with real-time address validation
+- ✅ License number verification for tattoo shops
+- ✅ Distance-based delivery fee calculation
+- ✅ Database storage of validated business details
+
+**Checkout Flow:**
+
+1. Customer enters business details and tattoo shop license number
+2. Address is validated via Mapbox geocoding API
+3. System checks if location is within 25-mile delivery radius
+4. If valid, customer proceeds to payment with Square
+5. Business details stored in database for future orders
+
+**Required Environment Variables:**
+
+```bash
+# Mapbox Configuration
+NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
+```
+
+**Testing the Checkout:**
+
+- Visit `/shop/checkout-v2` for the enhanced checkout with business validation
+- Original checkout remains at `/shop/checkout` for fallback
 
 ### Supabase Development & Management
 
