@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { ShoppingBag } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import CartDrawer from './CartDrawer'
 
 interface AnimatedCartIconProps {

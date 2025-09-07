@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 
 interface ProductCardProps {
@@ -44,7 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    
+
     if (!user) {
       toast.error('Please sign in to add favorites')
       return
@@ -56,9 +56,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           .from('favorites')
           .delete()
           .match({ user_id: user.id, product_id: product.id })
-        
+
         if (error) throw error
-        
+
         setIsFavorited(false)
         toast.success('Removed from favorites')
       } else {
@@ -69,7 +69,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             { user_id: user.id, product_id: product.id },
             { onConflict: 'user_id,product_id' }
           )
-        
+
         if (error) {
           // If upsert fails, it might already exist, so just set as favorited
           if (error.code === '23505' || error.message?.includes('duplicate')) {

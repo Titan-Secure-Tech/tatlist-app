@@ -16,10 +16,10 @@ interface PaymentSuccessPageProps {
 
 export default async function PaymentSuccessPage({ searchParams }: PaymentSuccessPageProps) {
   const { orderId, orderNumber, total } = searchParams
-  
+
   let order: Order | null = null
   let error: string | null = null
-  
+
   // Try to fetch the order from database
   if (orderId) {
     const supabase = await createClient()
@@ -28,7 +28,7 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
       .select('*')
       .eq('id', orderId)
       .single()
-    
+
     if (fetchError) {
       console.error('Error fetching order:', fetchError)
       error = 'Unable to load order details'
@@ -36,16 +36,16 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
       order = data
     }
   }
-  
+
   // Use order data if available, otherwise fall back to URL params
   const displayOrderNumber = order?.order_number || orderNumber
   const displayTotal = order?.total_amount || (total ? parseFloat(total) : null)
   const customerEmail = order?.customer_email
-  
+
   return (
     <main className="min-h-screen bg-white">
       <PaymentSuccessConfetti />
-      
+
       <nav className="border-b bg-white/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -74,10 +74,13 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               {order ? 'Order Confirmed!' : 'Payment Successful!'}
             </CardTitle>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
             <p className="text-muted-foreground">
-              Thank you for your order. {order ? 'Your order has been confirmed and will be processed shortly.' : 'Your payment has been processed successfully.'}
+              Thank you for your order.{' '}
+              {order
+                ? 'Your order has been confirmed and will be processed shortly.'
+                : 'Your payment has been processed successfully.'}
             </p>
 
             {displayOrderNumber && (
@@ -95,25 +98,27 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
                 </div>
               </div>
             )}
-            
+
             {order && order.items && (
               <div className="bg-gray-50 rounded-lg p-4 text-left">
                 <div className="text-sm text-muted-foreground mb-3">Order Items</div>
                 <div className="space-y-2">
-                  {(order.items as any[]).map((item: any, index: number) => (
-                    <div key={index} className="flex justify-between text-sm">
-                      <div>
-                        <span className="font-medium">{item.product_name}</span>
-                        {item.variant_name && (
-                          <span className="text-muted-foreground"> - {item.variant_name}</span>
-                        )}
-                        <span className="text-muted-foreground"> x{item.quantity}</span>
+                  {(order.items as Array<Record<string, unknown>>).map(
+                    (item: Record<string, unknown>, index: number) => (
+                      <div key={index} className="flex justify-between text-sm">
+                        <div>
+                          <span className="font-medium">{item.product_name}</span>
+                          {item.variant_name && (
+                            <span className="text-muted-foreground"> - {item.variant_name}</span>
+                          )}
+                          <span className="text-muted-foreground"> x{item.quantity}</span>
+                        </div>
+                        <div className="font-medium">
+                          ${(item.total_price || item.unit_price * item.quantity).toFixed(2)}
+                        </div>
                       </div>
-                      <div className="font-medium">
-                        ${(item.total_price || item.unit_price * item.quantity).toFixed(2)}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                   {order.delivery_fee > 0 && (
                     <div className="flex justify-between text-sm pt-2 border-t">
                       <span>Delivery Fee</span>
@@ -123,18 +128,20 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
                 </div>
               </div>
             )}
-            
+
             {order?.delivery_address && (
               <div className="bg-gray-50 rounded-lg p-4 text-left">
                 <div className="text-sm text-muted-foreground mb-2">Delivery Address</div>
                 <div className="text-sm">
                   <div className="font-medium">{order.customer_name}</div>
-                  <div>{(order.delivery_address as any).line1}</div>
-                  {(order.delivery_address as any).line2 && (
-                    <div>{(order.delivery_address as any).line2}</div>
+                  <div>{(order.delivery_address as Record<string, unknown>).line1}</div>
+                  {(order.delivery_address as Record<string, unknown>).line2 && (
+                    <div>{(order.delivery_address as Record<string, unknown>).line2}</div>
                   )}
                   <div>
-                    {(order.delivery_address as any).city}, {(order.delivery_address as any).state} {(order.delivery_address as any).postalCode}
+                    {(order.delivery_address as Record<string, unknown>).city},{' '}
+                    {(order.delivery_address as Record<string, unknown>).state}{' '}
+                    {(order.delivery_address as Record<string, unknown>).postalCode}
                   </div>
                 </div>
               </div>
@@ -147,14 +154,17 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               </div>
               <div className="text-sm text-blue-700">
                 <ul className="space-y-1 text-left">
-                  <li>• You'll receive an order confirmation email{customerEmail ? ` at ${customerEmail}` : ' shortly'}</li>
+                  <li>
+                    • You&apos;ll receive an order confirmation email
+                    {customerEmail ? ` at ${customerEmail}` : ' shortly'}
+                  </li>
                   <li>• Your order will be processed within 24 hours</li>
                   <li>• Local delivery typically takes 1-2 business days</li>
-                  <li>• You'll get tracking information once shipped</li>
+                  <li>• You&apos;ll get tracking information once shipped</li>
                 </ul>
               </div>
             </div>
-            
+
             {error && (
               <div className="border rounded-lg p-4 bg-yellow-50">
                 <div className="flex items-center gap-3">
@@ -166,11 +176,9 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
 
             <div className="pt-4 space-y-3">
               <Button asChild className="w-full">
-                <Link href="/shop">
-                  Continue Shopping
-                </Link>
+                <Link href="/shop">Continue Shopping</Link>
               </Button>
-              
+
               <Button variant="outline" asChild className="w-full">
                 <Link href="/">
                   <ArrowLeft className="w-4 h-4 mr-2" />
@@ -188,7 +196,8 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               </p>
               {displayOrderNumber && (
                 <p className="mt-2">
-                  Please reference order number <strong>{displayOrderNumber}</strong> in any correspondence.
+                  Please reference order number <strong>{displayOrderNumber}</strong> in any
+                  correspondence.
                 </p>
               )}
             </div>

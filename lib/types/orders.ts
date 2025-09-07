@@ -55,7 +55,7 @@ export interface CustomerInfo {
   phone?: string
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
   | 'processing'
   | 'paid'
@@ -64,7 +64,7 @@ export type OrderStatus =
   | 'cancelled'
   | 'refunded'
 
-export type PaymentStatus = 
+export type PaymentStatus =
   | 'pending'
   | 'processing'
   | 'completed'
@@ -101,7 +101,7 @@ export interface SquareWebhookEvent {
   merchant_id?: string
   location_id?: string
   entity_id?: string
-  payload: any
+  payload: Record<string, unknown>
   processed?: boolean
   processed_at?: string | null
   error?: string | null
@@ -117,5 +117,5 @@ export interface SquareSyncLog {
   error_details?: string | null
   started_at: string
   completed_at?: string | null
-  metadata?: any
+  metadata?: Record<string, unknown>
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 
 interface Product {

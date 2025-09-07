@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 
 interface SquareProduct {

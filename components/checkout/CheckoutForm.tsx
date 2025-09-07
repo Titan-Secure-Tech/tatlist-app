@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 import {
   isZipCodeSupported,

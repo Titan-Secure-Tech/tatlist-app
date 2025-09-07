@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Loader2, ShoppingCart, Plus, Minus } from 'lucide-react'
 import { toast } from 'sonner'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CartProvider } from '@/components/providers/CartProvider'
@@ -47,13 +47,13 @@ function ShopContent() {
     try {
       const response = await fetch('/api/square/products')
       const data = await response.json()
-      
+
       if (data.products) {
         setProducts(data.products)
         // Initialize quantities
         const initialQuantities: Record<string, number> = {}
         data.products.forEach((product: SquareProduct) => {
-          product.variations.forEach((variation) => {
+          product.variations.forEach(variation => {
             initialQuantities[variation.id] = 1
           })
         })
@@ -69,7 +69,7 @@ function ShopContent() {
 
   const handleAddToCart = (product: SquareProduct, variation: ProductVariation) => {
     const quantity = quantities[variation.id] || 1
-    
+
     try {
       addItem({
         id: variation.id,
@@ -81,7 +81,7 @@ function ShopContent() {
         variant: variation.name,
         quantity: quantity,
       })
-      
+
       toast.success(`Added ${quantity} ${product.name} to cart`)
     } catch (error) {
       console.error('Error adding to cart:', error)
@@ -92,7 +92,7 @@ function ShopContent() {
   const updateQuantity = (variationId: string, change: number) => {
     setQuantities(prev => ({
       ...prev,
-      [variationId]: Math.max(1, (prev[variationId] || 1) + change)
+      [variationId]: Math.max(1, (prev[variationId] || 1) + change),
     }))
   }
 
@@ -134,7 +134,7 @@ function ShopContent() {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {products.map(product => (
           <Card key={product.id} className="flex flex-col">
             <div className="aspect-square relative overflow-hidden rounded-t-lg">
               <Image
@@ -145,33 +145,31 @@ function ShopContent() {
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
             </div>
-            
+
             <CardContent className="flex-1 p-6">
               <div className="mb-2">
                 <Badge variant="outline" className="text-xs">
                   {product.category}
                 </Badge>
               </div>
-              
+
               <h3 className="font-semibold mb-2 line-clamp-2">{product.name}</h3>
               <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                 {product.description}
               </p>
-              
+
               {/* Variations */}
               <div className="space-y-3">
-                {product.variations.map((variation) => (
+                {product.variations.map(variation => (
                   <div key={variation.id} className="border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div>
                         <p className="font-medium">{variation.name}</p>
                         <p className="text-sm text-muted-foreground">SKU: {variation.sku}</p>
                       </div>
-                      <p className="font-bold text-lg">
-                        ${variation.price.toFixed(2)}
-                      </p>
+                      <p className="font-bold text-lg">${variation.price.toFixed(2)}</p>
                     </div>
-                    
+
                     <div className="flex items-center justify-between">
                       {/* Quantity Controls */}
                       <div className="flex items-center space-x-2">
@@ -196,7 +194,7 @@ function ShopContent() {
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
-                      
+
                       {/* Add to Cart Button */}
                       <Button
                         onClick={() => handleAddToCart(product, variation)}

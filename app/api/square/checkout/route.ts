@@ -2,12 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
 import { createClient } from '@/lib/supabase/server'
 import { randomUUID } from 'crypto'
-import type {
-  SquareCreateOrderRequest,
-  SquarePaymentLinkRequest,
-  SquareOrderResponse,
-  SquarePaymentLinkResponse,
-} from '@/lib/types/square'
+// Square types are defined inline below
 import type { OrderItem } from '@/lib/types/orders'
 
 interface CartItem {
@@ -207,15 +202,13 @@ export async function POST(request: NextRequest) {
 
       // Create order items in normalized table
       if (order) {
-        const { error: itemsError } = await supabase
-          .from('order_items')
-          .insert(
-            orderItems.map(item => ({
-              ...item,
-              order_id: order.id,
-            }))
-          )
-        
+        const { error: itemsError } = await supabase.from('order_items').insert(
+          orderItems.map(item => ({
+            ...item,
+            order_id: order.id,
+          }))
+        )
+
         if (itemsError) {
           console.error('Failed to create order items:', itemsError)
         }
@@ -228,15 +221,14 @@ export async function POST(request: NextRequest) {
         paymentLink: paymentLinkResult.paymentLink.url,
         order: orderResult.order,
         total: total,
-        source: 'square_api'
+        source: 'square_api',
       })
-
     } catch (squareError) {
       console.error('Square API error, falling back to mock:', squareError)
-      
+
       // Fallback to mock payment link
       const mockOrderId = `MOCK_${Date.now()}_${Math.random().toString(36).substring(7).toUpperCase()}`
-      
+
       // Still create order in Supabase for mock
       const orderItems: OrderItem[] = items.map(item => ({
         product_name: item.name,
@@ -273,14 +265,12 @@ export async function POST(request: NextRequest) {
 
       // Create order items in normalized table
       if (order) {
-        await supabase
-          .from('order_items')
-          .insert(
-            orderItems.map(item => ({
-              ...item,
-              order_id: order.id,
-            }))
-          )
+        await supabase.from('order_items').insert(
+          orderItems.map(item => ({
+            ...item,
+            order_id: order.id,
+          }))
+        )
       }
 
       const mockPaymentLink = `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success?orderId=${order?.id || mockOrderId}&orderNumber=${order?.order_number}&total=${total.toFixed(2)}`
@@ -302,21 +292,23 @@ export async function POST(request: NextRequest) {
             amount: Math.round(total * 100),
             currency: 'USD',
           },
-          fulfillments: [{
-            type: 'DELIVERY',
-            deliveryDetails: {
-              recipient: {
-                displayName: customerInfo.name,
-                email: customerInfo.email,
-                phoneNumber: customerInfo.phone,
+          fulfillments: [
+            {
+              type: 'DELIVERY',
+              deliveryDetails: {
+                recipient: {
+                  displayName: customerInfo.name,
+                  email: customerInfo.email,
+                  phoneNumber: customerInfo.phone,
+                },
+                recipientAddress: deliveryAddress,
               },
-              recipientAddress: deliveryAddress,
-            }
-          }]
+            },
+          ],
         },
         total: total,
         source: 'mock_fallback',
-        note: 'Using mock data due to Square API authentication issues'
+        note: 'Using mock data due to Square API authentication issues',
       })
     }
   } catch (error: unknown) {

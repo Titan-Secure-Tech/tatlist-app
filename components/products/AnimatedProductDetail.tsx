@@ -16,7 +16,7 @@ import {
   Minus,
 } from 'lucide-react'
 import { Product } from '@/types'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 

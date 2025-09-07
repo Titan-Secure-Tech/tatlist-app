@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useShoppingCart } from 'use-shopping-cart'
-import { useRouter } from 'next/navigation'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { ArrowLeft, CreditCard, ShoppingCart, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -28,7 +27,6 @@ interface DeliveryAddress {
 }
 
 function CheckoutContent() {
-  const router = useRouter()
   const { cartDetails, cartCount, totalPrice, clearCart } = useShoppingCart()
   const [mounted, setMounted] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -53,7 +51,7 @@ function CheckoutContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate form
     if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
       toast.error('Please fill in all customer information fields')
@@ -227,7 +225,9 @@ function CheckoutContent() {
                       type="text"
                       placeholder="123 Main St"
                       value={deliveryAddress.line1}
-                      onChange={e => setDeliveryAddress({ ...deliveryAddress, line1: e.target.value })}
+                      onChange={e =>
+                        setDeliveryAddress({ ...deliveryAddress, line1: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -238,7 +238,9 @@ function CheckoutContent() {
                       type="text"
                       placeholder="Apt 4B"
                       value={deliveryAddress.line2}
-                      onChange={e => setDeliveryAddress({ ...deliveryAddress, line2: e.target.value })}
+                      onChange={e =>
+                        setDeliveryAddress({ ...deliveryAddress, line2: e.target.value })
+                      }
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -249,7 +251,9 @@ function CheckoutContent() {
                         type="text"
                         placeholder="New York"
                         value={deliveryAddress.city}
-                        onChange={e => setDeliveryAddress({ ...deliveryAddress, city: e.target.value })}
+                        onChange={e =>
+                          setDeliveryAddress({ ...deliveryAddress, city: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -261,10 +265,12 @@ function CheckoutContent() {
                         placeholder="NY"
                         maxLength={2}
                         value={deliveryAddress.state}
-                        onChange={e => setDeliveryAddress({
-                          ...deliveryAddress,
-                          state: e.target.value.toUpperCase(),
-                        })}
+                        onChange={e =>
+                          setDeliveryAddress({
+                            ...deliveryAddress,
+                            state: e.target.value.toUpperCase(),
+                          })
+                        }
                         required
                       />
                     </div>
@@ -275,7 +281,9 @@ function CheckoutContent() {
                         type="text"
                         placeholder="10001"
                         value={deliveryAddress.postalCode}
-                        onChange={e => setDeliveryAddress({ ...deliveryAddress, postalCode: e.target.value })}
+                        onChange={e =>
+                          setDeliveryAddress({ ...deliveryAddress, postalCode: e.target.value })
+                        }
                         required
                       />
                     </div>

@@ -6,15 +6,20 @@ import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { InventoryListWithItems, InventoryListItemWithProduct } from '@/types/inventory'
 import { Trash2, Plus, ShoppingCart } from 'lucide-react'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 
 interface InventoryListDetailProps {
   inventoryList: InventoryListWithItems
   favoriteProducts: Product[]
 }
 
-export default function InventoryListDetail({ inventoryList, favoriteProducts }: InventoryListDetailProps) {
-  const [items, setItems] = useState<InventoryListItemWithProduct[]>(inventoryList.inventory_list_items || [])
+export default function InventoryListDetail({
+  inventoryList,
+  favoriteProducts,
+}: InventoryListDetailProps) {
+  const [items, setItems] = useState<InventoryListItemWithProduct[]>(
+    inventoryList.inventory_list_items || []
+  )
   const [showAddProducts, setShowAddProducts] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -29,26 +34,21 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
       .eq('id', itemId)
 
     if (!error) {
-      setItems(items.map((item) => 
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      ))
+      setItems(items.map(item => (item.id === itemId ? { ...item, quantity: newQuantity } : item)))
     }
   }
 
   const removeItem = async (itemId: string) => {
-    const { error } = await supabase
-      .from('inventory_list_items')
-      .delete()
-      .eq('id', itemId)
+    const { error } = await supabase.from('inventory_list_items').delete().eq('id', itemId)
 
     if (!error) {
-      setItems(items.filter((item) => item.id !== itemId))
+      setItems(items.filter(item => item.id !== itemId))
     }
   }
 
   const addProductToList = async (product: Product) => {
-    const existingItem = items.find((item) => item.product.id === product.id)
-    
+    const existingItem = items.find(item => item.product.id === product.id)
+
     if (existingItem) {
       updateQuantity(existingItem.id, existingItem.quantity + 1)
       return
@@ -59,55 +59,58 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
       .insert({
         inventory_list_id: inventoryList.id,
         product_id: product.id,
-        quantity: 1
+        quantity: 1,
       })
-      .select(`
+      .select(
+        `
         id,
         quantity,
         product:products (*)
-      `)
+      `
+      )
       .single()
 
     if (!error && data && data.product) {
       const newItem: InventoryListItemWithProduct = {
         id: data.id,
         quantity: data.quantity,
-        product: Array.isArray(data.product) ? data.product[0] : data.product
+        product: Array.isArray(data.product) ? data.product[0] : data.product,
       }
       setItems([...items, newItem])
     }
   }
 
   const addAllToCart = () => {
-    items.forEach((item) => {
+    items.forEach(item => {
       if (item.product.in_stock) {
-        addItem({
-          id: item.product.id,
-          name: item.product.name,
-          price: item.product.price * 100,
-          currency: 'USD',
-          image: item.product.images?.[0],
-          description: item.product.description,
-          price_data: {
+        addItem(
+          {
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price * 100,
             currency: 'USD',
-            product_data: {
-              name: item.product.name,
-              description: item.product.description,
-              images: item.product.images
+            image: item.product.images?.[0],
+            description: item.product.description,
+            price_data: {
+              currency: 'USD',
+              product_data: {
+                name: item.product.name,
+                description: item.product.description,
+                images: item.product.images,
+              },
+              unit_amount: item.product.price * 100,
             },
-            unit_amount: item.product.price * 100
+          },
+          {
+            count: item.quantity,
           }
-        }, {
-          count: item.quantity
-        })
+        )
       }
     })
     router.push('/cart')
   }
 
-  const totalPrice = items.reduce((sum, item) => 
-    sum + (item.product.price * item.quantity), 0
-  )
+  const totalPrice = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 
   return (
     <div>
@@ -126,11 +129,16 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
         <div className="mb-6 p-4 border border-gray-200 rounded-lg">
           <h3 className="font-semibold mb-3">Add from Favorites</h3>
           {favoriteProducts.length === 0 ? (
-            <p className="text-gray-600">No favorite products yet. Heart products to add them here.</p>
+            <p className="text-gray-600">
+              No favorite products yet. Heart products to add them here.
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {favoriteProducts.map((product) => (
-                <div key={product.id} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded">
+              {favoriteProducts.map(product => (
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center p-2 hover:bg-gray-50 rounded"
+                >
                   <div>
                     <p className="font-medium">{product.name}</p>
                     <p className="text-sm text-gray-600">${product.price}</p>
@@ -157,7 +165,7 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
         <>
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
             <div className="divide-y divide-gray-200">
-              {items.map((item) => (
+              {items.map(item => (
                 <div key={item.id} className="p-4 flex items-center space-x-4">
                   <div className="flex-1">
                     <h3 className="font-semibold text-black">{item.product.name}</h3>
@@ -181,7 +189,9 @@ export default function InventoryListDetail({ inventoryList, favoriteProducts }:
                   </div>
 
                   <div className="text-right">
-                    <p className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-semibold">
+                      ${(item.product.price * item.quantity).toFixed(2)}
+                    </p>
                   </div>
 
                   <button

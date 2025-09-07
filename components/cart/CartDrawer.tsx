@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ShoppingBag, Plus, Minus, Trash2, ShoppingCart } from 'lucide-react'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'

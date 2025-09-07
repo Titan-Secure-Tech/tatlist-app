@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import { Trash2, Plus, Minus, ShoppingCart, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'

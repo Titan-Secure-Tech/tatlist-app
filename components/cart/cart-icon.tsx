@@ -3,7 +3,7 @@
 import { ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useShoppingCart } from 'use-shopping-cart'
+import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 
 interface CartIconProps {
@@ -12,25 +12,16 @@ interface CartIconProps {
   size?: 'default' | 'sm' | 'lg' | 'icon'
 }
 
-export function CartIcon({ 
-  className,
-  variant = 'outline',
-  size = 'icon'
-}: CartIconProps) {
+export function CartIcon({ className, variant = 'outline', size = 'icon' }: CartIconProps) {
   const { cartCount } = useShoppingCart()
 
   return (
-    <Button 
-      variant={variant} 
-      size={size}
-      className={`relative ${className}`}
-      asChild
-    >
+    <Button variant={variant} size={size} className={`relative ${className}`} asChild>
       <Link href="/cart">
         <ShoppingCart className="h-4 w-4" />
         {cartCount && cartCount > 0 && (
-          <Badge 
-            variant="destructive" 
+          <Badge
+            variant="destructive"
             className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 text-xs"
             data-testid="cart-badge"
           >

@@ -25,7 +25,6 @@ vi.mock('next/navigation', () => ({
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-     
     return React.createElement('img', props)
   },
 }))
@@ -37,7 +36,7 @@ vi.mock('next/link', () => ({
   },
 }))
 
-// Mock use-shopping-cart
+// Mock cart store
 const mockCartContext = {
   cartCount: 0,
   cartDetails: {},
@@ -50,9 +49,14 @@ const mockCartContext = {
   totalPrice: 0,
 }
 
-vi.mock('use-shopping-cart', () => ({
+vi.mock('@/lib/store/cart-store', () => ({
   useShoppingCart: () => mockCartContext,
-  CartProvider: ({ children }: React.PropsWithChildren) => children,
+  useCartStore: () => mockCartContext,
+}))
+
+// Mock CartProvider component
+vi.mock('@/components/providers/CartProvider', () => ({
+  CartProvider: ({ children }: React.PropsWithChildren) => React.createElement('div', {}, children),
 }))
 
 // Mock toast notifications
