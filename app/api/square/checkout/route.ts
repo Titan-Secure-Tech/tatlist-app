@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { squareClient, SQUARE_LOCATION_ID } from '@/lib/square/client'
+import { getSquareConfig, isSandboxUser } from '@/lib/square/client-config'
 import { createClient } from '@/lib/supabase/server'
+import { SquareCustomerSyncService } from '@/lib/services/square-customer-sync'
 import { randomUUID } from 'crypto'
 // Square types are defined inline below
 import type { OrderItem } from '@/lib/types/orders'
@@ -52,6 +53,70 @@ export async function POST(request: NextRequest) {
 
     // Initialize Supabase client
     const supabase = await createClient()
+
+    // Get authenticated user (if any)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    // Check if user should use sandbox mode
+    let useSandbox = false
+    let sandboxReason = 'production'
+
+    // First check if email is in hardcoded sandbox list
+    if (customerInfo.email && isSandboxUser(customerInfo.email)) {
+      useSandbox = true
+      sandboxReason = 'hardcoded_test_user'
+    } else {
+      // Check database for sandbox_users entry
+      const { data: sandboxUser } = await supabase
+        .from('sandbox_users')
+        .select('enabled')
+        .eq('email', customerInfo.email.toLowerCase())
+        .eq('enabled', true)
+        .single()
+
+      if (sandboxUser?.enabled) {
+        useSandbox = true
+        sandboxReason = 'database_sandbox_user'
+      }
+    }
+
+    // Get appropriate Square configuration
+    const squareConfig = getSquareConfig(useSandbox)
+    const { client: squareClient, locationId: SQUARE_LOCATION_ID, environment } = squareConfig
+
+    console.log(
+      `[Square Checkout] Using ${environment} mode for ${customerInfo.email} (reason: ${sandboxReason})`
+    )
+
+    // Create or get Square customer
+    let squareCustomerId: string | null = null
+    try {
+      const syncService = new SquareCustomerSyncService(supabase)
+
+      // Parse customer name into first/last
+      const nameParts = customerInfo.name.trim().split(/\s+/)
+      const givenName = nameParts[0] || ''
+      const familyName = nameParts.slice(1).join(' ') || ''
+
+      squareCustomerId = await syncService.getOrCreateSquareCustomerForCheckout(
+        customerInfo.email,
+        {
+          givenName,
+          familyName,
+          phoneNumber: customerInfo.phone,
+          userId: user?.id,
+        }
+      )
+
+      if (squareCustomerId) {
+        console.log(`[Square Checkout] Created/linked Square customer: ${squareCustomerId}`)
+      }
+    } catch (customerError) {
+      console.error('[Square Checkout] Failed to create/link Square customer:', customerError)
+      // Continue with checkout even if customer creation fails
+    }
 
     // Create line items for the order (simplified for mock)
     const lineItems = items.map((item: CartItem) => ({
@@ -178,6 +243,8 @@ export async function POST(request: NextRequest) {
         .from('orders')
         .insert({
           square_order_id: orderResult.order.id,
+          square_customer_id: squareCustomerId,
+          user_id: user?.id,
           customer_email: customerInfo.email,
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
@@ -222,6 +289,8 @@ export async function POST(request: NextRequest) {
         order: orderResult.order,
         total: total,
         source: 'square_api',
+        environment: environment,
+        sandboxMode: useSandbox,
       })
     } catch (squareError) {
       console.error('Square API error, falling back to mock:', squareError)
@@ -242,6 +311,8 @@ export async function POST(request: NextRequest) {
         .from('orders')
         .insert({
           square_order_id: mockOrderId,
+          square_customer_id: squareCustomerId,
+          user_id: user?.id,
           customer_email: customerInfo.email,
           customer_name: customerInfo.name,
           customer_phone: customerInfo.phone,
@@ -309,6 +380,8 @@ export async function POST(request: NextRequest) {
         total: total,
         source: 'mock_fallback',
         note: 'Using mock data due to Square API authentication issues',
+        environment: environment,
+        sandboxMode: useSandbox,
       })
     }
   } catch (error: unknown) {

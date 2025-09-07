@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { CartIcon } from '@/components/cart/cart-icon'
+import { SandboxIndicator } from '@/components/sandbox-indicator'
 
 export function Header() {
   return (
@@ -34,6 +35,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <SandboxIndicator />
           <CartIcon />
         </div>
       </div>

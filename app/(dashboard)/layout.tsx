@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CartProvider } from '@/components/providers/CartProvider'
-import AnimatedNavigation from '@/components/layout/AnimatedNavigation'
-import AnnouncementBanner from '@/components/announcement-banner'
+import DashboardWrapper from '@/components/layout/DashboardWrapper'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -25,9 +24,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <CartProvider>
       <div className="min-h-screen bg-white">
-        <AnnouncementBanner />
-        <AnimatedNavigation isAdmin={isAdmin} />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">{children}</main>
+        <DashboardWrapper isAdmin={isAdmin}>{children}</DashboardWrapper>
       </div>
     </CartProvider>
   )

@@ -11,6 +11,9 @@ const RELEVANT_EVENT_TYPES = [
   'order.fulfillment.updated',
   'refund.created',
   'refund.updated',
+  'customer.created',
+  'customer.updated',
+  'customer.deleted',
 ]
 
 // Verify webhook signature from Square
@@ -107,6 +110,15 @@ export async function POST(request: NextRequest) {
         case 'refund.created':
         case 'refund.updated':
           await handleRefundEvent(supabase, event)
+          break
+
+        case 'customer.created':
+        case 'customer.updated':
+          await handleCustomerEvent(supabase, event)
+          break
+
+        case 'customer.deleted':
+          await handleCustomerDeletedEvent(supabase, event)
           break
       }
 
@@ -295,6 +307,84 @@ async function handleRefundEvent(
     .eq('id', order.id)
 
   console.log(`Order ${order.order_number} marked as refunded`)
+}
+
+async function handleCustomerEvent(
+  supabase: ReturnType<typeof createClient>,
+  event: Record<string, unknown>
+) {
+  const customer = event.data?.object?.customer
+
+  if (!customer || !customer.emailAddress) {
+    console.log('No customer data or email in webhook event')
+    return
+  }
+
+  try {
+    // Try to match customer with existing Supabase user by email
+    const { data: user } = await supabase.rpc('match_square_customer_to_user', {
+      p_email: customer.emailAddress,
+    })
+
+    if (user) {
+      // Update or create customer link
+      await supabase.from('square_customers').upsert(
+        {
+          user_id: user,
+          square_customer_id: customer.id,
+          email: customer.emailAddress.toLowerCase(),
+          given_name: customer.givenName,
+          family_name: customer.familyName,
+          phone_number: customer.phoneNumber,
+          company_name: customer.companyName,
+          address: customer.address,
+          reference_id: customer.referenceId,
+          created_in_square_at: customer.createdAt,
+          updated_in_square_at: customer.updatedAt,
+          last_synced_at: new Date().toISOString(),
+          sync_status: 'active',
+        },
+        {
+          onConflict: 'square_customer_id',
+        }
+      )
+
+      console.log(`Customer ${customer.emailAddress} linked to user ${user}`)
+    } else {
+      // No matching user found - customer might be a guest checkout
+      console.log(`No matching user found for customer ${customer.emailAddress}`)
+    }
+  } catch (error) {
+    console.error(`Failed to handle customer event for ${customer.emailAddress}:`, error)
+  }
+}
+
+async function handleCustomerDeletedEvent(
+  supabase: ReturnType<typeof createClient>,
+  event: Record<string, unknown>
+) {
+  const customer = event.data?.object?.customer
+
+  if (!customer) {
+    console.log('No customer data in deletion webhook event')
+    return
+  }
+
+  try {
+    // Mark customer link as deleted instead of removing it
+    await supabase
+      .from('square_customers')
+      .update({
+        sync_status: 'deleted',
+        sync_error: 'Customer deleted in Square',
+        last_synced_at: new Date().toISOString(),
+      })
+      .eq('square_customer_id', customer.id)
+
+    console.log(`Customer ${customer.id} marked as deleted`)
+  } catch (error) {
+    console.error(`Failed to handle customer deletion for ${customer.id}:`, error)
+  }
 }
 
 // Helper function to map Square payment status to our status

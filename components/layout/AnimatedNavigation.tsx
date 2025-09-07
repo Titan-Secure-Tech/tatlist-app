@@ -7,6 +7,7 @@ import { Home, ShoppingBag, Package, List, User, Settings, LogOut } from 'lucide
 import { AnimatedCartIcon } from '@/components/cart/AnimatedCartIcon'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { useState, useEffect } from 'react'
 
 interface NavItem {
   href: string
@@ -22,12 +23,38 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const [bannerHeight, setBannerHeight] = useState(0)
+
+  useEffect(() => {
+    // Check if banner is visible
+    const checkBanner = () => {
+      const bannerClosed = sessionStorage.getItem('announcementBannerClosed')
+      if (bannerClosed !== 'true') {
+        // Banner is visible, set height (approximate height of banner)
+        setBannerHeight(60) // Adjust this value based on actual banner height
+      } else {
+        setBannerHeight(0)
+      }
+    }
+
+    checkBanner()
+    // Listen for storage changes
+    window.addEventListener('storage', checkBanner)
+
+    // Also check periodically in case sessionStorage changes
+    const interval = setInterval(checkBanner, 100)
+
+    return () => {
+      window.removeEventListener('storage', checkBanner)
+      clearInterval(interval)
+    }
+  }, [])
 
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw error
-      
+
       // Clear only auth-related storage, keep cart data
       // Remove Supabase auth tokens
       const keysToRemove = []
@@ -38,15 +65,19 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
         }
       }
       keysToRemove.forEach(key => localStorage.removeItem(key))
-      
+
       // Clear session storage (but not announcement banner preference)
       for (let i = sessionStorage.length - 1; i >= 0; i--) {
         const key = sessionStorage.key(i)
-        if (key && !key.includes('announcementBannerClosed') && (key.includes('supabase') || key.includes('auth'))) {
+        if (
+          key &&
+          !key.includes('announcementBannerClosed') &&
+          (key.includes('supabase') || key.includes('auth'))
+        ) {
           sessionStorage.removeItem(key)
         }
       }
-      
+
       toast.success('Signed out successfully')
       router.push('/login')
       router.refresh()
@@ -71,7 +102,10 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <header
+      className="fixed left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
+      style={{ top: `${bannerHeight}px` }}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}

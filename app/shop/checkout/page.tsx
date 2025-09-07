@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { CartProvider } from '@/components/providers/CartProvider'
+import { useSandbox } from '@/lib/contexts/sandbox-context'
 
 interface CustomerInfo {
   name: string
@@ -28,6 +29,7 @@ interface DeliveryAddress {
 
 function CheckoutContent() {
   const { cartDetails, cartCount, totalPrice, clearCart } = useShoppingCart()
+  const { isSandboxMode, setUserEmail } = useSandbox()
   const [mounted, setMounted] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -101,7 +103,10 @@ function CheckoutContent() {
 
       if (data.paymentLink) {
         clearCart()
-        toast.success('Redirecting to payment...')
+        const message = data.sandboxMode
+          ? '🧪 Redirecting to Square Sandbox payment...'
+          : 'Redirecting to payment...'
+        toast.success(message)
         window.location.href = data.paymentLink
       } else {
         throw new Error('No payment link received')
@@ -170,7 +175,14 @@ function CheckoutContent() {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Customer Information</CardTitle>
+              <CardTitle>
+                Customer Information
+                {isSandboxMode && (
+                  <span className="ml-2 text-sm font-normal text-orange-600">
+                    (🧪 Sandbox Mode Active)
+                  </span>
+                )}
+              </CardTitle>
             </CardHeader>
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-6">
@@ -195,7 +207,14 @@ function CheckoutContent() {
                         type="email"
                         placeholder="john@example.com"
                         value={customerInfo.email}
-                        onChange={e => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                        onChange={e => {
+                          const newEmail = e.target.value
+                          setCustomerInfo({ ...customerInfo, email: newEmail })
+                          // Update sandbox context when email changes
+                          if (newEmail) {
+                            setUserEmail(newEmail)
+                          }
+                        }}
                         required
                       />
                     </div>

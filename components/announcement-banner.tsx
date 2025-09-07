@@ -33,7 +33,7 @@ export default function AnnouncementBanner() {
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="sticky top-0 z-50 bg-gradient-to-r from-black via-gray-900 to-black text-white overflow-hidden"
+          className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-black via-gray-900 to-black text-white overflow-hidden"
         >
           <div className="relative">
             {/* Animated background pattern */}

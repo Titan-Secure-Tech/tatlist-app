@@ -4,6 +4,7 @@ import './globals.css'
 // import { Header } from "@/components/layout/header";
 import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/components/providers/CartProvider'
+import { SandboxProvider } from '@/lib/contexts/sandbox-context'
 import { PWAInstaller } from '@/components/PWAInstaller'
 
 const geistSans = Geist({
@@ -70,11 +71,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <CartProvider>
-          <PWAInstaller />
-          <main className="min-h-screen">{children}</main>
-          <Toaster />
-        </CartProvider>
+        <SandboxProvider>
+          <CartProvider>
+            <PWAInstaller />
+            <main className="min-h-screen">{children}</main>
+            <Toaster />
+          </CartProvider>
+        </SandboxProvider>
       </body>
     </html>
   )

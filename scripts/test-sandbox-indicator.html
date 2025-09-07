@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Sandbox Indicator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .sandbox-badge { background: #fed7aa; color: #9a3412; padding: 4px 8px; border-radius: 4px; font-size: 14px; }
+        .success { background: #dcfce7; border-color: #16a34a; }
+        .fail { background: #fee2e2; border-color: #dc2626; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Sandbox Indicator Testing Guide</h1>
+    
+    <div class="test-section">
+        <h2>Test Setup Instructions</h2>
+        <p>To test the sandbox indicator functionality:</p>
+        <ol>
+            <li>Open <strong>http://localhost:7500</strong> in your browser</li>
+            <li>Navigate to <strong>/shop</strong> to add items to cart</li>
+            <li>Go to <strong>/shop/checkout</strong> to test the checkout form</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Expected Results</h2>
+        
+        <h3>🧪 Test User: crushjunkmail@gmail.com</h3>
+        <ul>
+            <li>✅ Navigation bar should show: <span class="sandbox-badge">🧪 Sandbox Mode</span></li>
+            <li>✅ Checkout form should show: "Customer Information (🧪 Sandbox Mode Active)"</li>
+            <li>✅ Payment redirect should show: "🧪 Redirecting to Square Sandbox payment..."</li>
+        </ul>
+
+        <h3>🧪 Test User: james@familiawashington.com</h3>
+        <ul>
+            <li>✅ Navigation bar should show: <span class="sandbox-badge">🧪 Sandbox Mode</span></li>
+            <li>✅ Checkout form should show: "Customer Information (🧪 Sandbox Mode Active)"</li>
+            <li>✅ Payment redirect should show: "🧪 Redirecting to Square Sandbox payment..."</li>
+        </ul>
+
+        <h3>👤 Regular User: customer@example.com</h3>
+        <ul>
+            <li>❌ Navigation bar should NOT show sandbox badge</li>
+            <li>❌ Checkout form should show: "Customer Information" (no sandbox indicator)</li>
+            <li>❌ Payment redirect should show: "Redirecting to payment..."</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>Testing Steps</h2>
+        <ol>
+            <li><strong>Clear browser localStorage</strong> to start fresh</li>
+            <li><strong>Navigate to checkout page</strong></li>
+            <li><strong>Enter test email</strong> (crushjunkmail@gmail.com)</li>
+            <li><strong>Verify sandbox indicator appears</strong> in navigation and form</li>
+            <li><strong>Clear email field</strong> and enter regular email</li>
+            <li><strong>Verify sandbox indicator disappears</strong></li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Troubleshooting</h2>
+        <p>If sandbox indicator doesn't appear:</p>
+        <ul>
+            <li>Check browser console for errors</li>
+            <li>Verify email is exactly: <code>crushjunkmail@gmail.com</code> or <code>james@familiawashington.com</code></li>
+            <li>Clear browser cache and localStorage</li>
+            <li>Check that SandboxProvider is wrapping the app</li>
+        </ul>
+    </div>
+
+    <script>
+        // Helper to clear localStorage for testing
+        function clearTestData() {
+            localStorage.removeItem('tatlist-user-email');
+            localStorage.removeItem('tatlist-sandbox-mode');
+            alert('Test data cleared! Refresh the page.');
+        }
+        
+        // Add button to clear test data
+        const button = document.createElement('button');
+        button.textContent = 'Clear Test Data';
+        button.onclick = clearTestData;
+        button.style.cssText = 'padding: 10px 20px; margin: 20px 0; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer;';
+        document.body.appendChild(button);
+    </script>
+</body>
+</html>

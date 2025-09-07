@@ -9,37 +9,32 @@ ADD COLUMN IF NOT EXISTS sync_source TEXT DEFAULT 'manual';
 -- Create index for Square catalog ID
 CREATE INDEX IF NOT EXISTS idx_products_square_catalog_id ON public.products(square_catalog_id);
 
--- Create orders table
-CREATE TABLE IF NOT EXISTS public.orders (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  order_number TEXT UNIQUE NOT NULL,
-  square_order_id TEXT UNIQUE,
-  square_payment_id TEXT,
-  user_id UUID REFERENCES auth.users(id),
-  customer_email TEXT NOT NULL,
-  customer_name TEXT NOT NULL,
-  customer_phone TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  payment_status TEXT DEFAULT 'pending',
-  total_amount DECIMAL(10, 2) NOT NULL,
-  subtotal DECIMAL(10, 2) NOT NULL,
-  delivery_fee DECIMAL(10, 2) DEFAULT 0,
-  tax_amount DECIMAL(10, 2) DEFAULT 0,
-  currency TEXT DEFAULT 'USD',
-  items JSONB NOT NULL,
-  delivery_address JSONB,
-  payment_method TEXT,
-  square_receipt_url TEXT,
-  notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  paid_at TIMESTAMPTZ,
-  fulfilled_at TIMESTAMPTZ,
-  cancelled_at TIMESTAMPTZ
-);
+-- Add Square-specific fields to existing orders table
+ALTER TABLE public.orders
+ADD COLUMN IF NOT EXISTS square_order_id TEXT UNIQUE,
+ADD COLUMN IF NOT EXISTS square_payment_id TEXT,
+ADD COLUMN IF NOT EXISTS customer_email TEXT,
+ADD COLUMN IF NOT EXISTS customer_name TEXT,
+ADD COLUMN IF NOT EXISTS customer_phone TEXT,
+ADD COLUMN IF NOT EXISTS payment_status TEXT DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS subtotal DECIMAL(10, 2),
+ADD COLUMN IF NOT EXISTS delivery_fee DECIMAL(10, 2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(10, 2) DEFAULT 0,
+ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'USD',
+ADD COLUMN IF NOT EXISTS delivery_address JSONB,
+ADD COLUMN IF NOT EXISTS payment_method TEXT,
+ADD COLUMN IF NOT EXISTS square_receipt_url TEXT,
+ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS fulfilled_at TIMESTAMPTZ,
+ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
 
--- Create indexes for orders
-CREATE INDEX IF NOT EXISTS idx_orders_square_order_id ON public.orders(square_order_id);
+-- Create indexes for orders (only if column exists)
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'orders' AND column_name = 'square_order_id') THEN
+    CREATE INDEX IF NOT EXISTS idx_orders_square_order_id ON public.orders(square_order_id);
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON public.orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_customer_email ON public.orders(customer_email);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(status);
@@ -108,6 +103,7 @@ ALTER TABLE public.square_sync_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own orders" ON public.orders
   FOR SELECT USING (auth.uid() = user_id OR auth.jwt()->>'email' = customer_email);
 
+DROP POLICY IF EXISTS "Service role can manage orders" ON public.orders;
 CREATE POLICY "Service role can manage orders" ON public.orders
   FOR ALL USING (auth.role() = 'service_role');
 
