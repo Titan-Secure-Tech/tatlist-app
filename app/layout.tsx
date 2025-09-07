@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-// import { Header } from "@/components/layout/header";
+import { SiteHeader } from '@/components/layout/site-header'
+import { SiteFooter } from '@/components/layout/site-footer'
 import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/components/providers/CartProvider'
 import { SandboxProvider } from '@/lib/contexts/sandbox-context'
@@ -74,7 +75,11 @@ export default function RootLayout({
         <SandboxProvider>
           <CartProvider>
             <PWAInstaller />
-            <main className="min-h-screen">{children}</main>
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
             <Toaster />
           </CartProvider>
         </SandboxProvider>
