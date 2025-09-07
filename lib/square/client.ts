@@ -1,14 +1,14 @@
 import { SquareClient, SquareEnvironment } from 'square'
-import type { TypedSquareClient } from '@/lib/types/square'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
+// Initialize Square client with correct parameters
 export const squareClient = new SquareClient({
-  token: isProduction
+  accessToken: isProduction
     ? process.env.SQUARE_PRODUCTION_ACCESS_TOKEN!
     : process.env.SQUARE_SANDBOX_ACCESS_TOKEN!,
   environment: isProduction ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
-}) as TypedSquareClient
+})
 
 export const SQUARE_LOCATION_ID = isProduction
   ? process.env.SQUARE_PRODUCTION_LOCATION_ID!

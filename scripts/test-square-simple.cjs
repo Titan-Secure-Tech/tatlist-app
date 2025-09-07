@@ -1,8 +1,5 @@
-import { SquareClient, SquareEnvironment } from 'square';
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config({ path: '.env.local' });
+const { SquareClient, SquareEnvironment } = require('square');
+require('dotenv').config({ path: '.env.local' });
 
 const squareClient = new SquareClient({
   accessToken: process.env.SQUARE_SANDBOX_ACCESS_TOKEN?.trim(),
@@ -13,29 +10,35 @@ async function testConnection() {
   try {
     console.log('Testing Square API connection...');
     console.log('Access Token:', process.env.SQUARE_SANDBOX_ACCESS_TOKEN ? 'Found' : 'Missing');
+    console.log('Location ID:', process.env.SQUARE_SANDBOX_LOCATION_ID ? 'Found' : 'Missing');
     
     // Test 1: Fetch locations
-    const { result: locationsResult } = await squareClient.locationsApi.listLocations();
-    console.log('\n✅ Successfully connected to Square API');
-    console.log(`Found ${locationsResult?.locations?.length || 0} location(s)`);
+    const locationsResponse = await squareClient.locationsApi.listLocations();
+    const locations = locationsResponse.result.locations;
     
-    if (locationsResult?.locations && locationsResult.locations.length > 0) {
+    console.log('\n✅ Successfully connected to Square API');
+    console.log(`Found ${locations?.length || 0} location(s)`);
+    
+    if (locations && locations.length > 0) {
       console.log('\nLocation details:');
-      locationsResult.locations.forEach(location => {
-        console.log(`- ${location.name} (${location.id})`);
+      locations.forEach(location => {
+        console.log(`- ${location.name} (ID: ${location.id})`);
+        console.log(`  Status: ${location.status}`);
+        console.log(`  Business Name: ${location.businessName || 'N/A'}`);
       });
     }
     
     // Test 2: Fetch catalog items
-    const { result: catalogResult } = await squareClient.catalogApi.listCatalog({
+    const catalogResponse = await squareClient.catalogApi.listCatalog({
       types: 'ITEM'
     });
     
-    console.log(`\n✅ Found ${catalogResult?.objects?.length || 0} catalog item(s)`);
+    const items = catalogResponse.result.objects;
+    console.log(`\n✅ Found ${items?.length || 0} catalog item(s)`);
     
-    if (catalogResult?.objects && catalogResult.objects.length > 0) {
+    if (items && items.length > 0) {
       console.log('\nFirst few items:');
-      catalogResult.objects.slice(0, 3).forEach(item => {
+      items.slice(0, 3).forEach(item => {
         console.log(`- ${item.itemData?.name} (${item.id})`);
         if (item.itemData?.variations) {
           item.itemData.variations.forEach(v => {
@@ -46,12 +49,16 @@ async function testConnection() {
           });
         }
       });
+    } else {
+      console.log('\nNo items found. You may need to create some products in your Square dashboard.');
+      console.log('Go to: https://squareup.com/dashboard/items/library');
     }
     
   } catch (error) {
     console.error('\n❌ Error connecting to Square API:', error.message);
     if (error.response) {
-      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.statusCode);
+      console.error('Response data:', error.response.body);
     }
     if (error.errors) {
       console.error('Error details:', error.errors);

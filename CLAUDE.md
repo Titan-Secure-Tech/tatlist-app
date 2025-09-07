@@ -44,6 +44,61 @@ bun add <package>  # Add a new dependency
 bun remove <package> # Remove a dependency
 ```
 
+### Square Integration & Payment Processing
+
+```bash
+# Database Setup
+bunx supabase db push --include-all  # Run Square integration migration
+
+# Product Sync
+bun run scripts/sync-square-products.ts  # Import Square catalog to Supabase
+
+# Testing Square Integration
+# 1. Visit /shop to see products
+# 2. Add items to cart and checkout
+# 3. Use test cards in sandbox:
+#    - Success: 4111 1111 1111 1111
+#    - Decline: 4000 0000 0000 0002
+```
+
+**Square Integration Status:**
+- ✅ Database schema created and applied (orders, payments, webhooks tables)
+- ✅ Test products created and working
+- ✅ Checkout flow with order creation in database
+- ✅ Payment processing route with order tracking
+- ✅ Webhook handler for payment confirmations
+- ✅ Enhanced payment success page with order details
+- ✅ Apple Pay domain verification configured and working
+- ⚠️  Square product sync requires OAuth scope permissions (ITEMS_READ/WRITE)
+
+**Apple Pay Configuration:**
+- ✅ Verification file accessible at: `https://tatlist.com/.well-known/apple-developer-merchantid-domain-association`
+- ✅ File served correctly via Next.js public directory
+- ✅ Ready for Square domain verification in production
+
+**Integration Test Results (Local):**
+- ✅ Products API returns 4 test products
+- ✅ Checkout API creates orders in database  
+- ✅ Apple Pay verification file loads correctly
+- ✅ Payment success page shows order details
+- ✅ Mock payment flow works end-to-end
+
+**Required Environment Variables for Square:**
+```bash
+# Square Sandbox
+SQUARE_SANDBOX_ACCESS_TOKEN=your_token
+SQUARE_SANDBOX_APPLICATION_ID=your_app_id
+SQUARE_SANDBOX_LOCATION_ID=your_location_id
+
+# Square Production (when ready)
+SQUARE_PRODUCTION_ACCESS_TOKEN=your_token
+SQUARE_PRODUCTION_APPLICATION_ID=your_app_id
+SQUARE_PRODUCTION_LOCATION_ID=your_location_id
+
+# Webhook Signature (production only)
+SQUARE_WEBHOOK_SIGNATURE_KEY=your_webhook_key
+```
+
 ### Supabase Development & Management
 
 ```bash

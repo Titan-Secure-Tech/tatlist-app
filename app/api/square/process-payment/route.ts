@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { mailgunService } from '@/lib/email/mailgun'
 import type { SquareCreatePaymentRequest, SquarePaymentResponse } from '@/lib/types/square'
+import type { OrderItem } from '@/lib/types/orders'
 
 interface CartItem {
   id: string
@@ -86,21 +87,39 @@ export async function POST(request: NextRequest) {
       throw new Error('Payment failed')
     }
 
-    // Create order in database
+    // Calculate totals
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const deliveryFee = 5.0
+    const taxAmount = amount - subtotal - deliveryFee
+    
+    // Prepare order items
+    const orderItems: OrderItem[] = items.map(item => ({
+      square_catalog_id: item.id,
+      product_name: item.name,
+      variant_name: item.variant,
+      quantity: item.quantity,
+      unit_price: item.price,
+      total_price: item.price * item.quantity,
+    }))
+
+    // Create order in database with new schema
     const orderData = {
       user_id: user?.id || null,
+      square_payment_id: paymentResult.payment.id,
       customer_name: customerInfo.name,
       customer_email: customerInfo.email,
       customer_phone: customerInfo.phone,
       delivery_address: deliveryAddress,
-      items: items,
-      subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-      delivery_fee: 5.0,
-      tax: amount - items.reduce((sum, item) => sum + item.price * item.quantity, 0) - 5.0,
-      total: amount,
-      payment_id: paymentResult.payment.id,
-      payment_status: paymentResult.payment.status,
-      status: 'pending',
+      items: orderItems,
+      subtotal: subtotal,
+      delivery_fee: deliveryFee,
+      tax_amount: taxAmount,
+      total_amount: amount,
+      currency: 'USD',
+      payment_status: paymentResult.payment.status === 'COMPLETED' ? 'completed' : 'processing',
+      status: 'processing',
+      payment_method: paymentResult.payment.sourceType,
+      paid_at: paymentResult.payment.status === 'COMPLETED' ? new Date().toISOString() : null,
     }
 
     const { data: order, error: orderError } = await supabase
@@ -108,6 +127,22 @@ export async function POST(request: NextRequest) {
       .insert(orderData)
       .select()
       .single()
+      
+    // Create normalized order items
+    if (order && !orderError) {
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(
+          orderItems.map(item => ({
+            ...item,
+            order_id: order.id,
+          }))
+        )
+      
+      if (itemsError) {
+        console.error('Failed to create order items:', itemsError)
+      }
+    }
 
     if (orderError) {
       console.error('Order creation error:', orderError)
@@ -123,12 +158,13 @@ export async function POST(request: NextRequest) {
     // Send order confirmation email
     try {
       await mailgunService.sendOrderConfirmation(customerInfo.email, {
-        orderId: order.id || paymentResult.payment.id,
+        orderId: order?.id || paymentResult.payment.id,
+        orderNumber: order?.order_number || 'N/A',
         customerName: customerInfo.name,
         items: items,
-        subtotal: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        deliveryFee: 5.0,
-        tax: amount - items.reduce((sum, item) => sum + item.price * item.quantity, 0) - 5.0,
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        tax: taxAmount,
         total: amount,
         deliveryAddress: deliveryAddress,
       })
@@ -138,9 +174,11 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      orderId: order.id,
+      orderId: order?.id,
+      orderNumber: order?.order_number,
       payment: paymentResult.payment,
       order,
+      receiptUrl: paymentResult.payment.receiptUrl,
     })
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
