@@ -23,6 +23,19 @@ const nextConfig = {
       },
     ];
   },
+  
+  // Rewrites to serve Apple Pay verification from API route
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Rewrite Apple Pay verification requests to the API route
+        {
+          source: '/.well-known/apple-developer-merchantid-domain-association',
+          destination: '/api/apple-pay-verification',
+        },
+      ],
+    };
+  },
   // Image configuration for remote patterns
   images: {
     remotePatterns: [

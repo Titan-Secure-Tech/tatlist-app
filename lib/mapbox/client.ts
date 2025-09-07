@@ -2,13 +2,14 @@ import mapboxSdk from '@mapbox/mapbox-sdk'
 import mapboxGeocoding from '@mapbox/mapbox-sdk/services/geocoding'
 import mapboxDirections from '@mapbox/mapbox-sdk/services/directions'
 
-// Initialize Mapbox client
-const baseClient = mapboxSdk({
-  accessToken: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
-})
+// Initialize Mapbox client with conditional check
+const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
-export const geocodingClient = mapboxGeocoding(baseClient)
-export const directionsClient = mapboxDirections(baseClient)
+// Only initialize if we have a token
+const baseClient = accessToken ? mapboxSdk({ accessToken }) : null
+
+export const geocodingClient = baseClient ? mapboxGeocoding(baseClient) : null
+export const directionsClient = baseClient ? mapboxDirections(baseClient) : null
 
 // Tampa delivery center coordinates (downtown Tampa)
 export const DELIVERY_CENTER = {
@@ -63,6 +64,14 @@ function toRad(value: number): number {
  */
 export async function validateDeliveryAddress(address: string): Promise<ValidationResult> {
   try {
+    // Check if Mapbox client is available
+    if (!geocodingClient) {
+      return {
+        isValid: false,
+        error: 'Delivery validation is temporarily unavailable. Please try again later.',
+      }
+    }
+
     // Geocode the address
     const response = await geocodingClient
       .forwardGeocode({
@@ -143,6 +152,11 @@ export async function getDeliveryEstimate(
   destinationLng: number
 ): Promise<{ duration: number; distance: number } | null> {
   try {
+    // Check if Mapbox client is available
+    if (!directionsClient) {
+      return null
+    }
+
     const response = await directionsClient
       .getDirections({
         profile: 'driving-traffic',
