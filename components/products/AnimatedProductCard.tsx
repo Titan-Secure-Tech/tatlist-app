@@ -229,50 +229,46 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
               </div>
             )}
 
-            {/* Quick action buttons */}
-            <AnimatePresence>
-              {isHovered && (
-                <motion.div
-                  className="absolute top-3 right-3 flex flex-col gap-2"
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                >
+            {/* Quick action buttons - Always visible for favorites, hover for quick view */}
+            <div className="absolute top-3 right-3 flex flex-col gap-2">
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                onClick={e => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  toggleFavorite()
+                }}
+                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10"
+                whileTap={{ scale: 0.95 }}
+              >
+                <Heart
+                  className={`h-4 w-4 transition-colors ${
+                    isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'
+                  }`}
+                />
+              </motion.button>
+              <AnimatePresence>
+                {isHovered && (
                   <motion.button
                     variants={buttonVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
                     onClick={e => {
                       e.preventDefault()
-                      toggleFavorite()
-                    }}
-                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Heart
-                      className={`h-4 w-4 transition-colors ${
-                        isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'
-                      }`}
-                    />
-                  </motion.button>
-                  <motion.button
-                    variants={{
-                      ...buttonVariants,
-                      visible: {
-                        ...buttonVariants.visible,
-                        transition: { delay: 0.1, duration: 0.3 },
-                      },
-                    }}
-                    onClick={e => {
-                      e.preventDefault()
+                      e.stopPropagation()
                       setShowQuickView(true)
                     }}
-                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
+                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10"
                     whileTap={{ scale: 0.95 }}
                   >
                     <Eye className="h-4 w-4 text-gray-600" />
                   </motion.button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </Link>
 

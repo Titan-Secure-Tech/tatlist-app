@@ -151,8 +151,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </h3>
         </Link>
-        <button onClick={toggleFavorite} className="p-1 hover:bg-gray-100 rounded ml-2">
-          <Heart className={`h-5 w-5 ${isFavorited ? 'fill-black text-black' : 'text-gray-400'}`} />
+        <button
+          onClick={e => {
+            e.preventDefault()
+            e.stopPropagation()
+            toggleFavorite()
+          }}
+          className="p-2 hover:bg-gray-100 rounded-full ml-2 transition-all hover:scale-110 active:scale-95"
+          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+        >
+          <Heart
+            className={`h-5 w-5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+          />
         </button>
       </div>
 
