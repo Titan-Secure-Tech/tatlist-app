@@ -60,13 +60,16 @@ ALTER TABLE public.square_customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.square_customer_sync_logs ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for square_customers
+DROP POLICY IF EXISTS "Users can view their own Square customer link" ON public.square_customers;
 CREATE POLICY "Users can view their own Square customer link" ON public.square_customers
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Service role can manage Square customers" ON public.square_customers;
 CREATE POLICY "Service role can manage Square customers" ON public.square_customers
   FOR ALL USING (auth.role() = 'service_role');
 
 -- RLS Policies for sync logs (admin only)
+DROP POLICY IF EXISTS "Service role can manage customer sync logs" ON public.square_customer_sync_logs;
 CREATE POLICY "Service role can manage customer sync logs" ON public.square_customer_sync_logs
   FOR ALL USING (auth.role() = 'service_role');
 
