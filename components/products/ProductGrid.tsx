@@ -31,7 +31,7 @@ export default function ProductGrid({
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
     // First filter
-    let filtered = products
+    let filtered = [...products]
 
     if (activeFilter === 'new') {
       // Filter by new arrivals (products with 'new' or 'latest' tags)
@@ -87,7 +87,7 @@ export default function ProductGrid({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-wrap gap-4 items-center justify-between"
+          className="mb-8 flex flex-wrap gap-4 items-center justify-between relative z-10"
         >
           <div className="flex gap-2">
             <button
@@ -122,16 +122,28 @@ export default function ProductGrid({
             </button>
           </div>
 
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as SortType)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black"
-          >
-            <option value="featured">Sort by: Featured</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="newest">Newest First</option>
-          </select>
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as SortType)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black cursor-pointer appearance-none pr-10"
+              style={{ minWidth: '200px' }}
+            >
+              <option value="featured">Sort by: Featured</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="newest">Newest First</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+              <svg
+                className="h-4 w-4 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
         </motion.div>
       )}
 
@@ -166,7 +178,19 @@ export default function ProductGrid({
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-500">Try adjusting your filters or check back later.</p>
+          <p className="text-gray-500 mb-4">
+            {activeFilter !== 'all'
+              ? `No products match the "${activeFilter === 'new' ? 'New Arrivals' : 'Best Sellers'}" filter.`
+              : 'No products available at this time.'}
+          </p>
+          {activeFilter !== 'all' && (
+            <button
+              onClick={() => setActiveFilter('all')}
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Show All Products
+            </button>
+          )}
         </motion.div>
       )}
     </div>
