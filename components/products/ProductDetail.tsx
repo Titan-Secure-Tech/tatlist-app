@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface ProductDetailProps {
   product: Product
@@ -14,11 +16,82 @@ interface ProductDetailProps {
 export default function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isFavorited, setIsFavorited] = useState(false)
   const router = useRouter()
   const { addItem } = useShoppingCart()
+  const supabase = createClient()
 
   const images = product.images || []
   const attachments = (product as Product & { attachments?: string[] }).attachments || []
+
+  useEffect(() => {
+    // Check if product is favorited on mount
+    const checkFavorite = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data } = await supabase
+        .from('favorites')
+        .select('id')
+        .match({ user_id: user.id, product_id: product.id })
+        .maybeSingle()
+
+      if (data) setIsFavorited(true)
+    }
+
+    checkFavorite()
+  }, [product.id, supabase])
+
+  const toggleFavorite = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      toast.error('Please sign in to add favorites')
+      return
+    }
+
+    try {
+      if (isFavorited) {
+        const { error } = await supabase
+          .from('favorites')
+          .delete()
+          .match({ user_id: user.id, product_id: product.id })
+
+        if (error) throw error
+
+        setIsFavorited(false)
+        toast.success('Removed from favorites')
+      } else {
+        // Use upsert to handle potential duplicates
+        const { error } = await supabase
+          .from('favorites')
+          .upsert(
+            { user_id: user.id, product_id: product.id },
+            { onConflict: 'user_id,product_id' }
+          )
+
+        if (error) {
+          // If upsert fails, it might already exist, so just set as favorited
+          if (error.code === '23505' || error.message?.includes('duplicate')) {
+            setIsFavorited(true)
+            toast.info('Already in favorites')
+          } else {
+            throw error
+          }
+        } else {
+          setIsFavorited(true)
+          toast.success('Added to favorites!')
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      toast.error('Failed to update favorites')
+    }
+  }
 
   const handleAddToCart = () => {
     addItem(
@@ -205,8 +278,15 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
               </button>
 
-              <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50">
-                <Heart className="h-5 w-5" />
+              <button
+                onClick={toggleFavorite}
+                type="button"
+                className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <Heart
+                  className={`h-5 w-5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'}`}
+                />
               </button>
             </div>
           </div>
