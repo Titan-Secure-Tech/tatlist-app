@@ -66,6 +66,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_business_details_updated_at ON public.business_details;
 CREATE TRIGGER update_business_details_updated_at
   BEFORE UPDATE ON public.business_details
   FOR EACH ROW
