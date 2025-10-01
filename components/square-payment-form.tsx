@@ -23,9 +23,13 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
   useEffect(() => {
     const initializeSquare = async () => {
       if (!window.Square) {
-        // Load Square Web SDK script
+        // Load Square Web SDK script - use production in production environment
+        const isProduction = process.env.NODE_ENV === 'production'
+        const scriptUrl = isProduction
+          ? 'https://web.squarecdn.com/v1/square.js'
+          : 'https://sandbox.web.squarecdn.com/v1/square.js'
         const script = document.createElement('script')
-        script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'
+        script.src = scriptUrl
         script.async = true
         script.onload = () => initializePayments()
         script.onerror = () => {
@@ -43,8 +47,13 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
 
     const initializePayments = async () => {
       try {
-        const applicationId = process.env.NEXT_PUBLIC_SQUARE_SANDBOX_APPLICATION_ID
-        const locationId = process.env.NEXT_PUBLIC_SQUARE_SANDBOX_LOCATION_ID
+        const isProduction = process.env.NODE_ENV === 'production'
+        const applicationId = isProduction
+          ? process.env.NEXT_PUBLIC_SQUARE_PRODUCTION_APPLICATION_ID
+          : process.env.NEXT_PUBLIC_SQUARE_SANDBOX_APPLICATION_ID
+        const locationId = isProduction
+          ? process.env.NEXT_PUBLIC_SQUARE_PRODUCTION_LOCATION_ID
+          : process.env.NEXT_PUBLIC_SQUARE_SANDBOX_LOCATION_ID
 
         if (!applicationId || !locationId) {
           console.error('Square credentials missing:', {
