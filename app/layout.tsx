@@ -25,6 +25,15 @@ export const metadata: Metadata = {
   keywords:
     'Tampa tattoo supply, tattoo supplies Tampa FL, tattoo equipment Tampa, tattoo ink Tampa, tattoo needles Tampa, Tampa Bay tattoo supplies, Hillsborough County tattoo supply, St Petersburg tattoo supplies, Clearwater tattoo supplies, professional tattoo supplies Florida',
   authors: [{ name: 'Tatlist' }],
+  applicationName: 'Tatlist - Tampa Tattoo Supply',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Tatlist',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: 'Tampa Tattoo Supply | Professional Equipment & Same-Day Delivery',
     description:
@@ -53,13 +62,14 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  manifest: '/manifest.webmanifest',
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   viewportFit: 'cover',
   themeColor: '#FFB347',
 }

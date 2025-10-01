@@ -18,9 +18,10 @@ export function AnimatedCartIcon({ className }: AnimatedCartIconProps) {
     <>
       <motion.button
         onClick={() => setIsDrawerOpen(true)}
-        className={`relative p-2 hover:bg-gray-100 rounded-lg transition-colors ${className}`}
+        className={`relative p-3 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${className}`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        aria-label={`Open cart (${cartCount || 0} items)`}
       >
         <ShoppingBag className="h-5 w-5" />
 

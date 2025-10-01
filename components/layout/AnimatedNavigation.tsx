@@ -164,22 +164,23 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
             {/* Cart Icon */}
             <AnimatedCartIcon />
 
-            {/* Sign Out Button */}
+            {/* Sign Out Button - Enhanced touch target for mobile */}
             <motion.button
               onClick={handleSignOut}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title="Sign out"
+              aria-label="Sign out"
             >
               <LogOut className="w-5 h-5" />
             </motion.button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation - Improved visibility and touch targets */}
         <motion.div
-          className="md:hidden flex items-center gap-2 pb-3 overflow-x-auto scrollbar-hide"
+          className="md:hidden flex items-center gap-2 pb-4 pt-2 overflow-x-auto scrollbar-hide -mx-4 px-4"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -190,12 +191,12 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
             return (
               <Link key={item.href} href={item.href}>
                 <motion.div
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap text-sm ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-medium ${
                     isActive ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-4 h-4" />
                   <span>{item.label}</span>
                 </motion.div>
               </Link>
