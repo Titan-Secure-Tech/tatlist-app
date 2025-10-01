@@ -4,9 +4,9 @@ import { ArrowLeft, Package } from 'lucide-react'
 import ProductGrid from '@/components/products/ProductGrid'
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // Map URL slugs to category names
@@ -30,7 +30,7 @@ const categoryMap: Record<string, string> = {
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = params
+  const { slug } = await params
   const categoryName = categoryMap[slug] || decodeURIComponent(slug)
 
   const supabase = await createClient()

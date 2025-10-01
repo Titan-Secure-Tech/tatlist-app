@@ -1,16 +1,49 @@
 import { createClient } from '@/lib/supabase/server'
 import ProductGrid from '@/components/products/ProductGrid'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
-export default async function ProductsPage() {
+interface ProductsPageProps {
+  searchParams: Promise<{ category?: string }>
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const supabase = await createClient()
+  const params = await searchParams
+  const categoryFilter = params?.category
 
-  const { data: products } = await supabase.from('products').select('*').order('name')
+  // Fetch products, optionally filtered by category
+  let query = supabase.from('products').select('*').order('name')
+
+  if (categoryFilter) {
+    query = query.ilike('category', categoryFilter)
+  }
+
+  const { data: products } = await query
 
   return (
     <div className="max-w-7xl mx-auto">
+      {categoryFilter && (
+        <div className="mb-6">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            All Products
+          </Link>
+        </div>
+      )}
+
       <div className="mb-8">
-        <h1 className="text-3xl font-light text-gray-900 mb-2">All Products</h1>
-        <p className="text-gray-500">Discover our curated collection</p>
+        <h1 className="text-3xl font-light text-gray-900 mb-2">
+          {categoryFilter ? categoryFilter : 'All Products'}
+        </h1>
+        <p className="text-gray-500">
+          {categoryFilter
+            ? `${products?.length || 0} products in this category`
+            : 'Discover our curated collection'}
+        </p>
       </div>
 
       <ProductGrid products={products || []} showFilters={true} />
