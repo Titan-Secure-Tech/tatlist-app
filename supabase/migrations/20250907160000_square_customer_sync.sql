@@ -91,6 +91,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger to update updated_at timestamp
+DROP TRIGGER IF EXISTS update_square_customers_updated_at ON public.square_customers;
 CREATE TRIGGER update_square_customers_updated_at
   BEFORE UPDATE ON public.square_customers
   FOR EACH ROW
