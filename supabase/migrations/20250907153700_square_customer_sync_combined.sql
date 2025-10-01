@@ -1,6 +1,9 @@
 -- Combined Square Customer Sync Migration
 -- This migration combines all customer sync functionality
 
+-- Enable uuid extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Create table to link Supabase auth users with Square customers
 CREATE TABLE IF NOT EXISTS public.square_customers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
