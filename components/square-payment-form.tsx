@@ -28,6 +28,13 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
         script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'
         script.async = true
         script.onload = () => initializePayments()
+        script.onerror = () => {
+          console.error('Failed to load Square Web SDK')
+          setError(
+            'Failed to load payment system. Please check your internet connection and refresh.'
+          )
+          setIsInitializing(false)
+        }
         document.body.appendChild(script)
       } else {
         await initializePayments()
@@ -40,7 +47,17 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
         const locationId = process.env.NEXT_PUBLIC_SQUARE_SANDBOX_LOCATION_ID
 
         if (!applicationId || !locationId) {
-          throw new Error('Square credentials not configured')
+          console.error('Square credentials missing:', {
+            applicationId: applicationId ? 'SET' : 'MISSING',
+            locationId: locationId ? 'SET' : 'MISSING',
+          })
+          throw new Error(
+            'Square payment credentials are not configured. Please check your environment variables.'
+          )
+        }
+
+        if (!window.Square) {
+          throw new Error('Square Web SDK failed to load. Please check your internet connection.')
         }
 
         const paymentsInstance = (
@@ -84,7 +101,11 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
         setIsInitializing(false)
       } catch (error) {
         console.error('Error initializing Square payments:', error)
-        setError('Failed to initialize payment form. Please refresh and try again.')
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Failed to initialize payment form. Please refresh and try again.'
+        setError(errorMessage)
         setIsInitializing(false)
       }
     }
@@ -155,6 +176,21 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         <span className="ml-2 text-muted-foreground">Initializing payment form...</span>
+      </div>
+    )
+  }
+
+  if (error && !card) {
+    return (
+      <div className="space-y-4">
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+        <div className="text-center py-4">
+          <Button onClick={() => window.location.reload()} variant="outline" className="w-full">
+            Refresh Page and Try Again
+          </Button>
+        </div>
       </div>
     )
   }
