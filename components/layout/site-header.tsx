@@ -24,6 +24,10 @@ const navigationItems: NavItem[] = [
     href: '/shop',
   },
   {
+    title: 'Favorites',
+    href: '/favorites',
+  },
+  {
     title: 'About',
     href: '/about',
   },

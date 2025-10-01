@@ -28,6 +28,11 @@ const navigationItems: NavItem[] = [
     description: 'Browse products',
   },
   {
+    title: 'Favorites',
+    href: '/favorites',
+    description: 'View your favorite products',
+  },
+  {
     title: 'About',
     href: '/about',
     description: 'Learn more about us',
