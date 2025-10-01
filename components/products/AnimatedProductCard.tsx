@@ -230,7 +230,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
             )}
 
             {/* Quick action buttons - Always visible for favorites, hover for quick view */}
-            <div className="absolute top-3 right-3 flex flex-col gap-2">
+            <div className="absolute top-3 right-3 flex flex-col gap-2 z-20">
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -240,7 +240,8 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                   e.stopPropagation()
                   toggleFavorite()
                 }}
-                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10"
+                type="button"
+                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer"
                 whileTap={{ scale: 0.95 }}
               >
                 <Heart

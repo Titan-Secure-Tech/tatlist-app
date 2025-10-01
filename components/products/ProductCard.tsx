@@ -146,18 +146,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       <div className="flex justify-between items-start mb-4">
-        <Link href={`/products/${product.id}`} className="flex-1">
+        <Link href={`/products/${product.id}`} className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-black line-clamp-2 hover:underline">
             {product.name}
           </h3>
         </Link>
         <button
-          onClick={e => {
-            e.preventDefault()
-            e.stopPropagation()
-            toggleFavorite()
-          }}
-          className="p-2 hover:bg-gray-100 rounded-full ml-2 transition-all hover:scale-110 active:scale-95"
+          onClick={toggleFavorite}
+          type="button"
+          className="p-2 hover:bg-gray-100 rounded-full ml-2 transition-all hover:scale-110 active:scale-95 flex-shrink-0 relative z-10 cursor-pointer"
           aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
         >
           <Heart
