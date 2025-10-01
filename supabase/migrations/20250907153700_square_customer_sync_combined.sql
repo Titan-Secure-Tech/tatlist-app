@@ -1,12 +1,9 @@
 -- Combined Square Customer Sync Migration
 -- This migration combines all customer sync functionality
 
--- Enable uuid extension if not already enabled
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- Create table to link Supabase auth users with Square customers
 CREATE TABLE IF NOT EXISTS public.square_customers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   square_customer_id TEXT UNIQUE NOT NULL,
   email TEXT NOT NULL,
@@ -35,7 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_square_customers_last_synced_at ON public.square_
 
 -- Create table for tracking customer sync operations
 CREATE TABLE IF NOT EXISTS public.square_customer_sync_logs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sync_type TEXT NOT NULL, -- 'scheduled', 'manual', 'webhook', 'checkout'
   sync_direction TEXT NOT NULL, -- 'supabase_to_square', 'square_to_supabase', 'bidirectional'
   status TEXT NOT NULL, -- 'started', 'completed', 'failed', 'partial'
