@@ -49,7 +49,7 @@ export default async function DashboardPage() {
         </Link>
 
         <Link
-          href="/cart"
+          href="/inventory-lists"
           className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="flex items-center space-x-3">
@@ -64,13 +64,13 @@ export default async function DashboardPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 11-4 0v-6m4 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                 />
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-black">Shopping Cart</h3>
-              <p className="text-sm text-gray-600">Review your items</p>
+              <h3 className="text-lg font-medium text-black">Inventory Lists</h3>
+              <p className="text-sm text-gray-600">Manage your inventory</p>
             </div>
           </div>
         </Link>
@@ -96,35 +96,8 @@ export default async function DashboardPage() {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-black">Orders</h3>
+              <h3 className="text-lg font-medium text-black">Recent Orders</h3>
               <p className="text-sm text-gray-600">View order history</p>
-            </div>
-          </div>
-        </Link>
-
-        <Link
-          href="/profile"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Profile</h3>
-              <p className="text-sm text-gray-600">Manage account settings</p>
             </div>
           </div>
         </Link>
