@@ -79,13 +79,13 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
       }
 
       toast.success('Signed out successfully')
-      router.push('/login')
+      router.push('/')
       router.refresh()
     } catch (error) {
       console.error('Sign out error:', error)
       toast.error('Failed to sign out. Please try again.')
-      // Force redirect to login even if signout fails
-      router.push('/login')
+      // Force redirect to home even if signout fails
+      router.push('/')
     }
   }
 
