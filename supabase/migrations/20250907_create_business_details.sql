@@ -23,26 +23,29 @@ CREATE TABLE IF NOT EXISTS public.business_details (
 );
 
 -- Create index for faster lookups
-CREATE INDEX idx_business_details_user_id ON public.business_details(user_id);
-CREATE INDEX idx_business_details_license_number ON public.business_details(license_number);
+CREATE INDEX IF NOT EXISTS idx_business_details_user_id ON public.business_details(user_id);
+CREATE INDEX IF NOT EXISTS idx_business_details_license_number ON public.business_details(license_number);
 
 -- Add RLS policies
 ALTER TABLE public.business_details ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can view their own business details
-CREATE POLICY "Users can view own business details" 
+DROP POLICY IF EXISTS "Users can view own business details" ON public.business_details;
+CREATE POLICY "Users can view own business details"
   ON public.business_details
   FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Policy: Users can insert their own business details
-CREATE POLICY "Users can insert own business details" 
+DROP POLICY IF EXISTS "Users can insert own business details" ON public.business_details;
+CREATE POLICY "Users can insert own business details"
   ON public.business_details
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Policy: Users can update their own business details
-CREATE POLICY "Users can update own business details" 
+DROP POLICY IF EXISTS "Users can update own business details" ON public.business_details;
+CREATE POLICY "Users can update own business details"
   ON public.business_details
   FOR UPDATE
   USING (auth.uid() = user_id)
