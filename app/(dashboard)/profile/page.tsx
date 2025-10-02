@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { User } from 'lucide-react'
+import { PushNotificationToggle } from '@/components/push-notifications/PushNotificationToggle'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -13,7 +14,7 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto space-y-6">
       <div className="bg-white border border-gray-200 rounded-lg p-8">
         <div className="flex items-center mb-6">
           <User className="h-8 w-8 text-gray-600 mr-3" />
@@ -56,6 +57,12 @@ export default async function ProfilePage() {
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Push Notifications Settings */}
+      <div className="bg-white border border-gray-200 rounded-lg p-8">
+        <h2 className="text-xl font-bold text-black mb-4">Notification Settings</h2>
+        <PushNotificationToggle />
       </div>
     </div>
   )
