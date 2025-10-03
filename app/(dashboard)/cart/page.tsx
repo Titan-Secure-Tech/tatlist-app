@@ -19,7 +19,6 @@ export default function CartPage() {
     incrementItem,
     decrementItem,
     clearCart,
-    formattedTotalPrice,
     cartCount,
     totalPrice,
   } = useShoppingCart()
@@ -32,7 +31,7 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     // Navigate to the checkout page
-    window.location.href = '/checkout'
+    window.location.href = '/shop/checkout'
   }
 
   // Debug logging
@@ -73,6 +72,8 @@ export default function CartPage() {
   }
 
   const cartItems = cartDetails ? Object.values(cartDetails) : []
+  const subtotal = (totalPrice ?? 0) / 100
+  const deliveryFee = 5.0
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex flex-col">
@@ -202,11 +203,11 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
+                  <span>${subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span>Calculated at checkout</span>
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span>${deliveryFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tax</span>
@@ -218,7 +219,7 @@ export default function CartPage() {
 
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
-                <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
+                <span>${(subtotal + deliveryFee).toFixed(2)}</span>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
