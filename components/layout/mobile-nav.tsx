@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Logo } from '@/components/ui/logo'
 import { cn } from '@/lib/utils'
+import type { User } from '@supabase/supabase-js'
 
 interface NavItem {
   title: string
@@ -39,9 +40,18 @@ const navigationItems: NavItem[] = [
   },
 ]
 
-export function MobileNav() {
+export function MobileNav({ user }: { user: User | null }) {
   const pathname = usePathname()
   const [open, setOpen] = React.useState(false)
+
+  // Filter navigation items based on authentication state
+  const filteredNavigationItems = navigationItems.filter(item => {
+    // Hide "Shop" for unauthenticated users
+    if (item.title === 'Shop' && !user) {
+      return false
+    }
+    return true
+  })
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -62,7 +72,7 @@ export function MobileNav() {
         </SheetHeader>
         <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
           <div className="flex flex-col space-y-3">
-            {navigationItems.map(item => (
+            {filteredNavigationItems.map(item => (
               <MobileLink
                 key={item.href}
                 href={item.href}
