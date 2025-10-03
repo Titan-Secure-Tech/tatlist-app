@@ -92,7 +92,7 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
   const navItems: NavItem[] = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/products', label: 'Products', icon: ShoppingBag },
-    { href: '/inventory-lists', label: 'Lists', icon: List },
+    { href: '/inventory-lists', label: 'My Inventory', icon: List },
     { href: '/orders', label: 'Orders', icon: Package },
     { href: '/profile', label: 'Profile', icon: User },
   ]
