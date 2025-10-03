@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable typed routes for better type safety
-  experimental: {
-    typedRoutes: true,
-  },
-  
+  typedRoutes: true,
+
   // Headers for Apple Pay domain verification
   async headers() {
     return [
@@ -23,7 +21,7 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Rewrites to serve Apple Pay verification from API route
   async rewrites() {
     return {
@@ -80,20 +78,6 @@ const nextConfig = {
   // Ignore ESLint errors during build
   eslint: {
     ignoreDuringBuilds: true,
-  },
-
-  // Suppress webpack warnings about Node.js APIs in Edge Runtime
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-      }
-    }
-    return config
   },
 }
 

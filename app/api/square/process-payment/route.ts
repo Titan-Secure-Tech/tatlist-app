@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
     const deliveryFee = 5.0
     const taxAmount = amount - subtotal - deliveryFee
-    
+
     // Prepare order items
     const orderItems: OrderItem[] = items.map(item => ({
       square_catalog_id: item.id,
@@ -127,18 +127,16 @@ export async function POST(request: NextRequest) {
       .insert(orderData)
       .select()
       .single()
-      
+
     // Create normalized order items
     if (order && !orderError) {
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(
-          orderItems.map(item => ({
-            ...item,
-            order_id: order.id,
-          }))
-        )
-      
+      const { error: itemsError } = await supabase.from('order_items').insert(
+        orderItems.map(item => ({
+          ...item,
+          order_id: order.id,
+        }))
+      )
+
       if (itemsError) {
         console.error('Failed to create order items:', itemsError)
       }
@@ -159,7 +157,6 @@ export async function POST(request: NextRequest) {
     try {
       await mailgunService.sendOrderConfirmation(customerInfo.email, {
         orderId: order?.id || paymentResult.payment.id,
-        orderNumber: order?.order_number || 'N/A',
         customerName: customerInfo.name,
         items: items,
         subtotal: subtotal,

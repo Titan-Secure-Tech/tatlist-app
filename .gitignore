@@ -82,3 +82,7 @@ bun.lockb
 
 # Claude Code
 .claude/
+
+# PWA - compiled service worker
+public/sw.js
+public/sw.js.map
