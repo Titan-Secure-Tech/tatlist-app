@@ -205,8 +205,8 @@ export default function CartPage() {
                   <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span>Calculated at checkout</span>
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span>$5.00</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tax</span>
@@ -218,7 +218,7 @@ export default function CartPage() {
 
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
-                <span>{formattedTotalPrice || `$${((totalPrice ?? 0) / 100).toFixed(2)}`}</span>
+                <span>${(((totalPrice ?? 0) / 100) + 5.00).toFixed(2)}</span>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-3">
