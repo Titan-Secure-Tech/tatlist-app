@@ -14,6 +14,7 @@ interface NavItem {
   title: string
   href: string
   description?: string
+  requiresAuth?: boolean
 }
 
 const navigationItems: NavItem[] = [
@@ -26,6 +27,7 @@ const navigationItems: NavItem[] = [
     title: 'Shop',
     href: '/shop',
     description: 'Browse products',
+    requiresAuth: true,
   },
   {
     title: 'About',
@@ -39,9 +41,18 @@ const navigationItems: NavItem[] = [
   },
 ]
 
-export function MobileNav() {
+interface User {
+  id: string
+  email?: string
+}
+
+export function MobileNav({ user, loading }: { user: User | null; loading: boolean }) {
   const pathname = usePathname()
   const [open, setOpen] = React.useState(false)
+
+  const visibleItems = loading
+    ? navigationItems.filter(item => !item.requiresAuth)
+    : navigationItems.filter(item => !item.requiresAuth || user)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -62,7 +73,7 @@ export function MobileNav() {
         </SheetHeader>
         <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
           <div className="flex flex-col space-y-3">
-            {navigationItems.map(item => (
+            {visibleItems.map(item => (
               <MobileLink
                 key={item.href}
                 href={item.href}

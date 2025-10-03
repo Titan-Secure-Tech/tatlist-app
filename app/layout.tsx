@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { CartProvider } from '@/components/providers/CartProvider'
 import { SandboxProvider } from '@/lib/contexts/sandbox-context'
 import { PWAInstaller } from '@/components/PWAInstaller'
+import { OfficeStatusBanner } from '@/components/office-status-banner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -87,6 +88,7 @@ export default function RootLayout({
             <PWAInstaller />
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
+              <OfficeStatusBanner />
               <main className="flex-1">{children}</main>
               <SiteFooter />
             </div>

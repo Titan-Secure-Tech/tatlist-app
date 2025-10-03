@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import AnimatedProductCard from './AnimatedProductCard'
 import { Product } from '@/types'
+import { Search, X } from 'lucide-react'
 
 interface ProductGridProps {
   products: Product[]
@@ -21,6 +22,7 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
   const [sortBy, setSortBy] = useState<SortType>('featured')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const gridColumns = {
     2: 'grid-cols-1 md:grid-cols-2',
@@ -33,14 +35,32 @@ export default function ProductGrid({
     // First filter
     let filtered = [...products]
 
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim()
+      filtered = filtered.filter(p => {
+        // Search by name
+        if (p.name?.toLowerCase().includes(query)) return true
+        // Search by brand
+        if (p.brand?.toLowerCase().includes(query)) return true
+        // Search by category
+        if (p.category?.toLowerCase().includes(query)) return true
+        // Search by description
+        if (p.description?.toLowerCase().includes(query)) return true
+        // Search by tags
+        if (p.tags?.some(tag => tag.toLowerCase().includes(query))) return true
+        return false
+      })
+    }
+
     if (activeFilter === 'new') {
       // Filter by new arrivals (products with 'new' or 'latest' tags)
-      filtered = products.filter(p =>
+      filtered = filtered.filter(p =>
         p.tags?.some(tag => ['new', 'latest', 'new arrival'].includes(tag.toLowerCase()))
       )
     } else if (activeFilter === 'bestsellers') {
       // Filter by bestsellers (products with 'bestseller' or 'popular' tags)
-      filtered = products.filter(p =>
+      filtered = filtered.filter(p =>
         p.tags?.some(tag =>
           ['bestseller', 'best seller', 'popular', 'best'].includes(tag.toLowerCase())
         )
@@ -68,7 +88,7 @@ export default function ProductGrid({
     }
 
     return sorted
-  }, [products, activeFilter, sortBy])
+  }, [products, activeFilter, sortBy, searchQuery])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -87,61 +107,84 @@ export default function ProductGrid({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex flex-wrap gap-4 items-center justify-between relative z-10"
+          className="mb-8 space-y-4 relative z-10"
         >
-          <div className="flex gap-2">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
-                activeFilter === 'all'
-                  ? 'bg-black text-white border-black'
-                  : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              All Products
-            </button>
-            <button
-              onClick={() => setActiveFilter('new')}
-              className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
-                activeFilter === 'new'
-                  ? 'bg-black text-white border-black'
-                  : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              New Arrivals
-            </button>
-            <button
-              onClick={() => setActiveFilter('bestsellers')}
-              className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
-                activeFilter === 'bestsellers'
-                  ? 'bg-black text-white border-black'
-                  : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              Best Sellers
-            </button>
+          {/* Search Bar */}
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search products by name, brand, category..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
-          <div className="relative">
-            <select
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value as SortType)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black cursor-pointer appearance-none pr-10"
-              style={{ minWidth: '200px' }}
-            >
-              <option value="featured">Sort by: Featured</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="newest">Newest First</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-              <svg
-                className="h-4 w-4 fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
+          {/* Filters and Sort */}
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveFilter('all')}
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+                  activeFilter === 'all'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
+                }`}
               >
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
+                All Products
+              </button>
+              <button
+                onClick={() => setActiveFilter('new')}
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+                  activeFilter === 'new'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                New Arrivals
+              </button>
+              <button
+                onClick={() => setActiveFilter('bestsellers')}
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+                  activeFilter === 'bestsellers'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                Best Sellers
+              </button>
+            </div>
+
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value as SortType)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black cursor-pointer appearance-none pr-10"
+                style={{ minWidth: '200px' }}
+              >
+                <option value="featured">Sort by: Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
+                <svg
+                  className="h-4 w-4 fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -179,16 +222,21 @@ export default function ProductGrid({
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-500 mb-4">
-            {activeFilter !== 'all'
-              ? `No products match the "${activeFilter === 'new' ? 'New Arrivals' : 'Best Sellers'}" filter.`
-              : 'No products available at this time.'}
+            {searchQuery
+              ? `No products match your search "${searchQuery}"`
+              : activeFilter !== 'all'
+                ? `No products match the "${activeFilter === 'new' ? 'New Arrivals' : 'Best Sellers'}" filter.`
+                : 'No products available at this time.'}
           </p>
-          {activeFilter !== 'all' && (
+          {(searchQuery || activeFilter !== 'all') && (
             <button
-              onClick={() => setActiveFilter('all')}
+              onClick={() => {
+                setSearchQuery('')
+                setActiveFilter('all')
+              }}
               className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
-              Show All Products
+              Clear Filters
             </button>
           )}
         </motion.div>

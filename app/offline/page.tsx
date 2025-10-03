@@ -1,10 +1,13 @@
 import { WifiOff } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ReloadButton } from './reload-button'
 
 export const metadata = {
   title: 'Offline | Tatlist',
   description: 'You are currently offline',
 }
+
+// Static page with client component (PPR)
+export const experimental_ppr = true
 
 export default function OfflinePage() {
   return (
@@ -14,7 +17,7 @@ export default function OfflinePage() {
       <p className="mb-6 text-center text-muted-foreground">
         It looks like you&apos;ve lost your internet connection. Some features may not be available.
       </p>
-      <Button onClick={() => window.location.reload()}>Try Again</Button>
+      <ReloadButton />
     </div>
   )
 }

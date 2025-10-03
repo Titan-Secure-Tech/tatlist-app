@@ -9,6 +9,11 @@ interface CategoryPageProps {
   }>
 }
 
+// Enable PPR for this dynamic route
+export const experimental_ppr = true
+// Revalidate every hour
+export const revalidate = 3600
+
 // Map URL slugs to category names
 const categoryMap: Record<string, string> = {
   // Original categories
@@ -27,6 +32,13 @@ const categoryMap: Record<string, string> = {
   'tattoo-parts': 'Tattoo Parts',
   'shop-furniture': 'Tattoo Shop Furniture and Supplies',
   'tattoo-shop-furniture': 'Tattoo Shop Furniture and Supplies',
+}
+
+// Generate static params for known categories
+export async function generateStaticParams() {
+  return Object.keys(categoryMap).map(slug => ({
+    slug,
+  }))
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

@@ -3,6 +3,11 @@ const nextConfig = {
   // Enable typed routes for better type safety
   typedRoutes: true,
 
+  // Enable Partial Prerendering for optimal performance
+  experimental: {
+    ppr: 'incremental',
+  },
+
   // Headers for Apple Pay domain verification
   async headers() {
     return [

@@ -111,7 +111,7 @@ export default function HeroSection() {
                 </motion.button>
               </Link>
 
-              <Link href="/about">
+              <Link href="/features">
                 <motion.button
                   className="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-300"
                   whileHover={{ scale: 1.05 }}
