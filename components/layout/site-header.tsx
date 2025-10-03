@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import { MobileNav } from './mobile-nav'
+import { OfficeStatusIndicator } from '@/components/office-status'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
@@ -43,14 +44,17 @@ export function SiteHeader() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* Search can be added here later */}
           </div>
-          <nav className="flex items-center">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button asChild size="sm" className="ml-2">
-              <Link href="/register">Sign Up</Link>
-            </Button>
-          </nav>
+          <div className="flex items-center space-x-4">
+            <OfficeStatusIndicator variant="outline" size="sm" />
+            <nav className="flex items-center">
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button asChild size="sm" className="ml-2">
+                <Link href="/register">Sign Up</Link>
+              </Button>
+            </nav>
+          </div>
         </div>
       </div>
     </header>

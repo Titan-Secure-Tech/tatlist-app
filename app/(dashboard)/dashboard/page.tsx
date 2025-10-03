@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { OfficeStatusToggle } from '@/components/office-status'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -18,6 +19,14 @@ export default async function DashboardPage() {
       <div className="text-center">
         <h1 className="text-3xl font-bold text-black mb-2">Dashboard</h1>
         <p className="text-gray-600">Welcome back! Manage your orders and browse products.</p>
+      </div>
+
+      <div className="flex justify-center">
+        <OfficeStatusToggle 
+          showNote={true} 
+          updatedBy={user?.email || 'Unknown User'}
+          className="w-full max-w-md"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

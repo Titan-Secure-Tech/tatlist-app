@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { OfficeStatusToggle } from '@/components/office-status'
 
 export default function AdminPage() {
   const [syncing, setSyncing] = useState(false)
@@ -61,6 +62,14 @@ export default function AdminPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-black mb-6">Admin Dashboard</h1>
+
+      <div className="mb-6">
+        <OfficeStatusToggle 
+          showNote={true} 
+          updatedBy="Admin User"
+          className="max-w-md"
+        />
+      </div>
 
       <div className="grid gap-6">
         <div className="bg-white border border-gray-200 rounded-lg p-6">
