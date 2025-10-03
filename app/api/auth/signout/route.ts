@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     const requestUrl = new URL(request.url)
     const origin = requestUrl.origin
     
-    // Create response with redirect
-    const response = NextResponse.redirect(new URL('/login', origin), {
+    // Create response with redirect to main site
+    const response = NextResponse.redirect(new URL('https://tatlist.com'), {
       status: 303, // Use 303 See Other for POST redirect
     })
     
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Signout error:', error)
     // Fallback redirect
-    return NextResponse.redirect(new URL('/login', request.url), {
+    return NextResponse.redirect(new URL('https://tatlist.com'), {
       status: 303,
     })
   }
@@ -51,8 +51,8 @@ export async function GET(request: Request) {
     const requestUrl = new URL(request.url)
     const origin = requestUrl.origin
     
-    // Create response with redirect
-    const response = NextResponse.redirect(new URL('/login', origin), {
+    // Create response with redirect to main site
+    const response = NextResponse.redirect(new URL('https://tatlist.com'), {
       status: 302, // Use 302 for GET redirect
     })
     
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Signout error:', error)
     // Fallback redirect
-    return NextResponse.redirect(new URL('/login', request.url), {
+    return NextResponse.redirect(new URL('https://tatlist.com'), {
       status: 302,
     })
   }

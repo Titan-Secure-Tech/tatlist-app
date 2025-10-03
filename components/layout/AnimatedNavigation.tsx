@@ -79,13 +79,12 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
       }
 
       toast.success('Signed out successfully')
-      router.push('/login')
-      router.refresh()
+      window.location.href = 'https://tatlist.com'
     } catch (error) {
       console.error('Sign out error:', error)
       toast.error('Failed to sign out. Please try again.')
-      // Force redirect to login even if signout fails
-      router.push('/login')
+      // Force redirect to main site even if signout fails
+      window.location.href = 'https://tatlist.com'
     }
   }
 
