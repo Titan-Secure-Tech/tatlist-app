@@ -14,6 +14,7 @@ import {
   Star,
   Plus,
   Minus,
+  ArrowLeft,
 } from 'lucide-react'
 import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
@@ -270,6 +271,21 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
                 <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
               </motion.button>
             </div>
+
+            {/* Continue Shopping Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Link
+                href="/shop"
+                className="w-full py-3 px-6 border border-gray-300 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 hover:bg-gray-50 text-gray-700"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                Continue Shopping
+              </Link>
+            </motion.div>
           </div>
 
           {/* Features */}
