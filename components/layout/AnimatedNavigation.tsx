@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Home, ShoppingBag, Package, List, User, Settings, LogOut } from 'lucide-react'
 import { AnimatedCartIcon } from '@/components/cart/AnimatedCartIcon'
@@ -21,7 +21,6 @@ interface AnimatedNavigationProps {
 
 export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigationProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const supabase = createClient()
   const [bannerHeight, setBannerHeight] = useState(0)
 
@@ -79,20 +78,19 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
       }
 
       toast.success('Signed out successfully')
-      router.push('/login')
-      router.refresh()
+      window.location.href = 'https://tatlist.com'
     } catch (error) {
       console.error('Sign out error:', error)
       toast.error('Failed to sign out. Please try again.')
-      // Force redirect to login even if signout fails
-      router.push('/login')
+      // Force redirect to home even if signout fails
+      window.location.href = 'https://tatlist.com'
     }
   }
 
   const navItems: NavItem[] = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/products', label: 'Products', icon: ShoppingBag },
-    { href: '/inventory-lists', label: 'Lists', icon: List },
+    { href: '/inventory-lists', label: 'My Inventory', icon: List },
     { href: '/orders', label: 'Orders', icon: Package },
     { href: '/profile', label: 'Profile', icon: User },
   ]

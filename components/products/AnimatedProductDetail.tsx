@@ -270,6 +270,16 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
                 <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
               </motion.button>
             </div>
+
+            <Link href="/products">
+              <motion.button
+                className="w-full py-3 px-6 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Continue Shopping
+              </motion.button>
+            </Link>
           </div>
 
           {/* Features */}

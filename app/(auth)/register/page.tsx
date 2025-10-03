@@ -172,7 +172,7 @@ export default function RegisterPage() {
 
         {/* Address Information */}
         <div className="space-y-4 pt-4 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Business Address</h2>
 
           <div>
             <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">
@@ -281,7 +281,7 @@ export default function RegisterPage() {
 
               <div>
                 <label htmlFor="taxId" className="block text-sm font-medium text-gray-700">
-                  Tax Identification Number <span className="text-red-500">*</span>
+                  Tax Identification Number
                 </label>
                 <input
                   id="taxId"
@@ -290,7 +290,6 @@ export default function RegisterPage() {
                   onChange={e => setFormData({ ...formData, taxId: e.target.value })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                   placeholder="XX-XXXXXXX"
-                  required
                 />
               </div>
             </>
@@ -306,19 +305,6 @@ export default function RegisterPage() {
               value={formData.businessName}
               onChange={e => setFormData({ ...formData, businessName: e.target.value })}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="businessAddress" className="block text-sm font-medium text-gray-700">
-              Business Address (Optional)
-            </label>
-            <textarea
-              id="businessAddress"
-              value={formData.businessAddress}
-              onChange={e => setFormData({ ...formData, businessAddress: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-              rows={2}
             />
           </div>
 
