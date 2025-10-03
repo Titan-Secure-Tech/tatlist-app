@@ -67,19 +67,26 @@ export default function RegisterPage() {
             tax_exempt_status: formData.taxExempt,
           })
 
-          if (profileError) throw profileError
+          if (profileError) {
+            // If profile creation fails, sign out the user and show error
+            await supabase.auth.signOut()
+            throw profileError
+          }
         }
 
+        // Successfully created account and profile
+        setLoading(false)
         router.push('/dashboard')
         router.refresh()
+        return // Exit early on success
       } else {
         // Email confirmations are enabled, show success message
         setError('Please check your email to confirm your account.')
         setLoading(false)
+        return // Exit early
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
       setLoading(false)
     }
   }
