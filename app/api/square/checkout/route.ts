@@ -118,12 +118,13 @@ export async function POST(request: NextRequest) {
       // Continue with checkout even if customer creation fails
     }
 
-    // Create line items for the order (simplified for mock)
+    // Create line items for the order
     const lineItems = items.map((item: CartItem) => ({
       quantity: String(item.quantity),
-      catalogObjectId: item.id,
-      basePriceAmount: Math.round(item.price * 100), // Price in cents, no BigInt
-      currency: 'USD',
+      basePriceMoney: {
+        amount: BigInt(Math.round(item.price * 100)), // Price in cents
+        currency: 'USD',
+      },
       name: item.name,
       variationName: item.variant,
     }))
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
             {
               name: 'Delivery Fee',
               amountMoney: {
-                amount: Math.round(deliveryFee * 100), // Use regular number instead of BigInt
+                amount: BigInt(Math.round(deliveryFee * 100)),
                 currency: 'USD',
               },
               calculationPhase: 'SUBTOTAL_PHASE',
