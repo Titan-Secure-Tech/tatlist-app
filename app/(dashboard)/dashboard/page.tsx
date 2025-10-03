@@ -69,8 +69,8 @@ export default async function DashboardPage() {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-black">Inventory Lists</h3>
-              <p className="text-sm text-gray-600">Manage your inventory</p>
+              <h3 className="text-lg font-medium text-black">Favorites</h3>
+              <p className="text-sm text-gray-600">Manage your favorites</p>
             </div>
           </div>
         </Link>

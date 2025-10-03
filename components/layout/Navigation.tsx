@@ -33,7 +33,7 @@ export default async function Navigation() {
         href="/inventory-lists"
         className="border-transparent text-gray-700 hover:border-gray-300 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
       >
-        Inventory Lists
+        Favorites
       </Link>
       <Link
         href="/cart"

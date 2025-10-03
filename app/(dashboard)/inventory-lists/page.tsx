@@ -38,24 +38,24 @@ export default async function InventoryListsPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-black">Inventory Lists</h1>
+        <h1 className="text-2xl font-bold text-black">Favorites</h1>
         <Link
           href="/inventory-lists/new"
           className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
         >
           <Plus className="h-5 w-5" />
-          Create New List
+          Add Favorites List
         </Link>
       </div>
 
       {inventoryLists?.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-600 mb-4">You haven&apos;t created any inventory lists yet.</p>
+          <p className="text-gray-600 mb-4">You haven&apos;t created any favorites lists yet.</p>
           <Link
             href="/inventory-lists/new"
             className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
           >
-            Create Your First List
+            Create Your First Favorites List
           </Link>
         </div>
       ) : (
