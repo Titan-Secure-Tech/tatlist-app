@@ -293,10 +293,14 @@ export default function FeaturesPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">SVG Logo</h3>
               <p className="text-gray-600 mb-6">Scalable vector format, perfect for any size</p>
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+              <a
+                href="/logo.svg"
+                download="tatlist-logo.svg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              >
                 <Download className="w-4 h-4" />
                 Download SVG
-              </button>
+              </a>
             </div>
 
             <div className="bg-white rounded-lg border border-gray-200 p-8 text-center hover:shadow-lg transition-shadow">
@@ -305,10 +309,14 @@ export default function FeaturesPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">PNG Logo</h3>
               <p className="text-gray-600 mb-6">High-resolution raster format for print & web</p>
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors">
+              <a
+                href="/logo.webp"
+                download="tatlist-logo.webp"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              >
                 <Download className="w-4 h-4" />
                 Download PNG
-              </button>
+              </a>
             </div>
           </div>
 

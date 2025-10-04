@@ -98,7 +98,12 @@ export default function ContactPage() {
                   <Phone className="w-5 h-5 text-gray-600 mt-1" />
                   <div>
                     <p className="font-medium text-gray-900">Phone</p>
-                    <p className="text-gray-600">(813) XXX-XXXX</p>
+                    <a
+                      href="tel:813-310-3877"
+                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                    >
+                      813-310-3877
+                    </a>
                   </div>
                 </div>
 

@@ -24,6 +24,7 @@ export default function RegisterPage() {
     taxExempt: false,
   })
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -31,6 +32,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     setLoading(true)
 
     try {
@@ -70,16 +72,19 @@ export default function RegisterPage() {
           if (profileError) throw profileError
         }
 
-        router.push('/dashboard')
-        router.refresh()
+        // Successfully created account and profile
+        setSuccess('Account created successfully! Redirecting to dashboard...')
+        setTimeout(() => {
+          router.push('/dashboard')
+          router.refresh()
+        }, 1500)
       } else {
         // Email confirmations are enabled, show success message
-        setError('Please check your email to confirm your account.')
+        setSuccess('Account created! Please check your email to confirm your account.')
         setLoading(false)
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
       setLoading(false)
     }
   }
@@ -323,6 +328,7 @@ export default function RegisterPage() {
         </div>
 
         {error && <div className="text-red-600 text-sm">{error}</div>}
+        {success && <div className="text-green-600 text-sm">{success}</div>}
 
         <button
           type="submit"

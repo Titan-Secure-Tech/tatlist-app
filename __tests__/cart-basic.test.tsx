@@ -3,23 +3,9 @@
  * Tests the core cart functionality to ensure stability
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { CartProvider } from '@/components/providers/CartProvider'
-
-// Mock Next.js components
-vi.mock('next/link', () => ({
-  default: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
-    <a {...props}>{children}</a>
-  ),
-}))
-
-vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: { src: string; alt: string; [key: string]: unknown }) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={alt} {...props} />
-  },
-}))
 
 describe('Cart Basic Functionality', () => {
   it('CartProvider renders without crashing', () => {

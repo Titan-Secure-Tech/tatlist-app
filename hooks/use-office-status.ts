@@ -21,6 +21,27 @@ export function useOfficeStatus(): OfficeStatus {
 
   useEffect(() => {
     const checkStatus = () => {
+      // Check for manual override first
+      const storedOverride = localStorage.getItem('office-status-override')
+      if (storedOverride) {
+        try {
+          const override = JSON.parse(storedOverride)
+          if (override.enabled) {
+            setStatus({
+              isOpen: override.value,
+              message: override.value
+                ? 'Office is manually set to OPEN'
+                : 'Office is manually set to CLOSED',
+              hours: 'Monday-Saturday, 9am-6pm',
+            })
+            return
+          }
+        } catch {
+          // Invalid override data, ignore and continue with normal logic
+          localStorage.removeItem('office-status-override')
+        }
+      }
+
       const now = new Date()
       const day = now.getDay() // 0 = Sunday, 6 = Saturday
       const hour = now.getHours()
@@ -63,7 +84,18 @@ export function useOfficeStatus(): OfficeStatus {
     // Check every minute
     const interval = setInterval(checkStatus, 60000)
 
-    return () => clearInterval(interval)
+    // Listen for storage changes (manual override in other tabs)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'office-status-override') {
+        checkStatus()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('storage', handleStorageChange)
+    }
   }, [])
 
   return status

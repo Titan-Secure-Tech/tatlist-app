@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CartIcon } from '@/components/cart/cart-icon'
@@ -14,18 +14,22 @@ describe('Cart Workflow Integration', () => {
   const mockClearCart = vi.fn()
 
   beforeEach(() => {
-    global.mockCartContext.addItem = mockAddItem
-    global.mockCartContext.removeItem = mockRemoveItem
-    global.mockCartContext.incrementItem = mockIncrementItem
-    global.mockCartContext.decrementItem = mockDecrementItem
-    global.mockCartContext.clearCart = mockClearCart
-
+    // Ensure global mock context exists
     setMockCartState({
       cartCount: 0,
       cartDetails: {},
       formattedTotalPrice: '$0.00',
       totalPrice: 0,
     })
+
+    // Set up mock functions
+    if (global.mockCartContext) {
+      global.mockCartContext.addItem = mockAddItem
+      global.mockCartContext.removeItem = mockRemoveItem
+      global.mockCartContext.incrementItem = mockIncrementItem
+      global.mockCartContext.decrementItem = mockDecrementItem
+      global.mockCartContext.clearCart = mockClearCart
+    }
   })
 
   afterEach(() => {

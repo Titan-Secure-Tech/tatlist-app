@@ -1,22 +1,36 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ProductDetail from '@/components/products/ProductDetail'
-import { mockProduct } from '@//__tests__/utils/test-utils'
+import { mockProduct, setMockCartState } from '@//__tests__/utils/test-utils'
 
-// Mock next/navigation
-const mockBack = vi.fn()
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    back: mockBack,
-  }),
-}))
+// Mock next/navigation is already set up in vitest.setup.ts
+// Access the global mock router
+declare global {
+  var mockRouter: {
+    push: ReturnType<typeof vi.fn>
+    replace: ReturnType<typeof vi.fn>
+    back: ReturnType<typeof vi.fn>
+    refresh: ReturnType<typeof vi.fn>
+  }
+}
 
 describe('ProductDetail', () => {
   const mockAddItem = vi.fn()
 
   beforeEach(() => {
-    global.mockCartContext.addItem = mockAddItem
+    // Initialize mock cart state
+    setMockCartState({
+      cartCount: 0,
+      cartDetails: {},
+      formattedTotalPrice: '$0.00',
+      totalPrice: 0,
+    })
+
+    // Set up mock function
+    if (global.mockCartContext) {
+      global.mockCartContext.addItem = mockAddItem
+    }
   })
 
   afterEach(() => {
@@ -214,7 +228,7 @@ describe('ProductDetail', () => {
     const backButton = screen.getByText('Back to Products')
     await user.click(backButton)
 
-    expect(mockBack).toHaveBeenCalled()
+    expect(global.mockRouter.back).toHaveBeenCalled()
   })
 
   it('handles favorite button click', async () => {
