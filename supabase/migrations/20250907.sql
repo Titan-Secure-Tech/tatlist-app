@@ -1,0 +1,3 @@
+-- Placeholder migration to match remote database history
+-- This migration exists on the remote database and needs to be present locally
+-- for Supabase preview deployments to work correctly
