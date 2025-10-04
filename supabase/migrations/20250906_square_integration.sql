@@ -132,8 +132,13 @@ CREATE POLICY "Service role can manage sync logs" ON public.square_sync_logs
   FOR ALL USING (auth.role() = 'service_role');
 
 -- Updated_at triggers for new tables
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_orders_updated_at') THEN
+    CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
 -- Function to generate order numbers
 CREATE OR REPLACE FUNCTION generate_order_number()
