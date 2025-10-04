@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
+import { DeleteInventoryListDialog } from '@/components/inventory/DeleteInventoryListDialog'
 
 type InventoryListItem = {
   id: string
@@ -65,36 +66,51 @@ export default async function InventoryListsPage() {
       ) : (
         <div className="grid gap-4">
           {inventoryLists?.map(list => (
-            <Link
+            <div
               key={list.id}
-              href={`/inventory-lists/${list.id}`}
-              className="block border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+              className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
             >
               <div className="flex justify-between items-start mb-2">
-                <h2 className="text-xl font-semibold text-black">{list.name}</h2>
-                <span className="text-sm text-gray-600">
-                  {list.inventory_list_items?.length || 0} items
-                </span>
-              </div>
-              <p className="text-gray-600 text-sm">
-                Updated {new Date(list.updated_at).toLocaleDateString()}
-              </p>
-
-              {list.inventory_list_items && list.inventory_list_items.length > 0 && (
-                <div className="mt-4 space-y-1">
-                  {list.inventory_list_items.slice(0, 3).map((item: InventoryListItem) => (
-                    <div key={item.id} className="text-sm text-gray-600">
-                      {item.product?.name} (x{item.quantity})
-                    </div>
-                  ))}
-                  {list.inventory_list_items.length > 3 && (
-                    <div className="text-sm text-gray-400">
-                      +{list.inventory_list_items.length - 3} more items
-                    </div>
-                  )}
+                <Link
+                  href={`/inventory-lists/${list.id}`}
+                  className="flex-1"
+                >
+                  <h2 className="text-xl font-semibold text-black hover:text-gray-700 transition-colors">
+                    {list.name}
+                  </h2>
+                </Link>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    {list.inventory_list_items?.length || 0} items
+                  </span>
+                  <DeleteInventoryListDialog 
+                    listId={list.id} 
+                    listName={list.name} 
+                  />
                 </div>
-              )}
-            </Link>
+              </div>
+              
+              <Link href={`/inventory-lists/${list.id}`}>
+                <p className="text-gray-600 text-sm">
+                  Updated {new Date(list.updated_at).toLocaleDateString()}
+                </p>
+
+                {list.inventory_list_items && list.inventory_list_items.length > 0 && (
+                  <div className="mt-4 space-y-1">
+                    {list.inventory_list_items.slice(0, 3).map((item: InventoryListItem) => (
+                      <div key={item.id} className="text-sm text-gray-600">
+                        {item.product?.name} (x{item.quantity})
+                      </div>
+                    ))}
+                    {list.inventory_list_items.length > 3 && (
+                      <div className="text-sm text-gray-400">
+                        +{list.inventory_list_items.length - 3} more items
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Link>
+            </div>
           ))}
         </div>
       )}
