@@ -195,7 +195,7 @@ export class MailgunService {
             </div>
             <div class="footer">
               <p><strong>Questions about your order?</strong></p>
-              <p>📧 support@tatlist.com | 📞 (813) XXX-XXXX</p>
+              <p>📧 support@tatlist.com | 📞 813-310-3877</p>
               <p style="margin-top: 10px; font-size: 11px; color: #999;">&copy; 2025 Tatlist. All rights reserved.</p>
             </div>
           </div>
@@ -321,7 +321,7 @@ export class MailgunService {
             </div>
             <div class="footer">
               <p><strong>Questions about your order?</strong></p>
-              <p>📧 support@tatlist.com | 📞 (813) XXX-XXXX</p>
+              <p>📧 support@tatlist.com | 📞 813-310-3877</p>
               <p style="margin-top: 10px; font-size: 11px; color: #999;">&copy; 2025 Tatlist. All rights reserved.</p>
             </div>
           </div>
