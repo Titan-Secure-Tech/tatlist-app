@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
+import DeleteInventoryListButton from '@/components/inventory/DeleteInventoryListButton'
 
 type InventoryListItem = {
   id: string
@@ -72,9 +73,12 @@ export default async function InventoryListsPage() {
             >
               <div className="flex justify-between items-start mb-2">
                 <h2 className="text-xl font-semibold text-black">{list.name}</h2>
-                <span className="text-sm text-gray-600">
-                  {list.inventory_list_items?.length || 0} items
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600">
+                    {list.inventory_list_items?.length || 0} items
+                  </span>
+                  <DeleteInventoryListButton listId={list.id} listName={list.name} />
+                </div>
               </div>
               <p className="text-gray-600 text-sm">
                 Updated {new Date(list.updated_at).toLocaleDateString()}

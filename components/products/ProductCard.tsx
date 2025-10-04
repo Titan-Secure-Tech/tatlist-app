@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
+import FavoritesPopup from '@/components/inventory/FavoritesPopup'
 
 interface ProductCardProps {
   product: Product
@@ -17,6 +18,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isFavorited, setIsFavorited] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [imageError, setImageError] = useState(false)
+  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false)
   const supabase = createClient()
   const { addItem } = useShoppingCart()
 
@@ -50,42 +52,20 @@ export default function ProductCard({ product }: ProductCardProps) {
       return
     }
 
-    try {
-      if (isFavorited) {
-        const { error } = await supabase
-          .from('favorites')
-          .delete()
-          .match({ user_id: user.id, product_id: product.id })
+    if (isFavorited) {
+      // Remove from favorites
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .match({ user_id: user.id, product_id: product.id })
 
-        if (error) throw error
-
+      if (!error) {
         setIsFavorited(false)
         toast.success('Removed from favorites')
-      } else {
-        // Use upsert to handle potential duplicates
-        const { error } = await supabase
-          .from('favorites')
-          .upsert(
-            { user_id: user.id, product_id: product.id },
-            { onConflict: 'user_id,product_id' }
-          )
-
-        if (error) {
-          // If upsert fails, it might already exist, so just set as favorited
-          if (error.code === '23505' || error.message?.includes('duplicate')) {
-            setIsFavorited(true)
-            toast.info('Already in favorites')
-          } else {
-            throw error
-          }
-        } else {
-          setIsFavorited(true)
-          toast.success('Added to favorites!')
-        }
       }
-    } catch (error) {
-      console.error('Error toggling favorite:', error)
-      toast.error('Failed to update favorites')
+    } else {
+      // Show popup to select list
+      setShowFavoritesPopup(true)
     }
   }
 
@@ -198,6 +178,16 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
       </button>
+
+      <FavoritesPopup
+        productId={product.id}
+        productName={product.name}
+        isOpen={showFavoritesPopup}
+        onClose={() => {
+          setShowFavoritesPopup(false)
+          setIsFavorited(true)
+        }}
+      />
     </div>
   )
 }

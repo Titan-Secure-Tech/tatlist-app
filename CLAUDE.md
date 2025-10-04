@@ -158,6 +158,29 @@ bunx supabase secrets set <key> <value> --project-ref <project-id>  # Set produc
 bunx supabase projects list                                          # List all projects
 ```
 
+**Supabase Custom Domain Configuration:**
+
+To configure a custom domain for your Supabase project (e.g., for OAuth redirects and auth):
+
+1. **Add Custom Domain** (Supabase Dashboard):
+   - Go to https://supabase.com/dashboard/project/yzpiadsnllrycdfxlneb/settings/general
+   - Scroll to "Custom Domain" section
+   - Add your custom domain (e.g., tatlist.com)
+
+2. **Update Site URL** (Supabase Auth Settings):
+   - Go to https://supabase.com/dashboard/project/yzpiadsnllrycdfxlneb/auth/url-configuration
+   - Update "Site URL" to your custom domain: `https://tatlist.com`
+
+3. **Add Redirect URLs**:
+   - In the same Auth URL Configuration page
+   - Add redirect URLs for OAuth callbacks:
+     - `https://tatlist.com/api/auth/callback`
+     - `https://tatlist.com/*` (wildcard for all paths)
+
+4. **Update Environment Variables** (if needed):
+   - Ensure production environment variables point to your custom domain
+   - `NEXT_PUBLIC_SITE_URL=https://tatlist.com`
+
 ### Vercel Deployment & Management
 
 ```bash

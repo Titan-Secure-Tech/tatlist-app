@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -183,14 +184,25 @@ export default function RegisterPage() {
             <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">
               Street Address <span className="text-red-500">*</span>
             </label>
-            <input
+            <AddressAutocomplete
               id="streetAddress"
-              type="text"
               value={formData.streetAddress}
-              onChange={e => setFormData({ ...formData, streetAddress: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-              placeholder="123 Main St"
+              onChange={(value, components) => {
+                if (components) {
+                  setFormData({
+                    ...formData,
+                    streetAddress: components.streetAddress,
+                    city: components.city,
+                    state: components.state,
+                    zipCode: components.zipCode,
+                  })
+                } else {
+                  setFormData({ ...formData, streetAddress: value })
+                }
+              }}
+              placeholder="Start typing your address..."
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
 

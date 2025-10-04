@@ -50,6 +50,18 @@ export function SiteFooter() {
           </Link>
         </div>
       </div>
+      <div className="container flex justify-center border-t py-4">
+        <p className="text-sm italic text-muted-foreground">
+          <Link
+            href="https://titansecuretech.com"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            POWERED BY TITAN
+          </Link>
+        </p>
+      </div>
     </footer>
   )
 }
