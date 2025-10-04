@@ -51,15 +51,18 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
 
   const handleSignOut = async () => {
     try {
+      // Get current user before signing out to clear their cart
+      const { data: { user } } = await supabase.auth.getUser()
+      const userId = user?.id
+
       const { error } = await supabase.auth.signOut()
       if (error) throw error
 
-      // Clear only auth-related storage, keep cart data
-      // Remove Supabase auth tokens
+      // Clear all localStorage data including cart data for the specific user
       const keysToRemove = []
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
-        if (key && (key.includes('supabase') || key.includes('auth'))) {
+        if (key && (key.includes('supabase') || key.includes('auth') || (userId && key.includes(`tatlist-cart-${userId}`)))) {
           keysToRemove.push(key)
         }
       }

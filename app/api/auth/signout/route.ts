@@ -5,6 +5,10 @@ export async function POST(request: Request) {
   try {
     const supabase = await createClient()
     
+    // Get user before signing out to clear their cart data
+    const { data: { user } } = await supabase.auth.getUser()
+    const userId = user?.id
+    
     // Sign out from Supabase
     const { error } = await supabase.auth.signOut()
     
@@ -25,6 +29,11 @@ export async function POST(request: Request) {
     response.cookies.delete('sb-access-token')
     response.cookies.delete('sb-refresh-token')
     
+    // Clear user-specific cart cookie if it exists
+    if (userId) {
+      response.cookies.delete(`tatlist-cart-${userId}`)
+    }
+    
     return response
   } catch (error) {
     console.error('Signout error:', error)
@@ -39,6 +48,10 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const supabase = await createClient()
+    
+    // Get user before signing out to clear their cart data
+    const { data: { user } } = await supabase.auth.getUser()
+    const userId = user?.id
     
     // Sign out from Supabase
     const { error } = await supabase.auth.signOut()
@@ -59,6 +72,11 @@ export async function GET(request: Request) {
     // Clear any auth cookies
     response.cookies.delete('sb-access-token')
     response.cookies.delete('sb-refresh-token')
+    
+    // Clear user-specific cart cookie if it exists
+    if (userId) {
+      response.cookies.delete(`tatlist-cart-${userId}`)
+    }
     
     return response
   } catch (error) {
