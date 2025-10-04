@@ -19,6 +19,7 @@ import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import FavoritesPopup from '@/components/favorites/FavoritesPopup'
 
 interface AnimatedProductDetailProps {
   product: Product
@@ -29,6 +30,7 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
   const [quantity, setQuantity] = useState(1)
   const [isFavorited, setIsFavorited] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
+  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false)
 
   const { addItem } = useShoppingCart()
   const supabase = createClient()
@@ -50,15 +52,14 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return
-
-    if (isFavorited) {
-      await supabase.from('favorites').delete().match({ user_id: user.id, product_id: product.id })
-    } else {
-      await supabase.from('favorites').insert({ user_id: user.id, product_id: product.id })
+    
+    if (!user) {
+      // Handle not logged in - could redirect to login or show message
+      return
     }
 
-    setIsFavorited(!isFavorited)
+    // Open the favorites popup instead of directly adding to favorites
+    setShowFavoritesPopup(true)
   }
 
   const features = [
@@ -266,8 +267,9 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
                 className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                title="Add to favorites list"
               >
-                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+                <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors" />
               </motion.button>
             </div>
 
@@ -365,6 +367,14 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
           </div>
         </motion.div>
       </div>
+
+      {/* Favorites Popup */}
+      <FavoritesPopup
+        isOpen={showFavoritesPopup}
+        onClose={() => setShowFavoritesPopup(false)}
+        productId={product.id}
+        productName={product.name}
+      />
     </motion.div>
   )
 }
