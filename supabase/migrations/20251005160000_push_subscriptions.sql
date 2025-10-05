@@ -36,27 +36,32 @@ ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE push_notifications_log ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for push_subscriptions
+DROP POLICY IF EXISTS "Users can view their own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can view their own push subscriptions"
   ON push_subscriptions
   FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can insert their own push subscriptions"
   ON push_subscriptions
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can update their own push subscriptions"
   ON push_subscriptions
   FOR UPDATE
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete their own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can delete their own push subscriptions"
   ON push_subscriptions
   FOR DELETE
   USING (auth.uid() = user_id);
 
 -- RLS Policies for push_notifications_log
+DROP POLICY IF EXISTS "Users can view their own notification logs" ON push_notifications_log;
 CREATE POLICY "Users can view their own notification logs"
   ON push_notifications_log
   FOR SELECT
@@ -76,6 +81,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create trigger for updated_at
+DROP TRIGGER IF EXISTS push_subscriptions_updated_at ON push_subscriptions;
 CREATE TRIGGER push_subscriptions_updated_at
   BEFORE UPDATE ON push_subscriptions
   FOR EACH ROW
