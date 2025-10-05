@@ -113,6 +113,7 @@ vi.mock('@/lib/supabase/client', () => ({
       onAuthStateChange: vi.fn(() => ({
         data: { subscription: { unsubscribe: vi.fn() } },
       })),
+      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
     },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
@@ -122,6 +123,8 @@ vi.mock('@/lib/supabase/client', () => ({
       upsert: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       match: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
       maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
     })),
@@ -172,6 +175,34 @@ vi.mock('@/lib/supabase/server', () => ({
     })),
   })),
 }))
+
+// Suppress console errors and warnings for specific known issues
+const originalError = console.error
+const originalWarn = console.warn
+
+beforeAll(() => {
+  console.error = (...args: unknown[]) => {
+    // Suppress React warnings about non-boolean attributes on SVG elements (from Lucide icons)
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('Received `true` for a non-boolean attribute') ||
+        args[0].includes('for a non-boolean attribute'))
+    ) {
+      return
+    }
+    originalError.call(console, ...args)
+  }
+
+  console.warn = (...args: unknown[]) => {
+    // Suppress any warnings we want to ignore
+    originalWarn.call(console, ...args)
+  }
+})
+
+afterAll(() => {
+  console.error = originalError
+  console.warn = originalWarn
+})
 
 // Reset mocks before each test
 beforeEach(() => {

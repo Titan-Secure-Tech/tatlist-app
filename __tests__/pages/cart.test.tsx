@@ -235,15 +235,23 @@ describe('Cart Page', () => {
 
     it('handles checkout button click', async () => {
       const user = userEvent.setup()
+
+      // Mock window.location.href to prevent jsdom navigation error
+      const originalLocation = window.location
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).location
+      window.location = { ...originalLocation, href: '' } as Location
+
       render(<CartPage />)
 
       const checkoutButton = screen.getByText('Proceed to Checkout')
       await user.click(checkoutButton)
 
-      // The cart page logs debug info on mount, not on checkout
-      // Checkout redirects to /shop/checkout via window.location.href
-      // We can't test the redirect in jsdom without more complex mocking
-      expect(checkoutButton).toBeInTheDocument()
+      // Verify navigation was attempted
+      expect(window.location.href).toBe('/shop/checkout')
+
+      // Restore original location
+      window.location = originalLocation
     })
   })
 
