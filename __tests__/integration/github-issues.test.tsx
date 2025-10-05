@@ -25,9 +25,6 @@ describe('GitHub Issues Integration Tests', () => {
   describe('Issue #32 - Sign Up Error Message', () => {
     beforeEach(() => {
       vi.clearAllMocks()
-      mockFrom.mockReturnValue({
-        insert: mockInsert.mockReturnValue({ error: null }),
-      })
     })
 
     it('shows success message when account is created successfully', async () => {
