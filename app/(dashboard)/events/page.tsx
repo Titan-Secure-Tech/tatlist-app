@@ -34,7 +34,8 @@ export default function EventsPage() {
 
           {/* Date Badge */}
           <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-black text-2xl md:text-3xl px-6 py-3 rounded-lg transform -rotate-3 shadow-lg mb-6">
-            APRIL 24-26<br />
+            APRIL 24-26
+            <br />
             <span className="text-xl">2026</span>
           </div>
 
@@ -46,10 +47,11 @@ export default function EventsPage() {
           {/* Event Details */}
           <div className="text-center mb-8">
             <div className="text-white text-lg md:text-xl font-bold mb-4">
-              150 BOOTHS AVAILABLE<br />
+              150 BOOTHS AVAILABLE
+              <br />
               CUSTOM TATTOO TROPHIES
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-4 text-yellow-300 font-bold text-base md:text-lg">
               <span>⚡ LIVE TATTOO COMPETITIONS ⚡</span>
               <span>🏆 CUSTOM TROPHIES 🏆</span>
@@ -66,18 +68,19 @@ export default function EventsPage() {
           {/* Registration QR Code Placeholder */}
           <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
             <div className="w-24 h-24 bg-black flex items-center justify-center text-white text-xs text-center">
-              QR CODE<br />TO REGISTER
+              QR CODE
+              <br />
+              TO REGISTER
             </div>
           </div>
 
           {/* Social Media & Website */}
           <div className="text-center text-white">
             <div className="mb-2">
-              <span className="font-bold">📷 @InkManiaevents</span> | <span className="font-bold">🌐 www.inkmaniafest.com</span>
+              <span className="font-bold">📷 @InkManiaevents</span> |{' '}
+              <span className="font-bold">🌐 www.inkmaniafest.com</span>
             </div>
-            <div className="text-sm opacity-75">
-              *Presented by Chino Gonzalez – Ink Mania Fest
-            </div>
+            <div className="text-sm opacity-75">*Presented by Chino Gonzalez – Ink Mania Fest</div>
           </div>
         </div>
       </div>

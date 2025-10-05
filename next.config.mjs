@@ -3,6 +3,9 @@ const nextConfig = {
   // Enable typed routes for better type safety
   typedRoutes: true,
 
+  // Empty turbopack config to silence migration warning
+  turbopack: {},
+
   // Enable Partial Prerendering for optimal performance
   experimental: {
     ppr: 'incremental',
