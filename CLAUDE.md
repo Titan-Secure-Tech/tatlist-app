@@ -158,6 +158,38 @@ bunx supabase secrets set <key> <value> --project-ref <project-id>  # Set produc
 bunx supabase projects list                                          # List all projects
 ```
 
+**Supabase Custom Domain Configuration:**
+
+✅ **Custom Domain Configured**: `db.tatlist.com`
+
+The following configuration has been completed:
+
+1. **Supabase API Custom Domain**:
+   - Custom domain: `db.tatlist.com`
+   - Configured in Supabase Dashboard and DNS
+
+2. **Site URL Configuration** (Supabase Auth Settings):
+   - Site URL: `https://tatlist.com`
+   - Update at: https://supabase.com/dashboard/project/yzpiadsnllrycdfxlneb/auth/url-configuration
+
+3. **Auth Redirect URLs**:
+   - `https://tatlist.com/api/auth/callback`
+   - `https://tatlist.com/*` (wildcard for all paths)
+
+4. **Environment Variables**:
+   - Production Supabase URL: `https://db.tatlist.com`
+   - Site URL: `https://tatlist.com`
+
+   Update these in Vercel:
+
+   ```bash
+   vercel env add NEXT_PUBLIC_SUPABASE_URL production
+   # Enter: https://db.tatlist.com
+
+   vercel env add NEXT_PUBLIC_SITE_URL production
+   # Enter: https://tatlist.com
+   ```
+
 ### Vercel Deployment & Management
 
 ```bash

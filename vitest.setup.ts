@@ -2,16 +2,33 @@ import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 import React from 'react'
 
+// Mock IntersectionObserver for framer-motion
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  takeRecords() {
+    return []
+  }
+  unobserve() {}
+} as unknown as typeof IntersectionObserver
+
+// Create mock router functions that can be accessed in tests
+const mockRouterPush = vi.fn()
+const mockRouterReplace = vi.fn()
+const mockRouterBack = vi.fn()
+const mockRouterRefresh = vi.fn()
+
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter() {
     return {
-      push: vi.fn(),
-      replace: vi.fn(),
+      push: mockRouterPush,
+      replace: mockRouterReplace,
       prefetch: vi.fn(),
-      back: vi.fn(),
+      back: mockRouterBack,
       forward: vi.fn(),
-      refresh: vi.fn(),
+      refresh: mockRouterRefresh,
     }
   },
   useSearchParams() {
@@ -21,6 +38,23 @@ vi.mock('next/navigation', () => ({
     return ''
   },
 }))
+
+// Export for tests to use
+;(
+  globalThis as typeof globalThis & {
+    mockRouter: {
+      push: typeof mockRouterPush
+      replace: typeof mockRouterReplace
+      back: typeof mockRouterBack
+      refresh: typeof mockRouterRefresh
+    }
+  }
+).mockRouter = {
+  push: mockRouterPush,
+  replace: mockRouterReplace,
+  back: mockRouterBack,
+  refresh: mockRouterRefresh,
+}
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
@@ -76,14 +110,21 @@ vi.mock('@/lib/supabase/client', () => ({
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user' } } }),
       signOut: vi.fn().mockResolvedValue({ error: null }),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      })),
+      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
     },
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
       insert: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),
       delete: vi.fn().mockReturnThis(),
+      upsert: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       match: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
       maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
     })),
@@ -102,6 +143,66 @@ vi.mock('@supabase/ssr', () => ({
     })),
   })),
 }))
+
+// Mock Supabase server client
+vi.mock('@/lib/supabase/server', () => ({
+  createClient: vi.fn(async () => ({
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user' } } }),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        order: vi.fn(() => ({
+          data: [],
+          error: null,
+          limit: vi.fn(() => ({
+            data: [],
+            error: null,
+          })),
+        })),
+        eq: vi.fn(() => ({
+          data: null,
+          error: null,
+          maybeSingle: vi.fn(() => ({
+            data: null,
+            error: null,
+          })),
+        })),
+      })),
+      insert: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      delete: vi.fn().mockReturnThis(),
+    })),
+  })),
+}))
+
+// Suppress console errors and warnings for specific known issues
+const originalError = console.error
+const originalWarn = console.warn
+
+beforeAll(() => {
+  console.error = (...args: unknown[]) => {
+    // Suppress React warnings about non-boolean attributes on SVG elements (from Lucide icons)
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('Received `true` for a non-boolean attribute') ||
+        args[0].includes('for a non-boolean attribute'))
+    ) {
+      return
+    }
+    originalError.call(console, ...args)
+  }
+
+  console.warn = (...args: unknown[]) => {
+    // Suppress any warnings we want to ignore
+    originalWarn.call(console, ...args)
+  }
+})
+
+afterAll(() => {
+  console.error = originalError
+  console.warn = originalWarn
+})
 
 // Reset mocks before each test
 beforeEach(() => {

@@ -5,6 +5,8 @@ interface EmailConfig {
   html?: string
   template?: string
   variables?: Record<string, unknown>
+  replyTo?: string
+  from?: string
 }
 
 export class MailgunService {
@@ -16,7 +18,7 @@ export class MailgunService {
   constructor() {
     this.baseUrl = process.env.MAILGUN_BASE_URL || 'https://api.mailgun.net'
     this.domain = process.env.MAILGUN_DOMAIN || ''
-    this.apiKey = process.env.SMTP_PASSWORD || '' // Mailgun API key is stored as SMTP_PASSWORD
+    this.apiKey = process.env.MAILGUN_SENDING_KEY || process.env.SMTP_PASSWORD || '' // Use MAILGUN_SENDING_KEY (private API key)
     this.from = `Tatlist <noreply@${this.domain}>`
 
     if (!this.domain || !this.apiKey) {
@@ -32,9 +34,13 @@ export class MailgunService {
 
     try {
       const formData = new FormData()
-      formData.append('from', this.from)
+      formData.append('from', config.from || this.from)
       formData.append('to', Array.isArray(config.to) ? config.to.join(',') : config.to)
       formData.append('subject', config.subject)
+
+      if (config.replyTo) {
+        formData.append('h:Reply-To', config.replyTo)
+      }
 
       if (config.text) {
         formData.append('text', config.text)
@@ -188,8 +194,9 @@ export class MailgunService {
               </div>
             </div>
             <div class="footer">
-              <p>If you have any questions, please contact us at support@tatlist.com</p>
-              <p>&copy; 2024 Tatlist. All rights reserved.</p>
+              <p><strong>Questions about your order?</strong></p>
+              <p>📧 support@tatlist.com | 📞 813-310-3877</p>
+              <p style="margin-top: 10px; font-size: 11px; color: #999;">&copy; 2025 Tatlist. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -201,6 +208,8 @@ export class MailgunService {
       subject: `Order Confirmation - #${orderData.orderId.slice(0, 8).toUpperCase()}`,
       html,
       text: `Order confirmation for order #${orderData.orderId.slice(0, 8).toUpperCase()}. Total: $${orderData.total.toFixed(2)}`,
+      from: `Tatlist Orders <orders@${this.domain}>`,
+      replyTo: 'support@tatlist.com',
     })
   }
 
@@ -311,8 +320,9 @@ export class MailgunService {
               }
             </div>
             <div class="footer">
-              <p>If you have any questions, please contact us at support@tatlist.com</p>
-              <p>&copy; 2024 Tatlist. All rights reserved.</p>
+              <p><strong>Questions about your order?</strong></p>
+              <p>📧 support@tatlist.com | 📞 813-310-3877</p>
+              <p style="margin-top: 10px; font-size: 11px; color: #999;">&copy; 2025 Tatlist. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -324,6 +334,11 @@ export class MailgunService {
       subject: `Order Update - #${orderData.orderId.slice(0, 8).toUpperCase()} - ${statusMessages[orderData.status]}`,
       html,
       text: `Order #${orderData.orderId.slice(0, 8).toUpperCase()} status: ${statusMessages[orderData.status]}`,
+      from:
+        orderData.status === 'out_for_delivery'
+          ? `Tatlist Delivery <delivery@${this.domain}>`
+          : `Tatlist Orders <orders@${this.domain}>`,
+      replyTo: 'support@tatlist.com',
     })
   }
 }

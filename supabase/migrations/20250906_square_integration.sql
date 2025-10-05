@@ -108,28 +108,37 @@ CREATE POLICY "Service role can manage orders" ON public.orders
   FOR ALL USING (auth.role() = 'service_role');
 
 -- RLS Policies for order_items
+DROP POLICY IF EXISTS "Users can view their own order items" ON public.order_items;
 CREATE POLICY "Users can view their own order items" ON public.order_items
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM public.orders 
-      WHERE orders.id = order_items.order_id 
+      SELECT 1 FROM public.orders
+      WHERE orders.id = order_items.order_id
       AND (orders.user_id = auth.uid() OR orders.customer_email = auth.jwt()->>'email')
     )
   );
 
+DROP POLICY IF EXISTS "Service role can manage order items" ON public.order_items;
 CREATE POLICY "Service role can manage order items" ON public.order_items
   FOR ALL USING (auth.role() = 'service_role');
 
 -- RLS Policies for webhooks and sync logs (admin only)
+DROP POLICY IF EXISTS "Service role can manage webhooks" ON public.square_webhooks;
 CREATE POLICY "Service role can manage webhooks" ON public.square_webhooks
   FOR ALL USING (auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Service role can manage sync logs" ON public.square_sync_logs;
 CREATE POLICY "Service role can manage sync logs" ON public.square_sync_logs
   FOR ALL USING (auth.role() = 'service_role');
 
 -- Updated_at triggers for new tables
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_orders_updated_at') THEN
+    CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
 -- Function to generate order numbers
 CREATE OR REPLACE FUNCTION generate_order_number()

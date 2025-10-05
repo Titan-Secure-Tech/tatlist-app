@@ -5,7 +5,12 @@ const nextConfig = {
 
   // Empty turbopack config to silence migration warning
   turbopack: {},
-  
+
+  // Enable Partial Prerendering for optimal performance
+  experimental: {
+    ppr: 'incremental',
+  },
+
   // Headers for Apple Pay domain verification
   async headers() {
     return [
@@ -24,7 +29,7 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Rewrites to serve Apple Pay verification from API route
   async rewrites() {
     return {

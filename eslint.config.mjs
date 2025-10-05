@@ -1,23 +1,26 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { FlatCompat } from '@eslint/eslintrc'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
-});
+})
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
-    files: ["jest.config.js", "jest.setup.js"],
+    ignores: ['slash-commands/'],
+  },
+  {
+    files: ['jest.config.js', 'jest.setup.js'],
     rules: {
-      "@typescript-eslint/no-require-imports": "off",
-      "@next/next/no-img-element": "off"
-    }
-  }
-];
+      '@typescript-eslint/no-require-imports': 'off',
+      '@next/next/no-img-element': 'off',
+    },
+  },
+]
 
-export default eslintConfig;
+export default eslintConfig

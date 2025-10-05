@@ -2,16 +2,19 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import { MobileNav } from './mobile-nav'
 import { cn } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
 
 interface NavItem {
   title: string
   href: string
   disabled?: boolean
+  requiresAuth?: boolean
 }
 
 const navigationItems: NavItem[] = [
@@ -22,6 +25,7 @@ const navigationItems: NavItem[] = [
   {
     title: 'Shop',
     href: '/shop',
+    requiresAuth: true,
   },
   {
     title: 'About',
@@ -33,23 +37,59 @@ const navigationItems: NavItem[] = [
   },
 ]
 
+interface User {
+  id: string
+  email?: string
+}
+
 export function SiteHeader() {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    // Get initial session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
-        <MainNav />
-        <MobileHeader />
+        <MainNav user={user} loading={loading} />
+        <MobileHeader user={user} loading={loading} />
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* Search can be added here later */}
           </div>
           <nav className="flex items-center">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Sign In</Link>
-            </Button>
-            <Button asChild size="sm" className="ml-2">
-              <Link href="/register">Sign Up</Link>
-            </Button>
+            {!loading &&
+              (user ? (
+                <Button asChild size="sm">
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/login">Sign In</Link>
+                  </Button>
+                  <Button asChild size="sm" className="ml-2">
+                    <Link href="/register">Sign Up</Link>
+                  </Button>
+                </>
+              ))}
           </nav>
         </div>
       </div>
@@ -57,14 +97,18 @@ export function SiteHeader() {
   )
 }
 
-function MainNav() {
+function MainNav({ user, loading }: { user: User | null; loading: boolean }) {
   const pathname = usePathname()
+
+  const visibleItems = loading
+    ? navigationItems.filter(item => !item.requiresAuth)
+    : navigationItems.filter(item => !item.requiresAuth || user)
 
   return (
     <div className="mr-4 hidden md:flex">
       <Logo className="mr-6" />
       <nav className="flex items-center gap-6 text-sm">
-        {navigationItems.map(item => (
+        {visibleItems.map(item => (
           <Link
             key={item.href}
             href={item.href}
@@ -81,10 +125,10 @@ function MainNav() {
   )
 }
 
-export function MobileHeader() {
+export function MobileHeader({ user, loading }: { user: User | null; loading: boolean }) {
   return (
     <div className="flex md:hidden">
-      <MobileNav />
+      <MobileNav user={user} loading={loading} />
       <Logo />
     </div>
   )

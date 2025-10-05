@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import FeaturedSection from '@/components/home/FeaturedSection'
+import ProductGrid from '@/components/products/ProductGrid'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -12,6 +14,13 @@ export default async function DashboardPage() {
     .select('*')
     .eq('id', user?.id)
     .maybeSingle()
+
+  // Fetch featured products for the dashboard
+  const { data: featuredProducts } = await supabase
+    .from('products')
+    .select('*')
+    .limit(8)
+    .order('created_at', { ascending: false })
 
   return (
     <div className="space-y-8">
@@ -156,6 +165,23 @@ export default async function DashboardPage() {
           </div>
         </Link>
       </div>
+
+      {/* Featured Categories */}
+      <div className="mt-12">
+        <FeaturedSection />
+      </div>
+
+      {/* Featured Products */}
+      <section className="py-12 bg-gray-50 rounded-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">New Arrivals</h2>
+            <p className="text-lg text-gray-600">Latest additions to our collection</p>
+          </div>
+
+          <ProductGrid products={featuredProducts || []} columns={4} />
+        </div>
+      </section>
     </div>
   )
 }

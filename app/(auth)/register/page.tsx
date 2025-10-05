@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,7 @@ export default function RegisterPage() {
     taxExempt: false,
   })
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -31,6 +33,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(null)
     setLoading(true)
 
     try {
@@ -70,16 +73,19 @@ export default function RegisterPage() {
           if (profileError) throw profileError
         }
 
-        router.push('/dashboard')
-        router.refresh()
+        // Successfully created account and profile
+        setSuccess('Account created successfully! Redirecting to dashboard...')
+        setTimeout(() => {
+          router.push('/dashboard')
+          router.refresh()
+        }, 1500)
       } else {
         // Email confirmations are enabled, show success message
-        setError('Please check your email to confirm your account.')
+        setSuccess('Account created! Please check your email to confirm your account.')
         setLoading(false)
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
       setLoading(false)
     }
   }
@@ -172,20 +178,31 @@ export default function RegisterPage() {
 
         {/* Address Information */}
         <div className="space-y-4 pt-4 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Business Address</h2>
 
           <div>
             <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">
               Street Address <span className="text-red-500">*</span>
             </label>
-            <input
+            <AddressAutocomplete
               id="streetAddress"
-              type="text"
               value={formData.streetAddress}
-              onChange={e => setFormData({ ...formData, streetAddress: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-              placeholder="123 Main St"
+              onChange={(value, components) => {
+                if (components) {
+                  setFormData({
+                    ...formData,
+                    streetAddress: components.streetAddress,
+                    city: components.city,
+                    state: components.state,
+                    zipCode: components.zipCode,
+                  })
+                } else {
+                  setFormData({ ...formData, streetAddress: value })
+                }
+              }}
+              placeholder="Start typing your address..."
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
 
@@ -281,7 +298,7 @@ export default function RegisterPage() {
 
               <div>
                 <label htmlFor="taxId" className="block text-sm font-medium text-gray-700">
-                  Tax Identification Number <span className="text-red-500">*</span>
+                  Tax Identification Number
                 </label>
                 <input
                   id="taxId"
@@ -290,7 +307,6 @@ export default function RegisterPage() {
                   onChange={e => setFormData({ ...formData, taxId: e.target.value })}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                   placeholder="XX-XXXXXXX"
-                  required
                 />
               </div>
             </>
@@ -309,19 +325,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          <div>
-            <label htmlFor="businessAddress" className="block text-sm font-medium text-gray-700">
-              Business Address (Optional)
-            </label>
-            <textarea
-              id="businessAddress"
-              value={formData.businessAddress}
-              onChange={e => setFormData({ ...formData, businessAddress: e.target.value })}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-              rows={2}
-            />
-          </div>
-
           <div className="flex items-center">
             <input
               id="taxExempt"
@@ -337,6 +340,7 @@ export default function RegisterPage() {
         </div>
 
         {error && <div className="text-red-600 text-sm">{error}</div>}
+        {success && <div className="text-green-600 text-sm">{success}</div>}
 
         <button
           type="submit"

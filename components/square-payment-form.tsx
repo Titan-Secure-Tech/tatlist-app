@@ -22,6 +22,9 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
 
   useEffect(() => {
     const initializeSquare = async () => {
+      // Small delay to ensure DOM is ready
+      await new Promise(resolve => setTimeout(resolve, 100))
+
       if (!window.Square) {
         // Load Square Web SDK script - use production in production environment
         const isProduction = process.env.NODE_ENV === 'production'
@@ -80,6 +83,13 @@ export function SquarePaymentForm({ amount, onSuccess, isProcessing }: SquarePay
             card: () => Promise<{ attach: (selector: string) => Promise<void> }>
           }
         ).card()
+
+        // Wait for DOM element to be available
+        const cardContainer = document.getElementById('card-container')
+        if (!cardContainer) {
+          throw new Error('Payment form container not found. Please refresh the page.')
+        }
+
         await cardInstance.attach('#card-container')
         setCard(cardInstance)
 
