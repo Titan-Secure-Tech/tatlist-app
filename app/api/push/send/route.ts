@@ -2,14 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import webpush from 'web-push'
 
-// Configure web-push with VAPID details
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT || 'mailto:support@tatlist.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '',
-  process.env.VAPID_PRIVATE_KEY || ''
-)
-
 export type NotificationType = 'order_status' | 'promotion' | 'update'
+
+// Lazy initialization of VAPID details to avoid build-time errors
+let vapidConfigured = false
+function ensureVapidConfigured() {
+  if (!vapidConfigured) {
+    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+    const privateKey = process.env.VAPID_PRIVATE_KEY
+    const subject = process.env.VAPID_SUBJECT || 'mailto:support@tatlist.com'
+
+    if (publicKey && privateKey) {
+      webpush.setVapidDetails(subject, publicKey, privateKey)
+      vapidConfigured = true
+    }
+  }
+}
 
 export interface PushNotificationPayload {
   title: string
@@ -21,6 +29,9 @@ export interface PushNotificationPayload {
 
 export async function POST(request: NextRequest) {
   try {
+    // Ensure VAPID is configured before processing
+    ensureVapidConfigured()
+
     const supabase = await createClient()
     const {
       data: { user },
