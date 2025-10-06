@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
+import { MapPin, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -27,8 +28,88 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [addressValidation, setAddressValidation] = useState<{
+    isValidating: boolean
+    isValid: boolean | null
+    error: string | null
+  }>({
+    isValidating: false,
+    isValid: null,
+    error: null,
+  })
   const router = useRouter()
   const supabase = createClient()
+
+  const validateAddress = async () => {
+    setAddressValidation({
+      isValidating: true,
+      isValid: null,
+      error: null,
+    })
+
+    const fullAddress = `${formData.streetAddress}, ${formData.city}, ${formData.state} ${formData.zipCode}`
+
+    try {
+      const response = await fetch('/api/validate-address', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: fullAddress }),
+      })
+
+      const result = await response.json()
+
+      if (result.isValid) {
+        setAddressValidation({
+          isValidating: false,
+          isValid: true,
+          error: null,
+        })
+
+        // Update form with validated address components if provided
+        if (result.address) {
+          setFormData(prev => ({
+            ...prev,
+            streetAddress: result.address.street || prev.streetAddress,
+            city: result.address.city || prev.city,
+            state: result.address.state || prev.state,
+            zipCode: result.address.zipCode || prev.zipCode,
+          }))
+        }
+      } else {
+        setAddressValidation({
+          isValidating: false,
+          isValid: false,
+          error: result.error || 'Address validation failed',
+        })
+      }
+    } catch {
+      setAddressValidation({
+        isValidating: false,
+        isValid: false,
+        error: 'Unable to validate address. Please try again.',
+      })
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target
+    
+    if (type === 'checkbox') {
+      const { checked } = e.target as HTMLInputElement
+      setFormData({ ...formData, [name]: checked })
+    } else {
+      setFormData({ ...formData, [name]: value })
+    }
+
+    // Reset validation when address changes
+    if (['streetAddress', 'city', 'state', 'zipCode'].includes(name)) {
+      setAddressValidation({
+        isValidating: false,
+        isValid: null,
+        error: null,
+      })
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,9 +190,10 @@ export default function RegisterPage() {
               </label>
               <input
                 id="firstName"
+                name="firstName"
                 type="text"
                 value={formData.firstName}
-                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
@@ -123,9 +205,10 @@ export default function RegisterPage() {
               </label>
               <input
                 id="lastName"
+                name="lastName"
                 type="text"
                 value={formData.lastName}
-                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
@@ -138,9 +221,10 @@ export default function RegisterPage() {
             </label>
             <input
               id="email"
+              name="email"
               type="email"
               value={formData.email}
-              onChange={e => setFormData({ ...formData, email: e.target.value })}
+              onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             />
@@ -152,9 +236,10 @@ export default function RegisterPage() {
             </label>
             <input
               id="phone"
+              name="phone"
               type="tel"
               value={formData.phone}
-              onChange={e => setFormData({ ...formData, phone: e.target.value })}
+              onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               placeholder="(555) 123-4567"
               required
@@ -167,9 +252,10 @@ export default function RegisterPage() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
               value={formData.password}
-              onChange={e => setFormData({ ...formData, password: e.target.value })}
+              onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             />
@@ -196,8 +282,20 @@ export default function RegisterPage() {
                     state: components.state,
                     zipCode: components.zipCode,
                   })
+                  // Reset validation when autocomplete populates address
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                  })
                 } else {
                   setFormData({ ...formData, streetAddress: value })
+                  // Reset validation when manual input changes
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                  })
                 }
               }}
               placeholder="Start typing your address..."
@@ -213,9 +311,10 @@ export default function RegisterPage() {
               </label>
               <input
                 id="city"
+                name="city"
                 type="text"
                 value={formData.city}
-                onChange={e => setFormData({ ...formData, city: e.target.value })}
+                onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
@@ -227,9 +326,17 @@ export default function RegisterPage() {
               </label>
               <input
                 id="state"
+                name="state"
                 type="text"
                 value={formData.state}
-                onChange={e => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
+                onChange={e => {
+                  setFormData({ ...formData, state: e.target.value.toUpperCase() })
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                  })
+                }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 placeholder="FL"
                 maxLength={2}
@@ -243,15 +350,67 @@ export default function RegisterPage() {
               </label>
               <input
                 id="zipCode"
+                name="zipCode"
                 type="text"
                 value={formData.zipCode}
-                onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
+                onChange={handleInputChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 placeholder="12345"
                 required
               />
             </div>
           </div>
+
+          {/* Address Validation Button */}
+          <button
+            type="button"
+            onClick={validateAddress}
+            disabled={
+              !formData.streetAddress ||
+              !formData.city ||
+              !formData.zipCode ||
+              addressValidation.isValidating
+            }
+            className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {addressValidation.isValidating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Validating Address...
+              </>
+            ) : (
+              <>
+                <MapPin className="mr-2 h-4 w-4" />
+                Validate Address
+              </>
+            )}
+          </button>
+
+          {/* Address Validation Success */}
+          {addressValidation.isValid === true && (
+            <div className="flex items-start p-3 bg-green-50 border border-green-200 rounded-md">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+              <div className="text-green-800 text-sm">
+                <div className="font-medium">Address Validated</div>
+                <div className="text-green-700 text-xs mt-1">
+                  Your address has been verified and is in our delivery area.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Address Validation Error */}
+          {addressValidation.isValid === false && (
+            <div className="flex items-start p-3 bg-red-50 border border-red-200 rounded-md">
+              <AlertCircle className="h-5 w-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" />
+              <div className="text-red-800 text-sm">
+                <div className="font-medium">Address Validation Failed</div>
+                <div className="text-red-700 text-xs mt-1">
+                  {addressValidation.error}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Business Information */}
@@ -264,13 +423,9 @@ export default function RegisterPage() {
             </label>
             <select
               id="userType"
+              name="userType"
               value={formData.userType}
-              onChange={e =>
-                setFormData({
-                  ...formData,
-                  userType: e.target.value as 'shop_owner' | 'tattoo_artist',
-                })
-              }
+              onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             >
@@ -288,9 +443,10 @@ export default function RegisterPage() {
                 </label>
                 <input
                   id="shopName"
+                  name="shopName"
                   type="text"
                   value={formData.shopName}
-                  onChange={e => setFormData({ ...formData, shopName: e.target.value })}
+                  onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                   required
                 />
@@ -302,9 +458,10 @@ export default function RegisterPage() {
                 </label>
                 <input
                   id="taxId"
+                  name="taxId"
                   type="text"
                   value={formData.taxId}
-                  onChange={e => setFormData({ ...formData, taxId: e.target.value })}
+                  onChange={handleInputChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                   placeholder="XX-XXXXXXX"
                 />
@@ -318,9 +475,10 @@ export default function RegisterPage() {
             </label>
             <input
               id="businessName"
+              name="businessName"
               type="text"
               value={formData.businessName}
-              onChange={e => setFormData({ ...formData, businessName: e.target.value })}
+              onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
@@ -328,9 +486,10 @@ export default function RegisterPage() {
           <div className="flex items-center">
             <input
               id="taxExempt"
+              name="taxExempt"
               type="checkbox"
               checked={formData.taxExempt}
-              onChange={e => setFormData({ ...formData, taxExempt: e.target.checked })}
+              onChange={handleInputChange}
               className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
             />
             <label htmlFor="taxExempt" className="ml-2 block text-sm text-gray-700">

@@ -37,8 +37,15 @@ export default function AddressAutocomplete({
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [mapboxAvailable, setMapboxAvailable] = useState(true)
   const debounceTimer = useRef<NodeJS.Timeout | null>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
+
+  // Check if Mapbox is available on mount
+  useEffect(() => {
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+    setMapboxAvailable(!!mapboxToken)
+  }, [])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -57,12 +64,21 @@ export default function AddressAutocomplete({
       return
     }
 
+    // Check if Mapbox token is available
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+    if (!mapboxToken) {
+      console.warn('Mapbox token not available - address autocomplete disabled')
+      setSuggestions([])
+      setMapboxAvailable(false)
+      return
+    }
+
     setIsLoading(true)
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
           new URLSearchParams({
-            access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
+            access_token: mapboxToken,
             country: 'US',
             types: 'address',
             limit: '5',
@@ -73,9 +89,13 @@ export default function AddressAutocomplete({
         const data = await response.json()
         setSuggestions(data.features || [])
         setShowSuggestions(true)
+      } else {
+        console.error('Mapbox API error:', response.status, response.statusText)
+        setSuggestions([])
       }
     } catch (error) {
       console.error('Error fetching address suggestions:', error)
+      setSuggestions([])
     } finally {
       setIsLoading(false)
     }
@@ -175,6 +195,13 @@ export default function AddressAutocomplete({
       {showSuggestions && !isLoading && suggestions.length === 0 && value.length >= 3 && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-600 text-sm">
           No addresses found. Please check your input.
+        </div>
+      )}
+
+      {!mapboxAvailable && value.length >= 3 && (
+        <div className="absolute z-50 w-full mt-1 bg-orange-50 border border-orange-200 rounded-md shadow-lg p-3 text-center text-orange-700 text-sm">
+          <div className="font-medium">Address autocomplete temporarily unavailable</div>
+          <div className="text-xs mt-1">Please enter your complete address manually</div>
         </div>
       )}
     </div>
