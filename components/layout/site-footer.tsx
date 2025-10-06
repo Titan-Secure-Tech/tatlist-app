@@ -8,25 +8,15 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <Logo />
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            Built with{' '}
+            Built by{' '}
             <Link
-              href="https://nextjs.org"
+              href="https://titansecuretech.com"
               target="_blank"
               rel="noreferrer"
               className="font-medium underline underline-offset-4"
             >
-              Next.js
-            </Link>{' '}
-            and{' '}
-            <Link
-              href="https://ui.shadcn.com"
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              shadcn/ui
+              TITAN
             </Link>
-            .
           </p>
         </div>
         <div className="flex flex-col items-center gap-4 px-8 md:ml-auto md:flex-row md:gap-6 md:px-0">
