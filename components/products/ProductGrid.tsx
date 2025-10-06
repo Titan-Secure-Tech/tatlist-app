@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import AnimatedProductCard from './AnimatedProductCard'
 import { Product } from '@/types'
-import { Search, X } from 'lucide-react'
 
 interface ProductGridProps {
   products: Product[]
@@ -22,7 +21,6 @@ export default function ProductGrid({
 }: ProductGridProps) {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
   const [sortBy, setSortBy] = useState<SortType>('featured')
-  const [searchQuery, setSearchQuery] = useState('')
 
   const gridColumns = {
     2: 'grid-cols-1 md:grid-cols-2',
@@ -34,24 +32,6 @@ export default function ProductGrid({
   const filteredAndSortedProducts = useMemo(() => {
     // First filter
     let filtered = [...products]
-
-    // Search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim()
-      filtered = filtered.filter(p => {
-        // Search by name
-        if (p.name?.toLowerCase().includes(query)) return true
-        // Search by brand
-        if (p.brand?.toLowerCase().includes(query)) return true
-        // Search by category
-        if (p.category?.toLowerCase().includes(query)) return true
-        // Search by description
-        if (p.description?.toLowerCase().includes(query)) return true
-        // Search by tags
-        if (p.tags?.some(tag => tag.toLowerCase().includes(query))) return true
-        return false
-      })
-    }
 
     if (activeFilter === 'new') {
       // Filter by new arrivals (products with 'new' or 'latest' tags)
@@ -88,7 +68,7 @@ export default function ProductGrid({
     }
 
     return sorted
-  }, [products, activeFilter, sortBy, searchQuery])
+  }, [products, activeFilter, sortBy])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -107,28 +87,8 @@ export default function ProductGrid({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 space-y-4 relative z-10"
+          className="mb-8 relative z-10"
         >
-          {/* Search Bar */}
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search products by name, brand, category..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-
           {/* Filters and Sort */}
           <div className="flex flex-wrap gap-4 items-center justify-between">
             <div className="flex gap-2">
@@ -222,21 +182,16 @@ export default function ProductGrid({
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
           <p className="text-gray-500 mb-4">
-            {searchQuery
-              ? `No products match your search "${searchQuery}"`
-              : activeFilter !== 'all'
-                ? `No products match the "${activeFilter === 'new' ? 'New Arrivals' : 'Best Sellers'}" filter.`
-                : 'No products available at this time.'}
+            {activeFilter !== 'all'
+              ? `No products match the "${activeFilter === 'new' ? 'New Arrivals' : 'Best Sellers'}" filter.`
+              : 'No products available at this time.'}
           </p>
-          {(searchQuery || activeFilter !== 'all') && (
+          {activeFilter !== 'all' && (
             <button
-              onClick={() => {
-                setSearchQuery('')
-                setActiveFilter('all')
-              }}
+              onClick={() => setActiveFilter('all')}
               className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
-              Clear Filters
+              Show All Products
             </button>
           )}
         </motion.div>
