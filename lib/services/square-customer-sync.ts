@@ -1,18 +1,12 @@
-import { SquareClient, SquareEnvironment, SquareError } from 'square'
+import { SquareError } from 'square'
 import { createClient } from '@/lib/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js'
+import { getSquareConfig } from '@/lib/square/client-config'
 
-// Initialize Square client - will be set dynamically
-let squareClient: SquareClient
-
-function initializeSquareClient() {
-  if (!squareClient) {
-    squareClient = new SquareClient({
-      accessToken: process.env.SQUARE_SANDBOX_ACCESS_TOKEN!,
-      environment: SquareEnvironment.Sandbox,
-    })
-  }
-  return squareClient
+// Initialize Square client dynamically based on environment
+function initializeSquareClient(useSandbox: boolean = false) {
+  const config = getSquareConfig(useSandbox)
+  return config.client
 }
 
 interface SyncResult {
