@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import { vi, beforeAll, beforeEach, afterAll } from 'vitest'
 import React from 'react'
 
 // Mock IntersectionObserver for framer-motion
@@ -72,6 +72,8 @@ vi.mock('next/link', () => ({
 
 // Mock cart store
 const mockCartContext = {
+  items: [],
+  userId: null,
   cartCount: 0,
   cartDetails: {},
   addItem: vi.fn(),
@@ -79,19 +81,25 @@ const mockCartContext = {
   incrementItem: vi.fn(),
   decrementItem: vi.fn(),
   clearCart: vi.fn(),
+  setUserId: vi.fn(),
   formattedTotalPrice: '$0.00',
   totalPrice: 0,
 }
 
 vi.mock('@/lib/store/cart-store', () => ({
   useShoppingCart: () => mockCartContext,
-  useCartStore: () => mockCartContext,
+  useCartStore: vi.fn((selector?: (state: typeof mockCartContext) => unknown) => {
+    if (selector) {
+      return selector(mockCartContext)
+    }
+    return mockCartContext
+  }),
 }))
 
-// Mock CartProvider component
-vi.mock('@/components/providers/CartProvider', () => ({
-  CartProvider: ({ children }: React.PropsWithChildren) => React.createElement('div', {}, children),
-}))
+// Mock CartProvider component - commented out to allow real CartProvider testing
+// vi.mock('@/components/providers/CartProvider', () => ({
+//   CartProvider: ({ children }: React.PropsWithChildren) => React.createElement('div', {}, children),
+// }))
 
 // Mock toast notifications
 vi.mock('sonner', () => ({
