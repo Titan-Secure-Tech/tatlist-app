@@ -33,6 +33,74 @@ export type Database = {
   }
   public: {
     Tables: {
+      business_details: {
+        Row: {
+          business_name: string
+          city: string
+          created_at: string | null
+          distance_miles: number | null
+          email: string
+          id: string
+          is_validated: boolean | null
+          latitude: number | null
+          license_number: string
+          longitude: number | null
+          phone: string
+          state: string
+          street: string
+          updated_at: string | null
+          user_id: string | null
+          validation_date: string | null
+          zip_code: string
+        }
+        Insert: {
+          business_name: string
+          city: string
+          created_at?: string | null
+          distance_miles?: number | null
+          email: string
+          id?: string
+          is_validated?: boolean | null
+          latitude?: number | null
+          license_number: string
+          longitude?: number | null
+          phone: string
+          state: string
+          street: string
+          updated_at?: string | null
+          user_id?: string | null
+          validation_date?: string | null
+          zip_code: string
+        }
+        Update: {
+          business_name?: string
+          city?: string
+          created_at?: string | null
+          distance_miles?: number | null
+          email?: string
+          id?: string
+          is_validated?: boolean | null
+          latitude?: number | null
+          license_number?: string
+          longitude?: number | null
+          phone?: string
+          state?: string
+          street?: string
+          updated_at?: string | null
+          user_id?: string | null
+          validation_date?: string | null
+          zip_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'business_details_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: true
+            referencedRelation: 'unlinked_supabase_users'
+            referencedColumns: ['user_id']
+          },
+        ]
+      }
       cart_items: {
         Row: {
           created_at: string | null
@@ -125,6 +193,51 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      email_events: {
+        Row: {
+          created_at: string | null
+          delivery_status_code: number | null
+          delivery_status_message: string | null
+          domain: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          message_id: string | null
+          reason: string | null
+          recipient: string
+          severity: string | null
+          timestamp: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_status_code?: number | null
+          delivery_status_message?: string | null
+          domain?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          message_id?: string | null
+          reason?: string | null
+          recipient: string
+          severity?: string | null
+          timestamp?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          delivery_status_code?: number | null
+          delivery_status_message?: string | null
+          domain?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          message_id?: string | null
+          reason?: string | null
+          recipient?: string
+          severity?: string | null
+          timestamp?: string | null
+        }
+        Relationships: []
       }
       favorites: {
         Row: {
@@ -277,8 +390,10 @@ export type Database = {
       }
       orders: {
         Row: {
+          business_details_id: string | null
           created_at: string | null
           delivery_address: Json | null
+          delivery_distance_miles: number | null
           delivery_fee: number | null
           fulfillment_type: Database['public']['Enums']['fulfillment_type']
           id: string
@@ -286,6 +401,7 @@ export type Database = {
           order_number: string
           payment_intent_id: string | null
           payment_status: Database['public']['Enums']['payment_status'] | null
+          square_customer_id: string | null
           status: Database['public']['Enums']['order_status'] | null
           subtotal: number
           tax: number
@@ -294,8 +410,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          business_details_id?: string | null
           created_at?: string | null
           delivery_address?: Json | null
+          delivery_distance_miles?: number | null
           delivery_fee?: number | null
           fulfillment_type: Database['public']['Enums']['fulfillment_type']
           id?: string
@@ -303,6 +421,7 @@ export type Database = {
           order_number: string
           payment_intent_id?: string | null
           payment_status?: Database['public']['Enums']['payment_status'] | null
+          square_customer_id?: string | null
           status?: Database['public']['Enums']['order_status'] | null
           subtotal: number
           tax: number
@@ -311,8 +430,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          business_details_id?: string | null
           created_at?: string | null
           delivery_address?: Json | null
+          delivery_distance_miles?: number | null
           delivery_fee?: number | null
           fulfillment_type?: Database['public']['Enums']['fulfillment_type']
           id?: string
@@ -320,6 +441,7 @@ export type Database = {
           order_number?: string
           payment_intent_id?: string | null
           payment_status?: Database['public']['Enums']['payment_status'] | null
+          square_customer_id?: string | null
           status?: Database['public']['Enums']['order_status'] | null
           subtotal?: number
           tax?: number
@@ -328,6 +450,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: 'orders_business_details_id_fkey'
+            columns: ['business_details_id']
+            isOneToOne: false
+            referencedRelation: 'business_details'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'orders_user_id_fkey'
             columns: ['user_id']
@@ -391,48 +520,345 @@ export type Database = {
         }
         Relationships: []
       }
-      users: {
+      push_notifications_log: {
         Row: {
-          business_address: string | null
-          business_name: string
+          body: string
+          data: Json | null
+          error_message: string | null
+          id: string
+          notification_type: string
+          sent_at: string | null
+          status: string
+          subscription_id: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          data?: Json | null
+          error_message?: string | null
+          id?: string
+          notification_type: string
+          sent_at?: string | null
+          status?: string
+          subscription_id: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          data?: Json | null
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          sent_at?: string | null
+          status?: string
+          subscription_id?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'push_notifications_log_subscription_id_fkey'
+            columns: ['subscription_id']
+            isOneToOne: false
+            referencedRelation: 'push_subscriptions'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'push_notifications_log_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'unlinked_supabase_users'
+            referencedColumns: ['user_id']
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string | null
+          endpoint: string
+          id: string
+          p256dh: string
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          p256dh: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'push_subscriptions_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'unlinked_supabase_users'
+            referencedColumns: ['user_id']
+          },
+        ]
+      }
+      sandbox_users: {
+        Row: {
           created_at: string | null
           email: string
+          enabled: boolean | null
           id: string
-          role: Database['public']['Enums']['user_role'] | null
-          tax_exempt_document: string | null
-          tax_exempt_status: boolean | null
+          notes: string | null
           updated_at: string | null
         }
         Insert: {
-          business_address?: string | null
-          business_name: string
           created_at?: string | null
           email: string
-          id: string
-          role?: Database['public']['Enums']['user_role'] | null
-          tax_exempt_document?: string | null
-          tax_exempt_status?: boolean | null
+          enabled?: boolean | null
+          id?: string
+          notes?: string | null
           updated_at?: string | null
         }
         Update: {
-          business_address?: string | null
-          business_name?: string
           created_at?: string | null
           email?: string
+          enabled?: boolean | null
           id?: string
-          role?: Database['public']['Enums']['user_role'] | null
-          tax_exempt_document?: string | null
-          tax_exempt_status?: boolean | null
+          notes?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
+      square_customer_sync_logs: {
+        Row: {
+          completed_at: string | null
+          customers_created: number | null
+          customers_failed: number | null
+          customers_matched: number | null
+          customers_updated: number | null
+          duration_ms: number | null
+          error_details: Json | null
+          id: string
+          metadata: Json | null
+          started_at: string | null
+          status: string
+          sync_direction: string
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          customers_created?: number | null
+          customers_failed?: number | null
+          customers_matched?: number | null
+          customers_updated?: number | null
+          duration_ms?: number | null
+          error_details?: Json | null
+          id?: string
+          metadata?: Json | null
+          started_at?: string | null
+          status: string
+          sync_direction: string
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          customers_created?: number | null
+          customers_failed?: number | null
+          customers_matched?: number | null
+          customers_updated?: number | null
+          duration_ms?: number | null
+          error_details?: Json | null
+          id?: string
+          metadata?: Json | null
+          started_at?: string | null
+          status?: string
+          sync_direction?: string
+          sync_type?: string
+        }
+        Relationships: []
+      }
+      square_customers: {
+        Row: {
+          address: Json | null
+          company_name: string | null
+          created_at: string | null
+          created_in_square_at: string | null
+          email: string
+          family_name: string | null
+          given_name: string | null
+          id: string
+          last_synced_at: string | null
+          metadata: Json | null
+          phone_number: string | null
+          reference_id: string | null
+          square_customer_id: string
+          sync_error: string | null
+          sync_status: string | null
+          updated_at: string | null
+          updated_in_square_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: Json | null
+          company_name?: string | null
+          created_at?: string | null
+          created_in_square_at?: string | null
+          email: string
+          family_name?: string | null
+          given_name?: string | null
+          id?: string
+          last_synced_at?: string | null
+          metadata?: Json | null
+          phone_number?: string | null
+          reference_id?: string | null
+          square_customer_id: string
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+          updated_in_square_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: Json | null
+          company_name?: string | null
+          created_at?: string | null
+          created_in_square_at?: string | null
+          email?: string
+          family_name?: string | null
+          given_name?: string | null
+          id?: string
+          last_synced_at?: string | null
+          metadata?: Json | null
+          phone_number?: string | null
+          reference_id?: string | null
+          square_customer_id?: string
+          sync_error?: string | null
+          sync_status?: string | null
+          updated_at?: string | null
+          updated_in_square_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'square_customers_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'unlinked_supabase_users'
+            referencedColumns: ['user_id']
+          },
+        ]
+      }
+      users: {
+        Row: {
+          business_address: string | null
+          business_name: string
+          city: string | null
+          created_at: string | null
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          role: Database['public']['Enums']['user_role'] | null
+          shop_name: string | null
+          state: string | null
+          street_address: string | null
+          tax_exempt_document: string | null
+          tax_exempt_status: boolean | null
+          tax_id: string | null
+          updated_at: string | null
+          user_type: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          business_address?: string | null
+          business_name: string
+          city?: string | null
+          created_at?: string | null
+          email: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database['public']['Enums']['user_role'] | null
+          shop_name?: string | null
+          state?: string | null
+          street_address?: string | null
+          tax_exempt_document?: string | null
+          tax_exempt_status?: boolean | null
+          tax_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          business_address?: string | null
+          business_name?: string
+          city?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database['public']['Enums']['user_role'] | null
+          shop_name?: string | null
+          state?: string | null
+          street_address?: string | null
+          tax_exempt_document?: string | null
+          tax_exempt_status?: boolean | null
+          tax_id?: string | null
+          updated_at?: string | null
+          user_type?: string | null
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'users_id_fkey'
+            columns: ['id']
+            isOneToOne: true
+            referencedRelation: 'unlinked_supabase_users'
+            referencedColumns: ['user_id']
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      unlinked_supabase_users: {
+        Row: {
+          email: string | null
+          first_name: string | null
+          full_name: string | null
+          last_name: string | null
+          phone: string | null
+          user_created_at: string | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_or_create_square_customer_id: {
+        Args: { p_user_id: string }
+        Returns: string
+      }
+      match_square_customer_to_user: {
+        Args: { p_email: string }
+        Returns: string
+      }
     }
     Enums: {
       delivery_status: 'pending' | 'assigned' | 'in_progress' | 'completed' | 'failed'
