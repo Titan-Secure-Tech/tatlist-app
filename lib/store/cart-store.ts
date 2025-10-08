@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 
 export interface CartItem {
   id: string
@@ -14,48 +14,25 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[]
-  userId: string | null
   addItem: (item: CartItem) => void
   removeItem: (id: string) => void
   incrementItem: (id: string) => void
   decrementItem: (id: string) => void
   clearCart: () => void
-  setUserId: (userId: string | null) => void
   cartCount: number
   cartDetails: Record<string, CartItem>
   totalPrice: number
   formattedTotalPrice: string
 }
 
-// Helper to get storage key based on user ID
-const getStorageKey = (userId: string | null) => {
-  return userId ? `tatlist-cart-${userId}` : 'tatlist-cart-guest'
-}
-
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
+    set => ({
       items: [],
-      userId: null,
       cartCount: 0,
       cartDetails: {},
       totalPrice: 0,
       formattedTotalPrice: '$0.00',
-
-      setUserId: (userId: string | null) => {
-        const currentUserId = get().userId
-        // If user changes, clear cart and update userId
-        if (currentUserId !== userId) {
-          set({
-            userId,
-            items: [],
-            cartDetails: {},
-            cartCount: 0,
-            totalPrice: 0,
-            formattedTotalPrice: '$0.00',
-          })
-        }
-      },
 
       addItem: item => {
         set(state => {
@@ -187,32 +164,6 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'tatlist-cart',
-      storage: createJSONStorage(() => ({
-        getItem: () => {
-          const state = useCartStore.getState()
-          const key = getStorageKey(state.userId)
-          const value = localStorage.getItem(key)
-          return value
-        },
-        setItem: (_name, value) => {
-          const state = useCartStore.getState()
-          const key = getStorageKey(state.userId)
-          localStorage.setItem(key, value)
-        },
-        removeItem: () => {
-          const state = useCartStore.getState()
-          const key = getStorageKey(state.userId)
-          localStorage.removeItem(key)
-        },
-      })),
-      partialize: state => ({
-        items: state.items,
-        userId: state.userId,
-        cartCount: state.cartCount,
-        cartDetails: state.cartDetails,
-        totalPrice: state.totalPrice,
-        formattedTotalPrice: state.formattedTotalPrice,
-      }),
     }
   )
 )
