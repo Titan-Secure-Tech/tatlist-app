@@ -66,7 +66,7 @@ export function ContactForm({ name, email, phone, subject, message }: ContactFor
 
       {/* Action Required Box */}
       <Section style={actionBox}>
-        <Text style={actionTitle}>⚡ Action Required</Text>
+        <Text style={actionTitle}>Action Required</Text>
         <Text style={actionText}>Please respond to this inquiry within 24 hours.</Text>
         <Text style={actionText}>
           Reply directly to:{' '}

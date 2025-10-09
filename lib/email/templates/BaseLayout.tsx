@@ -24,7 +24,7 @@ export function BaseLayout({ preview, children }: BaseLayoutProps) {
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerTitle}>Questions?</Text>
-            <Text style={footerContact}>📧 support@tatlist.com | 📞 813-310-3877</Text>
+            <Text style={footerContact}>support@tatlist.com | 813-310-3877</Text>
             <Text style={footerCopyright}>© 2025 Tatlist. All rights reserved.</Text>
           </Section>
         </Container>

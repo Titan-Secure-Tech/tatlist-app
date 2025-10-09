@@ -12,31 +12,26 @@ interface OrderStatusUpdateProps {
   estimatedTime?: string
 }
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; emoji: string }> = {
+const statusConfig: Record<OrderStatus, { label: string; color: string }> = {
   preparing: {
     label: 'Being Prepared',
     color: '#FFA500',
-    emoji: '👨‍🍳',
   },
   ready: {
     label: 'Ready for Delivery',
     color: '#4CAF50',
-    emoji: '✅',
   },
   out_for_delivery: {
     label: 'Out for Delivery',
     color: '#2196F3',
-    emoji: '🚚',
   },
   delivered: {
     label: 'Delivered',
     color: '#4CAF50',
-    emoji: '📦',
   },
   cancelled: {
     label: 'Cancelled',
     color: '#F44336',
-    emoji: '❌',
   },
 }
 
@@ -75,9 +70,7 @@ export function OrderStatusUpdate({
       <Section style={statusBox(config.color)}>
         <Text style={orderTitle}>Order #{orderNumber}</Text>
         <Section style={statusBadge(config.color)}>
-          <Text style={statusBadgeText}>
-            {config.emoji} {config.label}
-          </Text>
+          <Text style={statusBadgeText}>{config.label}</Text>
         </Section>
         <Text style={statusMessage}>{getStatusMessage()}</Text>
 
@@ -93,14 +86,14 @@ export function OrderStatusUpdate({
       {/* Status-specific information */}
       {status === 'out_for_delivery' && (
         <Section style={infoBox('#e3f2fd', '#2196F3')}>
-          <Text style={infoTitle}>🚚 Your delivery is on the way!</Text>
+          <Text style={infoTitle}>Your delivery is on the way</Text>
           <Text style={infoText}>Please ensure someone is available to receive the order.</Text>
         </Section>
       )}
 
       {status === 'delivered' && (
         <Section style={infoBox('#e8f5e9', '#4CAF50')}>
-          <Text style={infoTitle}>🎉 Thank you for your order!</Text>
+          <Text style={infoTitle}>Thank you for your order</Text>
           <Text style={infoText}>
             We hope you enjoy your products. Feel free to order again anytime.
           </Text>
@@ -118,7 +111,7 @@ export function OrderStatusUpdate({
 
       {status === 'ready' && (
         <Section style={infoBox('#fff9e6', '#FFA500')}>
-          <Text style={infoTitle}>📦 Ready for pickup or delivery</Text>
+          <Text style={infoTitle}>Ready for pickup or delivery</Text>
           <Text style={infoText}>
             Your order is packed and ready to go. You&apos;ll receive another update when it&apos;s
             out for delivery.
