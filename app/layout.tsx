@@ -89,7 +89,9 @@ export default function RootLayout({
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader />
               <OfficeStatusBanner />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 container max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+                {children}
+              </main>
               <SiteFooter />
             </div>
             <Toaster />

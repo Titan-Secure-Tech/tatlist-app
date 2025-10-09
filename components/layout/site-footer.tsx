@@ -4,8 +4,8 @@ import { Logo } from '@/components/ui/logo'
 export function SiteFooter() {
   return (
     <footer className="border-t bg-background">
-      <div className="container flex flex-col gap-4 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+      <div className="container max-w-screen-2xl flex flex-col gap-4 py-10 px-4 sm:px-6 lg:px-8 md:h-24 md:flex-row md:py-0">
+        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-2">
           <Logo />
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
             POWERED BY{' '}
@@ -19,7 +19,7 @@ export function SiteFooter() {
             </Link>
           </p>
         </div>
-        <div className="flex flex-col items-center gap-4 px-8 md:ml-auto md:flex-row md:gap-6 md:px-0">
+        <div className="flex flex-col items-center gap-4 md:ml-auto md:flex-row md:gap-6">
           <Link
             href="/privacy"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
