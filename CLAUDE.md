@@ -315,12 +315,60 @@ The project includes Shopify product data in CSV format located at:
 - Client components use `createClient` from `/lib/supabase/client.ts`
 - Middleware refreshes sessions automatically on each request
 
+### Email System
+
+**Transactional Emails with React Email:**
+
+All email templates are built using [React Email](https://react.email) with a consistent design system matching the platform's black and white aesthetic.
+
+**Available Templates:**
+
+- **Order Confirmation** - Sent after successful order placement
+- **Order Status Updates** - Dynamic status notifications (preparing, ready, out_for_delivery, delivered, cancelled)
+- **Contact Form** - Customer inquiry notifications
+
+**Preview Templates Locally:**
+
+```bash
+# Preview order confirmation
+http://localhost:7500/api/email/preview?template=order-confirmation
+
+# Preview order status (with status parameter)
+http://localhost:7500/api/email/preview?template=order-status&status=delivered
+
+# Preview contact form
+http://localhost:7500/api/email/preview?template=contact-form
+```
+
+**Test Email Delivery:**
+
+```bash
+# Test order confirmation email
+curl "http://localhost:7500/api/test-email?email=your@email.com&type=confirmation"
+
+# Test status update email
+curl "http://localhost:7500/api/test-email?email=your@email.com&type=status&status=delivered"
+```
+
+**Email Service Configuration:**
+
+The Mailgun service (`lib/email/mailgun.ts`) handles all email sending. Templates are located in `lib/email/templates/`. See `lib/email/README.md` for detailed documentation.
+
+**Required Environment Variables:**
+
+```bash
+MAILGUN_BASE_URL=https://api.mailgun.net
+MAILGUN_DOMAIN=your-domain.com
+MAILGUN_SENDING_KEY=your-private-api-key
+```
+
 ### Styling Conventions
 
 - Using Tailwind CSS v4 with PostCSS-based configuration
 - Primary color scheme: Black and white with gray accents
 - Form inputs use consistent styling with black focus states
 - Buttons follow a consistent pattern (black primary, white secondary)
+- Email templates follow the same black/white design system
 
 ## Port Configuration
 
