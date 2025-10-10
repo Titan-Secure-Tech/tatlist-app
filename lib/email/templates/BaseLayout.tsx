@@ -1,4 +1,4 @@
-import { Body, Container, Head, Html, Preview, Section, Text } from '@react-email/components'
+import { Body, Container, Head, Html, Img, Preview, Section, Text } from '@react-email/components'
 import * as React from 'react'
 
 interface BaseLayoutProps {
@@ -15,7 +15,13 @@ export function BaseLayout({ preview, children }: BaseLayoutProps) {
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
-            <Text style={headerText}>TATLIST</Text>
+            <Img
+              src="https://tatlist.com/tatlist-logo.webp"
+              alt="Tatlist - Tampa Tattoo Supply"
+              width="200"
+              height="67"
+              style={logo}
+            />
           </Section>
 
           {/* Content */}
@@ -52,12 +58,11 @@ const header = {
   textAlign: 'center' as const,
 }
 
-const headerText = {
-  color: '#ffffff',
-  fontSize: '28px',
-  fontWeight: 'bold',
-  margin: '0',
-  letterSpacing: '2px',
+const logo = {
+  display: 'block',
+  margin: '0 auto',
+  maxWidth: '180px',
+  height: 'auto',
 }
 
 const content = {
