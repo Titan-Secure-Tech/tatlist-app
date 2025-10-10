@@ -159,8 +159,8 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
                     {customerEmail ? ` at ${customerEmail}` : ' shortly'}
                   </li>
                   <li>• Your order will be processed within 24 hours</li>
-                  <li>• Local delivery typically takes 1-2 business days</li>
-                  <li>• You&apos;ll get tracking information once shipped</li>
+                  <li>• Local delivery typically takes 1-3 hours</li>
+                  <li>• You&apos;ll get email confirmation once order is shipped</li>
                 </ul>
               </div>
             </div>
