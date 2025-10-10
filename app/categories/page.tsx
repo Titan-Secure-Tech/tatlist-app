@@ -55,24 +55,79 @@ function categoryToSlug(category: string): string {
   return slugMap[category] || category.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 }
 
-// Map categories to icon filenames
-function getCategoryIcon(category: string): string {
-  const iconMap: Record<string, string> = {
-    'Needles & Cartridges': 'needles',
-    'Inks & Colors': 'ink',
-    'Tattoo Machines': 'machines',
-    'Tattoo Parts': 'accessories',
-    Aftercare: 'aftercare',
-    'Tattoo Shop Furniture and Supplies': 'furniture',
-    'Medical Supplies and Sterilization Equipment': 'hygiene',
-    'Art and stencil supplies': 'stencil',
-    'Power Supplies': 'power_supplies',
-    'Tubes & Grips': 'tubes_grips',
-    Cartridges: 'cartridges',
+// Map categories to Unsplash images with tattoo shop themes
+function getCategoryImage(category: string): string {
+  const imageMap: Record<string, string> = {
+    'Needles & Cartridges':
+      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo needles close-up
+    'Inks & Colors':
+      'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop', // Colorful ink bottles
+    'Tattoo Machines':
+      'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop', // Tattoo machine close-up
+    'Tattoo Parts':
+      'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop', // Tattoo equipment parts
+    Aftercare: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop', // Skincare/aftercare products
+    'Tattoo Shop Furniture and Supplies':
+      'https://images.unsplash.com/photo-1554224311-beee910c1967?w=800&h=800&fit=crop', // Tattoo shop interior
+    'Medical Supplies and Sterilization Equipment':
+      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop', // Medical/sterile equipment
+    'Art and stencil supplies':
+      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop', // Art supplies and stencils
+    'Power Supplies':
+      'https://images.unsplash.com/photo-1517420879524-86d64ac2f339?w=800&h=800&fit=crop', // Power supply/electronics
+    'Tubes & Grips':
+      'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop', // Tattoo grips and tubes
+    'Body Jewelry':
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop', // Body jewelry/piercings
+    Piercing: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop', // Piercing tools
+    Cartridges: 'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo cartridges
   }
 
-  const iconName = iconMap[category] || 'accessories'
-  return `/category-icons/${iconName}.svg`
+  return (
+    imageMap[category] ||
+    'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop'
+  )
+}
+
+// Get Unsplash attribution for category images
+function getCategoryImageCredit(category: string): { photographer: string; url: string } {
+  const creditMap: Record<string, { photographer: string; url: string }> = {
+    'Needles & Cartridges': {
+      photographer: 'Kristian Angelo',
+      url: 'https://unsplash.com/@kristian_angelo',
+    },
+    'Inks & Colors': { photographer: 'Lucas Lenzi', url: 'https://unsplash.com/@lucaslenzi' },
+    'Tattoo Machines': {
+      photographer: 'Jhonatan Saavedra Perales',
+      url: 'https://unsplash.com/@jhonny_peralvarez',
+    },
+    'Tattoo Parts': { photographer: 'Allef Vinicius', url: 'https://unsplash.com/@seteales' },
+    Aftercare: { photographer: 'Christin Hume', url: 'https://unsplash.com/@christinhumephoto' },
+    'Tattoo Shop Furniture and Supplies': {
+      photographer: 'Daniil Silantev',
+      url: 'https://unsplash.com/@betagamma',
+    },
+    'Medical Supplies and Sterilization Equipment': {
+      photographer: 'Myriam Zilles',
+      url: 'https://unsplash.com/@myriamzilles',
+    },
+    'Art and stencil supplies': {
+      photographer: 'Kelli Tungay',
+      url: 'https://unsplash.com/@kellitungay',
+    },
+    'Power Supplies': { photographer: 'Robin Glauser', url: 'https://unsplash.com/@nahakiole' },
+    'Tubes & Grips': {
+      photographer: 'Ksenia Chernaya',
+      url: 'https://unsplash.com/@ksenia_chernaya',
+    },
+    'Body Jewelry': {
+      photographer: 'Amelia Bartlett',
+      url: 'https://unsplash.com/@ameliabartlett',
+    },
+    Piercing: { photographer: 'Septian Simon', url: 'https://unsplash.com/@septiansimon' },
+  }
+
+  return creditMap[category] || { photographer: 'Unsplash', url: 'https://unsplash.com' }
 }
 
 export default async function CategoriesPage() {
@@ -153,32 +208,48 @@ export default async function CategoriesPage() {
 
               {/* Categories in this group */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {groupCategories.map(category => (
-                  <Link
-                    key={category.name}
-                    href={`/categories/${categoryToSlug(category.name)}`}
-                    className="bg-white border-2 border-black rounded-lg overflow-hidden hover:shadow-xl transition-all group"
-                  >
-                    <div className="aspect-square bg-white p-8 border-b-2 border-black relative overflow-hidden">
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity" />
-                      <Image
-                        src={getCategoryIcon(category.name)}
-                        alt={`${category.name} icon`}
-                        width={200}
-                        height={200}
-                        className="w-full h-full object-contain filter group-hover:scale-110 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="p-6 bg-white">
-                      <h3 className="text-xl font-bold text-black mb-2 group-hover:underline">
-                        {category.name}
-                      </h3>
-                      <p className="text-gray-700 font-medium">
-                        {category.count} {category.count === 1 ? 'product' : 'products'}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
+                {groupCategories.map(category => {
+                  const credit = getCategoryImageCredit(category.name)
+                  return (
+                    <Link
+                      key={category.name}
+                      href={`/categories/${categoryToSlug(category.name)}`}
+                      className="bg-white border-2 border-black rounded-lg overflow-hidden hover:shadow-xl transition-all group"
+                    >
+                      <div className="aspect-square bg-gray-100 relative overflow-hidden border-b-2 border-black">
+                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity z-10" />
+                        <Image
+                          src={getCategoryImage(category.name)}
+                          alt={`${category.name} - Professional tattoo supplies`}
+                          width={800}
+                          height={800}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Photo credit overlay */}
+                        <div className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-2 py-1 rounded z-20">
+                          Photo by{' '}
+                          <a
+                            href={credit.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-white"
+                            onClick={e => e.stopPropagation()}
+                          >
+                            {credit.photographer}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="p-6 bg-white">
+                        <h3 className="text-xl font-bold text-black mb-2 group-hover:underline">
+                          {category.name}
+                        </h3>
+                        <p className="text-gray-700 font-medium">
+                          {category.count} {category.count === 1 ? 'product' : 'products'}
+                        </p>
+                      </div>
+                    </Link>
+                  )
+                })}
               </div>
             </div>
           )
