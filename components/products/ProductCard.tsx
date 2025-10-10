@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart } from 'lucide-react'
+import { CirclePlus, CircleMinus } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -15,16 +15,16 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isInInventory, setIsInInventory] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [imageError, setImageError] = useState(false)
-  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false)
+  const [showInventoryPopup, setShowInventoryPopup] = useState(false)
   const supabase = createClient()
   const { addItem } = useShoppingCart()
 
   useEffect(() => {
-    // Check if product is favorited on mount
-    const checkFavorite = async () => {
+    // Check if product is in inventory on mount
+    const checkInventory = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -36,36 +36,45 @@ export default function ProductCard({ product }: ProductCardProps) {
         .match({ user_id: user.id, product_id: product.id })
         .maybeSingle()
 
-      if (data) setIsFavorited(true)
+      if (data) setIsInInventory(true)
     }
 
-    checkFavorite()
+    checkInventory()
   }, [product.id, supabase])
 
-  const toggleFavorite = async () => {
+  const toggleInventory = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-      toast.error('Please sign in to add favorites')
+      toast.error('Please sign in to add to inventory')
       return
     }
 
-    if (isFavorited) {
-      // Remove from favorites
+    if (isInInventory) {
+      // Optimistic update - change to plus icon immediately
+      setIsInInventory(false)
+
+      // Remove from inventory in background
       const { error } = await supabase
         .from('favorites')
         .delete()
         .match({ user_id: user.id, product_id: product.id })
 
-      if (!error) {
-        setIsFavorited(false)
-        toast.success('Removed from favorites')
+      if (error) {
+        // Rollback on error
+        setIsInInventory(true)
+        toast.error('Failed to remove from inventory')
+        console.error('Error removing from inventory:', error)
+      } else {
+        toast.success('Removed from inventory')
       }
     } else {
+      // Optimistic update - change to minus icon immediately
+      setIsInInventory(true)
       // Show popup to select list
-      setShowFavoritesPopup(true)
+      setShowInventoryPopup(true)
     }
   }
 
@@ -132,14 +141,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           </h3>
         </Link>
         <button
-          onClick={toggleFavorite}
+          onClick={toggleInventory}
           type="button"
           className="p-2 hover:bg-gray-100 rounded-full ml-2 transition-all hover:scale-110 active:scale-95 flex-shrink-0 relative z-10 cursor-pointer"
-          aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
         >
-          <Heart
-            className={`h-5 w-5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-500'}`}
-          />
+          {isInInventory ? (
+            <CircleMinus className="h-5 w-5 text-black transition-colors" />
+          ) : (
+            <CirclePlus className="h-5 w-5 text-gray-400 hover:text-black transition-colors" />
+          )}
         </button>
       </div>
 
@@ -182,10 +193,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       <FavoritesPopup
         productId={product.id}
         productName={product.name}
-        isOpen={showFavoritesPopup}
-        onClose={() => {
-          setShowFavoritesPopup(false)
-          setIsFavorited(true)
+        isOpen={showInventoryPopup}
+        onClose={(wasSuccessful = false) => {
+          setShowInventoryPopup(false)
+          // If user cancelled without adding to list, revert the optimistic update
+          if (!wasSuccessful) {
+            setIsInInventory(false)
+          }
         }}
       />
     </div>

@@ -15,7 +15,7 @@ interface FavoritesPopupProps {
   productId: string
   productName: string
   isOpen: boolean
-  onClose: () => void
+  onClose: (wasSuccessful?: boolean) => void
 }
 
 export default function FavoritesPopup({
@@ -74,7 +74,7 @@ export default function FavoritesPopup({
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) {
-      toast.error('Please sign in to add to favorites')
+      toast.error('Please sign in to add to inventory')
       setIsLoading(false)
       return
     }
@@ -97,8 +97,12 @@ export default function FavoritesPopup({
       if (error) {
         console.error('Error updating quantity:', error)
         toast.error('Failed to update list')
+        setIsLoading(false)
+        onClose(false)
       } else {
         toast.success('Product quantity updated in list!')
+        setIsLoading(false)
+        onClose(true)
       }
     } else {
       // If doesn't exist, create new entry
@@ -111,18 +115,19 @@ export default function FavoritesPopup({
       if (error) {
         console.error('Error adding to list:', error)
         toast.error('Failed to add to list')
+        setIsLoading(false)
+        onClose(false)
       } else {
         // Also add to general favorites table for backwards compatibility
         await supabase
           .from('favorites')
           .upsert({ user_id: user.id, product_id: productId }, { onConflict: 'user_id,product_id' })
 
-        toast.success('Added to favorites list!')
+        toast.success('Added to inventory!')
+        setIsLoading(false)
+        onClose(true)
       }
     }
-
-    setIsLoading(false)
-    onClose()
   }
 
   const createNewList = async () => {
@@ -169,20 +174,25 @@ export default function FavoritesPopup({
   return (
     <div
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={() => onClose(false)}
     >
       <div
         className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-black">Add to Favorites</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <h2 className="text-xl font-semibold text-black">Add to Inventory</h2>
+          <button
+            onClick={() => onClose(false)}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <p className="text-sm text-gray-600 mb-4">Choose a list for &ldquo;{productName}&rdquo;</p>
+        <p className="text-sm text-gray-600 mb-4">
+          Choose an inventory list for &ldquo;{productName}&rdquo;
+        </p>
 
         {/* Existing Lists */}
         {inventoryLists.length > 0 && (
