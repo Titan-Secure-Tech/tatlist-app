@@ -9,6 +9,7 @@ import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 import FavoritesPopup from '@/components/inventory/FavoritesPopup'
+import { useRouter } from 'next/navigation'
 
 interface ProductCardProps {
   product: Product
@@ -21,6 +22,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [showInventoryPopup, setShowInventoryPopup] = useState(false)
   const supabase = createClient()
   const { addItem } = useShoppingCart()
+  const router = useRouter()
 
   useEffect(() => {
     // Check if product is in inventory on mount
@@ -69,6 +71,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         console.error('Error removing from inventory:', error)
       } else {
         toast.success('Removed from inventory')
+        router.refresh() // Refresh server components
       }
     } else {
       // Optimistic update - change to minus icon immediately

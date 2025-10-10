@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { X, Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface InventoryList {
   id: string
@@ -29,6 +30,7 @@ export default function FavoritesPopup({
   const [newListName, setNewListName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     if (isOpen) {
@@ -101,6 +103,7 @@ export default function FavoritesPopup({
         onClose(false)
       } else {
         toast.success('Product quantity updated in list!')
+        router.refresh() // Refresh server components
         setIsLoading(false)
         onClose(true)
       }
@@ -124,6 +127,7 @@ export default function FavoritesPopup({
           .upsert({ user_id: user.id, product_id: productId }, { onConflict: 'user_id,product_id' })
 
         toast.success('Added to inventory!')
+        router.refresh() // Refresh server components
         setIsLoading(false)
         onClose(true)
       }
