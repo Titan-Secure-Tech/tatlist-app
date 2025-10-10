@@ -62,8 +62,7 @@ function getCategoryImage(category: string): string {
       'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo needles close-up
     'Inks & Colors':
       'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop', // Colorful ink bottles
-    'Tattoo Machines':
-      'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop', // Tattoo machine close-up
+    'Tattoo Machines': 'https://images.unsplash.com/photo-IODSUZngkQs?w=800&h=800&fit=crop', // Tattoo machine close-up
     'Tattoo Parts':
       'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop', // Tattoo equipment parts
     Aftercare: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop', // Skincare/aftercare products
@@ -73,12 +72,10 @@ function getCategoryImage(category: string): string {
       'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop', // Medical/sterile equipment
     'Art and stencil supplies':
       'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop', // Art supplies and stencils
-    'Power Supplies':
-      'https://images.unsplash.com/photo-1517420879524-86d64ac2f339?w=800&h=800&fit=crop', // Power supply/electronics
+    'Power Supplies': 'https://images.unsplash.com/photo-Ll1TDo_AQyM?w=800&h=800&fit=crop', // Power supply/electronics
     'Tubes & Grips':
       'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop', // Tattoo grips and tubes
-    'Body Jewelry':
-      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop', // Body jewelry/piercings
+    'Body Jewelry': 'https://images.unsplash.com/photo-ZMYkPSNrb8I?w=800&h=800&fit=crop', // Body jewelry/piercings
     Piercing: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop', // Piercing tools
     Cartridges: 'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo cartridges
   }
