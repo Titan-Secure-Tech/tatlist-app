@@ -62,7 +62,8 @@ function getCategoryImage(category: string): string {
       'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo needles close-up
     'Inks & Colors':
       'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop', // Colorful ink bottles
-    'Tattoo Machines': 'https://images.unsplash.com/photo-IODSUZngkQs?w=800&h=800&fit=crop', // Tattoo machine close-up
+    'Tattoo Machines':
+      'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop', // Tattoo machine close-up
     'Tattoo Parts':
       'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop', // Tattoo equipment parts
     Aftercare: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop', // Skincare/aftercare products
@@ -72,10 +73,12 @@ function getCategoryImage(category: string): string {
       'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop', // Medical/sterile equipment
     'Art and stencil supplies':
       'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop', // Art supplies and stencils
-    'Power Supplies': 'https://images.unsplash.com/photo-Ll1TDo_AQyM?w=800&h=800&fit=crop', // Power supply/electronics
+    'Power Supplies':
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop', // Power supply/electronics
     'Tubes & Grips':
       'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop', // Tattoo grips and tubes
-    'Body Jewelry': 'https://images.unsplash.com/photo-ZMYkPSNrb8I?w=800&h=800&fit=crop', // Body jewelry/piercings
+    'Body Jewelry':
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop', // Body jewelry/piercings
     Piercing: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop', // Piercing tools
     Cartridges: 'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo cartridges
   }
@@ -95,8 +98,8 @@ function getCategoryImageCredit(category: string): { photographer: string; url: 
     },
     'Inks & Colors': { photographer: 'Lucas Lenzi', url: 'https://unsplash.com/@lucaslenzi' },
     'Tattoo Machines': {
-      photographer: 'Jhonatan Saavedra Perales',
-      url: 'https://unsplash.com/@jhonny_peralvarez',
+      photographer: 'Artem Maltsev',
+      url: 'https://unsplash.com/@art_maltsev',
     },
     'Tattoo Parts': { photographer: 'Allef Vinicius', url: 'https://unsplash.com/@seteales' },
     Aftercare: { photographer: 'Christin Hume', url: 'https://unsplash.com/@christinhumephoto' },
@@ -112,14 +115,17 @@ function getCategoryImageCredit(category: string): { photographer: string; url: 
       photographer: 'Kelli Tungay',
       url: 'https://unsplash.com/@kellitungay',
     },
-    'Power Supplies': { photographer: 'Robin Glauser', url: 'https://unsplash.com/@nahakiole' },
+    'Power Supplies': {
+      photographer: 'Alexandre Debiève',
+      url: 'https://unsplash.com/@alexkixa',
+    },
     'Tubes & Grips': {
       photographer: 'Ksenia Chernaya',
       url: 'https://unsplash.com/@ksenia_chernaya',
     },
     'Body Jewelry': {
-      photographer: 'Amelia Bartlett',
-      url: 'https://unsplash.com/@ameliabartlett',
+      photographer: 'Sabrianna',
+      url: 'https://unsplash.com/@sabrinnaringquist',
     },
     Piercing: { photographer: 'Septian Simon', url: 'https://unsplash.com/@septiansimon' },
   }

@@ -3,7 +3,7 @@ const DYNAMIC_CACHE_NAME = 'tatlist-dynamic-v1'
 const STATIC_ASSETS = [
   '/',
   '/offline',
-  '/manifest.json',
+  '/manifest.webmanifest',
   '/icon-192x192.png',
   '/icon-512x512.png',
   '/logo.webp',

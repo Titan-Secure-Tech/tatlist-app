@@ -34,15 +34,25 @@ export default function CategoryCard({ category, slug, imageUrl, credit }: Categ
         {/* Photo credit overlay */}
         <div className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-2 py-1 rounded z-20">
           Photo by{' '}
-          <a
-            href={credit.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-white"
-            onClick={e => e.stopPropagation()}
+          <span
+            className="underline hover:text-white cursor-pointer"
+            onClick={e => {
+              e.preventDefault()
+              e.stopPropagation()
+              window.open(credit.url, '_blank', 'noopener,noreferrer')
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                e.stopPropagation()
+                window.open(credit.url, '_blank', 'noopener,noreferrer')
+              }
+            }}
+            role="link"
+            tabIndex={0}
           >
             {credit.photographer}
-          </a>
+          </span>
         </div>
       </div>
       <div className="p-6 bg-white">
