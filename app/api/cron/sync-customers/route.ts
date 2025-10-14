@@ -3,6 +3,7 @@ import { SquareCustomerSyncService } from '@/lib/services/square-customer-sync'
 import { createClient } from '@/lib/supabase/server'
 
 // This endpoint will be called by Vercel Cron
+// API routes are automatically dynamic when accessing request properties
 export async function GET(request: NextRequest) {
   try {
     // Verify the request is from Vercel Cron (in production)

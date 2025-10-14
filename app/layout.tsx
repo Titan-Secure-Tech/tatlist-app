@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
@@ -88,6 +89,18 @@ export const viewport: Viewport = {
   themeColor: '#FFB347',
 }
 
+function SiteHeaderFallback() {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
+      <div className="container max-w-screen-2xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center">
+          <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    </header>
+  )
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -100,7 +113,9 @@ export default function RootLayout({
           <CartProvider>
             <PWAInstaller />
             <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
+              <Suspense fallback={<SiteHeaderFallback />}>
+                <SiteHeader />
+              </Suspense>
               <OfficeStatusBanner />
               <main className="flex-1 container max-w-screen-2xl px-4 sm:px-6 lg:px-8">
                 {children}

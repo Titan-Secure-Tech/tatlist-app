@@ -6,10 +6,6 @@ export const metadata = {
     'Learn about Tatlist, your premier destination for professional tattoo supplies and equipment.',
 }
 
-// Static page - can be fully prerendered
-export const dynamic = 'force-static'
-export const revalidate = false
-
 export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto">

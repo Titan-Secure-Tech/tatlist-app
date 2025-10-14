@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ArrowLeft, Package } from 'lucide-react'
@@ -11,8 +12,6 @@ interface CategoryPageProps {
 
 // Enable PPR for this dynamic route
 export const experimental_ppr = true
-// Revalidate every hour
-export const revalidate = 3600
 
 // Map URL slugs to category names
 const categoryMap: Record<string, string> = {
@@ -41,8 +40,8 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { slug } = await params
+// Separate component for dynamic content
+async function CategoryContent({ slug }: { slug: string }) {
   const categoryName = categoryMap[slug] || decodeURIComponent(slug)
 
   const supabase = await createClient()
@@ -128,5 +127,27 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </Link>
       </div>
     </div>
+  )
+}
+
+// Loading component
+function CategoryLoading() {
+  return (
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading category...</p>
+      </div>
+    </div>
+  )
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params
+
+  return (
+    <Suspense fallback={<CategoryLoading />}>
+      <CategoryContent slug={slug} />
+    </Suspense>
   )
 }

@@ -6,9 +6,9 @@ const nextConfig = {
   // Empty turbopack config to silence migration warning
   turbopack: {},
 
-  // Enable Partial Prerendering for optimal performance
+  // Enable Cache Components (formerly Partial Prerendering) for optimal performance
   experimental: {
-    ppr: 'incremental',
+    cacheComponents: true,
   },
 
   // Headers for Apple Pay domain verification
@@ -87,11 +87,6 @@ const nextConfig = {
   // Ignore TypeScript errors during build (like shadcn/ui v4 and Square SDK issues)
   typescript: {
     ignoreBuildErrors: true,
-  },
-
-  // Ignore ESLint errors during build
-  eslint: {
-    ignoreDuringBuilds: true,
   },
 }
 

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Grid3x3, Package, Store, Sparkles } from 'lucide-react'
@@ -133,7 +134,7 @@ function getCategoryImageCredit(category: string): { photographer: string; url: 
   return creditMap[category] || { photographer: 'Unsplash', url: 'https://unsplash.com' }
 }
 
-export default async function CategoriesPage() {
+async function CategoriesContent() {
   const supabase = await createClient()
 
   // Fetch unique categories from products
@@ -232,5 +233,24 @@ export default async function CategoriesPage() {
         </Link>
       </div>
     </div>
+  )
+}
+
+function CategoriesLoading() {
+  return (
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading categories...</p>
+      </div>
+    </div>
+  )
+}
+
+export default function CategoriesPage() {
+  return (
+    <Suspense fallback={<CategoriesLoading />}>
+      <CategoriesContent />
+    </Suspense>
   )
 }

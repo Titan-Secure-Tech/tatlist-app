@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import InventoryListDetail from '@/components/inventory/InventoryListDetail'
@@ -7,21 +8,24 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
-export default async function InventoryListDetailPage({ params }: Props) {
-  const { id } = await params
+async function InventoryListContent({ id }: { id: string }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   const { data: inventoryList } = await supabase
     .from('inventory_lists')
-    .select(`
+    .select(
+      `
       *,
       inventory_list_items (
         id,
         quantity,
         product:products (*)
       )
-    `)
+    `
+    )
     .eq('id', id)
     .eq('user_id', user?.id)
     .single()
@@ -33,10 +37,12 @@ export default async function InventoryListDetailPage({ params }: Props) {
   // Get user's favorited products
   const { data: favorites } = await supabase
     .from('favorites')
-    .select(`
+    .select(
+      `
       id,
       products(*)
-    `)
+    `
+    )
     .eq('user_id', user?.id)
 
   type FavoriteWithProduct = {
@@ -44,15 +50,31 @@ export default async function InventoryListDetailPage({ params }: Props) {
     products: Product | null
   }
 
-  const favoriteProducts: Product[] = (favorites as FavoriteWithProduct[] | null)
-    ?.map(f => f.products)
-    .filter((p): p is Product => p !== null && p !== undefined)
-    || []
+  const favoriteProducts: Product[] =
+    (favorites as FavoriteWithProduct[] | null)
+      ?.map(f => f.products)
+      .filter((p): p is Product => p !== null && p !== undefined) || []
+
+  return <InventoryListDetail inventoryList={inventoryList} favoriteProducts={favoriteProducts} />
+}
+
+function InventoryListLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading inventory list...</p>
+      </div>
+    </div>
+  )
+}
+
+export default async function InventoryListDetailPage({ params }: Props) {
+  const { id } = await params
 
   return (
-    <InventoryListDetail 
-      inventoryList={inventoryList} 
-      favoriteProducts={favoriteProducts}
-    />
+    <Suspense fallback={<InventoryListLoading />}>
+      <InventoryListContent id={id} />
+    </Suspense>
   )
 }
