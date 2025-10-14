@@ -46,6 +46,10 @@ self.addEventListener('fetch', event => {
   if (!url.protocol.startsWith('http')) {
     return
   }
+  // Skip HEAD requests as they cannot be cached
+  if (request.method === 'HEAD') {
+    return
+  }
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)

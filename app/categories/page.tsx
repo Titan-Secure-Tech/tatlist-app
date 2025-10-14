@@ -64,7 +64,7 @@ function getCategoryImage(category: string): string {
     'Inks & Colors':
       'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop', // Colorful ink bottles
     'Tattoo Machines':
-      'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop', // Tattoo machine close-up
+      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo machine/needles
     'Tattoo Parts':
       'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop', // Tattoo equipment parts
     Aftercare: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop', // Skincare/aftercare products
@@ -99,8 +99,8 @@ function getCategoryImageCredit(category: string): { photographer: string; url: 
     },
     'Inks & Colors': { photographer: 'Lucas Lenzi', url: 'https://unsplash.com/@lucaslenzi' },
     'Tattoo Machines': {
-      photographer: 'Artem Maltsev',
-      url: 'https://unsplash.com/@art_maltsev',
+      photographer: 'Kristian Angelo',
+      url: 'https://unsplash.com/@kristian_angelo',
     },
     'Tattoo Parts': { photographer: 'Allef Vinicius', url: 'https://unsplash.com/@seteales' },
     Aftercare: { photographer: 'Christin Hume', url: 'https://unsplash.com/@christinhumephoto' },
