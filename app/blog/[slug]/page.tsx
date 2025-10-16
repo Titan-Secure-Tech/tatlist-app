@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { unstable_noStore as noStore } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { BlogPost } from '@/lib/types/blog'
 import Image from 'next/image'
@@ -12,6 +13,9 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // Opt out of caching to allow dynamic rendering
+  noStore()
+
   const resolvedParams = await params
   const supabase = await createClient()
 
@@ -70,6 +74,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 async function BlogPostContent({ slug }: { slug: string }) {
+  // Opt out of caching to allow dynamic rendering
+  noStore()
+
   const supabase = await createClient()
 
   const { data: post, error } = await supabase
@@ -78,6 +85,18 @@ async function BlogPostContent({ slug }: { slug: string }) {
     .eq('slug', slug)
     .eq('status', 'published')
     .single()
+
+  // Handle case where table doesn't exist yet (before migration)
+  if (error?.code === '42P01') {
+    return (
+      <div className="max-w-4xl mx-auto text-center py-16">
+        <h1 className="text-4xl font-bold mb-4">Blog Coming Soon</h1>
+        <p className="text-gray-600">
+          The blog system is currently being set up. Please check back soon!
+        </p>
+      </div>
+    )
+  }
 
   if (error || !post) {
     notFound()
@@ -304,6 +323,9 @@ function BlogPostSkeleton() {
 }
 
 export default async function BlogPostPage({ params }: Props) {
+  // Opt out of caching to allow dynamic rendering
+  noStore()
+
   const resolvedParams = await params
 
   return (

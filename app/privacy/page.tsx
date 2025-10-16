@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <h1 className="text-4xl font-bold text-black mb-8">Privacy Policy</h1>
 
       <div className="prose prose-lg max-w-none">
-        <p className="text-gray-600 mb-8">Last updated: {new Date().toLocaleDateString()}</p>
+        <p className="text-gray-600 mb-8">Last updated: October 16, 2025</p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-black mb-4">Introduction</h2>
