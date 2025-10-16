@@ -24,13 +24,7 @@ export function SiteFooter() {
             href="/privacy"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Privacy
-          </Link>
-          <Link
-            href="/terms"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Terms
+            Privacy and Terms
           </Link>
           <Link
             href="/contact"
