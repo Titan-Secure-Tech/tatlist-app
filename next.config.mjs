@@ -7,8 +7,9 @@ const nextConfig = {
   turbopack: {},
 
   // Enable Cache Components (formerly Partial Prerendering) for optimal performance
+  // Temporarily disabled due to conflicts with blog/[slug] dynamic route
   experimental: {
-    cacheComponents: true,
+    // cacheComponents: true,
   },
 
   // Headers for Apple Pay domain verification

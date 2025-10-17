@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HeroSection from '@/components/home/HeroSection'
+import ValueProposition from '@/components/home/ValueProposition'
 import { OAuthHandler } from '@/components/OAuth-handler'
 
 async function HomeContent() {
@@ -20,6 +21,9 @@ async function HomeContent() {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Value Proposition Section */}
+      <ValueProposition />
     </div>
   )
 }

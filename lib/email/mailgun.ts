@@ -1,6 +1,7 @@
 import { render } from '@react-email/components'
 import { OrderConfirmation } from './templates/OrderConfirmation'
 import { OrderStatusUpdate } from './templates/OrderStatusUpdate'
+import { ContactForm } from './templates/ContactForm'
 
 interface EmailConfig {
   to: string | string[]
@@ -164,6 +165,58 @@ export class MailgunService {
           ? `Tatlist Delivery <delivery@${this.domain}>`
           : `Tatlist Orders <orders@${this.domain}>`,
       replyTo: 'support@tatlist.com',
+    })
+  }
+
+  async sendContactFormEmail(contactData: {
+    name: string
+    email: string
+    phone?: string
+    subject: string
+    message: string
+  }): Promise<boolean> {
+    const html = await render(
+      ContactForm({
+        name: contactData.name,
+        email: contactData.email,
+        phone: contactData.phone,
+        subject: contactData.subject,
+        message: contactData.message,
+      })
+    )
+
+    return this.sendEmail({
+      to: 'support@tatlist.com',
+      subject: `Contact Form: ${contactData.subject}`,
+      html,
+      text: `New contact form submission from ${contactData.name} (${contactData.email}): ${contactData.message}`,
+      from: `Tatlist Contact Form <noreply@${this.domain}>`,
+      replyTo: contactData.email,
+    })
+  }
+
+  async sendPrivacyInquiry(inquiryData: {
+    name: string
+    email: string
+    subject: string
+    message: string
+  }): Promise<boolean> {
+    const html = await render(
+      ContactForm({
+        name: inquiryData.name,
+        email: inquiryData.email,
+        subject: inquiryData.subject,
+        message: inquiryData.message,
+      })
+    )
+
+    return this.sendEmail({
+      to: 'privacy@tatlist.com',
+      subject: `Privacy Inquiry: ${inquiryData.subject}`,
+      html,
+      text: `Privacy inquiry from ${inquiryData.name} (${inquiryData.email}): ${inquiryData.message}`,
+      from: `Tatlist Privacy <noreply@${this.domain}>`,
+      replyTo: inquiryData.email,
     })
   }
 }
