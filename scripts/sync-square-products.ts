@@ -22,13 +22,13 @@ const supabase = createClient(
 // Initialize Square client
 const isProduction = process.env.NODE_ENV === 'production'
 
-// For production mode, use production credentials from prod-check file
-const accessToken = isProduction 
-  ? 'EAAAly7UztVyCCTgkb4K75u3-nqu0FBkS-gPiQQfOeJSgCSKTwgtu05L9_lvF921'
+// Use environment variables for both production and sandbox
+const accessToken = isProduction
+  ? process.env.SQUARE_PRODUCTION_ACCESS_TOKEN!
   : process.env.SQUARE_SANDBOX_ACCESS_TOKEN!
 
 const locationId = isProduction
-  ? 'LQMAS99P4BA7N' // Production location ID  
+  ? process.env.SQUARE_PRODUCTION_LOCATION_ID!
   : process.env.SQUARE_SANDBOX_LOCATION_ID!
 
 console.log('Creating Square client with:')
@@ -73,7 +73,7 @@ interface SquareProduct {
 
 async function syncSquareProducts() {
   console.log('🔄 Starting Square to Supabase product sync...\n')
-  
+
   // Create sync log
   const { data: syncLog } = await supabase
     .from('square_sync_logs')
@@ -90,17 +90,19 @@ async function syncSquareProducts() {
     console.log('Using Square client with environment:', isProduction ? 'Production' : 'Sandbox')
     console.log('Square client config:', {
       environment: squareClient.environment,
-      hasAccessToken: !!squareClient.accessToken
+      hasAccessToken: !!squareClient.accessToken,
     })
-    
+
     const catalogResponse = await squareClient.catalog.list({
       types: 'ITEM',
     })
 
     if (!catalogResponse.result.objects || catalogResponse.result.objects.length === 0) {
       console.log('✅ No products found in Square catalog')
-      console.log('💡 Tip: First seed some products using: bun run scripts/seed-square-products.mjs')
-      
+      console.log(
+        '💡 Tip: First seed some products using: bun run scripts/seed-square-products.mjs'
+      )
+
       // Update sync log as completed (no items to sync)
       await supabase
         .from('square_sync_logs')
@@ -112,11 +114,11 @@ async function syncSquareProducts() {
           metadata: {
             location_id: SQUARE_LOCATION_ID,
             environment: isProduction ? 'production' : 'sandbox',
-            note: 'No products in catalog'
-          }
+            note: 'No products in catalog',
+          },
         })
         .eq('id', syncLog?.id)
-        
+
       return
     }
 
@@ -140,7 +142,7 @@ async function syncSquareProducts() {
         }
 
         // Get product images if available
-        let imageUrls: string[] = []
+        const imageUrls: string[] = []
         if (product.itemData.imageIds && product.itemData.imageIds.length > 0) {
           for (const imageId of product.itemData.imageIds) {
             try {
@@ -157,9 +159,10 @@ async function syncSquareProducts() {
 
         // Process variations
         const variations = []
-        const activeVariations = product.itemData.variations?.filter(
-          v => !v.isDeleted && v.presentAtLocationIds?.includes(SQUARE_LOCATION_ID)
-        ) || []
+        const activeVariations =
+          product.itemData.variations?.filter(
+            v => !v.isDeleted && v.presentAtLocationIds?.includes(SQUARE_LOCATION_ID)
+          ) || []
 
         // Get the first variation for primary product data
         const primaryVariation = activeVariations[0]
@@ -220,11 +223,9 @@ async function syncSquareProducts() {
         }
 
         // Upsert product to Supabase
-        const { error } = await supabase
-          .from('products')
-          .upsert(productData, {
-            onConflict: 'square_catalog_id',
-          })
+        const { error } = await supabase.from('products').upsert(productData, {
+          onConflict: 'square_catalog_id',
+        })
 
         if (error) {
           throw error
@@ -251,22 +252,21 @@ async function syncSquareProducts() {
         metadata: {
           location_id: SQUARE_LOCATION_ID,
           environment: isProduction ? 'production' : 'sandbox',
-        }
+        },
       })
       .eq('id', syncLog?.id)
 
     console.log('\n📊 Sync Summary:')
     console.log(`✅ Successfully synced: ${syncedCount} products`)
     console.log(`❌ Failed: ${failedCount} products`)
-    
+
     if (errors.length > 0) {
       console.log('\n❌ Errors:')
       errors.forEach(err => console.log(`  - ${err}`))
     }
-
   } catch (error) {
     console.error('Fatal error during sync:', error)
-    
+
     // Update sync log with failure
     if (syncLog) {
       await supabase
@@ -278,7 +278,7 @@ async function syncSquareProducts() {
         })
         .eq('id', syncLog.id)
     }
-    
+
     process.exit(1)
   }
 }
@@ -289,7 +289,7 @@ syncSquareProducts()
     console.log('\n✨ Square product sync completed!')
     process.exit(0)
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('Sync failed:', error)
     process.exit(1)
   })
