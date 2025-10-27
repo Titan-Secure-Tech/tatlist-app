@@ -2,10 +2,10 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Tatlist - Tampa Tattoo Supply',
+    name: 'Tatlist - Black Eye Products Delivery',
     short_name: 'Tatlist',
     description:
-      "Tampa Bay's premier tattoo supply delivery service. Professional tattoo inks, needles, machines, and equipment for licensed tattoo shops.",
+      "Official delivery and logistics service for Black Eye Products Tattoo Supply. Serving licensed tattoo shops in Tampa Bay with professional supplies.",
     start_url: '/',
     scope: '/',
     display: 'standalone',

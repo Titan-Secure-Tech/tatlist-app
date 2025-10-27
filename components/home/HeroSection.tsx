@@ -67,7 +67,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
               <Truck className="w-4 h-4" />
-              Tampa&apos;s Premier Tattoo Supply Partner
+              Tampa&apos;s Premier Delivery & Logistics Service
             </motion.div>
 
             <motion.h1
@@ -77,8 +77,8 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight"
             >
-              Tampa Tattoo Supply
-              <span className="block font-normal">Professional Supplies for Tampa Bay Artists</span>
+              Tatlist Delivery
+              <span className="block font-normal">Official Logistics Partner for Black Eye Products</span>
             </motion.h1>
 
             <motion.p
@@ -88,9 +88,7 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-lg text-gray-600 mb-8 max-w-md mx-auto lg:mx-0"
             >
-              Serving Tampa, St. Petersburg, Clearwater, and all of Hillsborough County. Your
-              trusted source for professional tattoo inks, needles, machines, and studio supplies
-              with same-day delivery to licensed tattoo shops.
+              Serving Tampa, St. Petersburg, Clearwater, and all of Hillsborough County. Tatlist is the official delivery and logistics service for Black Eye Products Tattoo Supply, providing same-day delivery to licensed tattoo shops.
             </motion.p>
 
             <motion.div

@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy and Terms of Service | Tatlist',
   description:
-    'Privacy policy and terms of service for Tatlist - Professional tattoo supply platform',
+    'Privacy policy and terms of service for Tatlist - Black Eye Products delivery and logistics platform',
 }
 
 export default function PrivacyPage() {

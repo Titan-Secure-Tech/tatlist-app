@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Terms of Service | Tatlist',
-  description: 'Terms of service for Tatlist - Professional tattoo supply platform',
+  description: 'Terms of service for Tatlist - Black Eye Products delivery and logistics platform',
 }
 
 export default function TermsPage() {

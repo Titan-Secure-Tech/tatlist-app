@@ -7,9 +7,9 @@ import Link from 'next/link'
 import { Calendar, MapPin, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Blog & Events | Tatlist - Tampa Tattoo Supply News',
+  title: 'Blog & Events | Tatlist - Black Eye Products Delivery News',
   description:
-    'Stay updated with the latest tattoo industry news, events, and announcements from Tatlist Tampa. Find upcoming tattoo conventions, product releases, and community updates.',
+    'Stay updated with the latest tattoo industry news, events, and announcements from Tatlist - the official Black Eye Products delivery service. Find upcoming tattoo conventions, product releases, and community updates.',
   keywords: [
     'Tampa tattoo news',
     'tattoo events Tampa',

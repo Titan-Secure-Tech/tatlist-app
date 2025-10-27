@@ -17,7 +17,7 @@ export function BaseLayout({ preview, children }: BaseLayoutProps) {
           <Section style={header}>
             <Img
               src="https://tatlist.com/tatlist-logo.webp"
-              alt="Tatlist - Tampa Tattoo Supply"
+              alt="Tatlist - Black Eye Products Delivery Service"
               width="200"
               height="67"
               style={logo}

@@ -33,9 +33,9 @@ export default function ValueProposition() {
   const features = [
     {
       icon: Package,
-      title: 'Premium Supply Selection',
+      title: 'Black Eye Products Selection',
       description:
-        'Curated selection of professional-grade tattoo inks, needles, machines, and studio supplies from trusted brands.',
+        'Complete selection of professional-grade tattoo inks, needles, machines, and studio supplies from Black Eye Products.',
     },
     {
       icon: Zap,
@@ -76,7 +76,7 @@ export default function ValueProposition() {
             Why Tampa Artists Choose Tatlist
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Professional tattoo supply delivery built for the Tampa Bay tattoo community
+            Official Black Eye Products delivery and logistics service built for the Tampa Bay tattoo community
           </p>
         </motion.div>
 

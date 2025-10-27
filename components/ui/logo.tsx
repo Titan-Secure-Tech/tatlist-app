@@ -18,7 +18,7 @@ export function Logo({ className }: LogoProps) {
     >
       <Image
         src="/tatlist-logo.webp"
-        alt="Tatlist - Tampa Tattoo Supply"
+        alt="Tatlist - Black Eye Products Delivery Service"
         width={150}
         height={50}
         className="h-10 w-auto object-contain"
