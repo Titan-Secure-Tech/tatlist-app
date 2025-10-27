@@ -51,7 +51,7 @@ export default function FeaturesPage() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
               <Truck className="w-4 h-4" />
-              Professional Tattoo Supply Delivery
+              Black Eye Products Delivery & Logistics
             </motion.div>
 
             <motion.h1
@@ -65,8 +65,8 @@ export default function FeaturesPage() {
               variants={itemVariants}
               className="text-xl text-gray-600 max-w-3xl mx-auto mb-8"
             >
-              Tampa Bay&apos;s premier same-day tattoo supply delivery service for licensed
-              professionals
+              The official delivery and logistics platform for Black Eye Products Tattoo Supply,
+              serving licensed professionals in Tampa Bay
             </motion.p>
 
             <motion.div variants={itemVariants}>
@@ -87,7 +87,7 @@ export default function FeaturesPage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-light text-gray-900 mb-4">Simple. Fast. Reliable.</h2>
             <p className="text-lg text-gray-600">
-              Professional tattoo supplies delivered to your shop in four easy steps
+              Black Eye Products tattoo supplies delivered to your shop in four easy steps
             </p>
           </div>
 
@@ -96,7 +96,8 @@ export default function FeaturesPage() {
               {
                 step: '01',
                 title: 'Browse & Select',
-                description: 'Explore our curated catalog of professional tattoo supplies',
+                description:
+                  'Explore our catalog of professional tattoo supplies from Black Eye Products',
                 icon: Package,
               },
               {
@@ -173,7 +174,7 @@ export default function FeaturesPage() {
                 icon: Package,
                 title: 'Premium Products',
                 description:
-                  'Curated selection of professional-grade tattoo supplies from trusted brands like Lucky Supply.',
+                  'Professional-grade tattoo supplies delivered exclusively from Black Eye Products.',
               },
               {
                 icon: Truck,
@@ -345,7 +346,7 @@ export default function FeaturesPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl lg:text-5xl font-light mb-6">Ready to Get Started?</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join Tampa Bay&apos;s leading tattoo supply delivery service today
+            Join Tampa Bay&apos;s official Black Eye Products delivery and logistics platform today
           </p>
           <Link href="/login">
             <button className="px-8 py-4 bg-white text-black rounded-lg font-medium hover:bg-gray-100 transition-colors">

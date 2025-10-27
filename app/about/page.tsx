@@ -3,7 +3,7 @@ import { ShoppingBag, Truck, Shield, CreditCard } from 'lucide-react'
 export const metadata = {
   title: 'About | Tatlist',
   description:
-    'Learn about Tatlist, your premier destination for professional tattoo supplies and equipment.',
+    "Learn about Tatlist, Tampa Bay's premier delivery and logistics service for Black Eye Products Tattoo Supply.",
 }
 
 export default function AboutPage() {
@@ -13,28 +13,29 @@ export default function AboutPage() {
 
       <div className="prose prose-gray max-w-none mb-12">
         <p className="text-lg text-gray-700 leading-relaxed">
-          Welcome to Tatlist, your premier destination for professional tattoo supplies and
-          equipment. We&apos;re dedicated to providing artists with the highest quality tools and
-          materials to bring their creative visions to life.
+          Welcome to Tatlist, Tampa Bay&apos;s premier delivery and logistics service for Black Eye
+          Products Tattoo Supply. We serve as the official mobile delivery and order management
+          platform, dedicated to getting professional tattoo supplies to licensed artists quickly
+          and reliably.
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <ShoppingBag className="h-10 w-10 text-black mb-4" />
-          <h2 className="text-xl font-semibold text-black mb-2">Quality Products</h2>
+          <h2 className="text-xl font-semibold text-black mb-2">Black Eye Products Partnership</h2>
           <p className="text-gray-600">
-            We source only the finest tattoo supplies from trusted manufacturers, ensuring every
-            product meets professional standards.
+            We exclusively deliver professional-grade tattoo supplies from Black Eye Products,
+            ensuring every order meets the highest professional standards.
           </p>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <Truck className="h-10 w-10 text-black mb-4" />
-          <h2 className="text-xl font-semibold text-black mb-2">Fast Shipping</h2>
+          <h2 className="text-xl font-semibold text-black mb-2">Same-Day Delivery</h2>
           <p className="text-gray-600">
-            Get your supplies quickly with our reliable shipping partners. Most orders ship within
-            24 hours.
+            Get your supplies fast with our dedicated same-day delivery service to licensed tattoo
+            shops throughout Tampa Bay.
           </p>
         </div>
 
@@ -60,9 +61,10 @@ export default function AboutPage() {
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-8">
         <h2 className="text-2xl font-semibold text-black mb-4">Our Mission</h2>
         <p className="text-gray-700 leading-relaxed">
-          At Tatlist, we believe every tattoo artist deserves access to professional-grade supplies
-          without the hassle. We&apos;re committed to making the procurement process simple,
-          reliable, and affordable, so you can focus on what you do best - creating art.
+          At Tatlist, we believe every tattoo artist deserves fast, reliable access to
+          professional-grade supplies from Black Eye Products. As the official delivery and
+          logistics platform, we&apos;re committed to making the ordering and delivery process
+          simple, reliable, and efficient, so you can focus on what you do best - creating art.
         </p>
       </div>
 

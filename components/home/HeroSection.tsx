@@ -67,7 +67,7 @@ export default function HeroSection() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
               <Truck className="w-4 h-4" />
-              Tampa&apos;s Premier Tattoo Supply Partner
+              Tampa&apos;s Premier Tattoo Supply Delivery Service
             </motion.div>
 
             <motion.h1
@@ -77,8 +77,10 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight"
             >
-              Tampa Tattoo Supply
-              <span className="block font-normal">Professional Supplies for Tampa Bay Artists</span>
+              Tattoo Supply Delivery
+              <span className="block font-normal">
+                Black Eye Products Logistics for Tampa Bay Artists
+              </span>
             </motion.h1>
 
             <motion.p
@@ -88,9 +90,10 @@ export default function HeroSection() {
               variants={textVariants}
               className="text-lg text-gray-600 mb-8 max-w-md mx-auto lg:mx-0"
             >
-              Serving Tampa, St. Petersburg, Clearwater, and all of Hillsborough County. Your
-              trusted source for professional tattoo inks, needles, machines, and studio supplies
-              with same-day delivery to licensed tattoo shops.
+              The official delivery and logistics platform for Black Eye Products Tattoo Supply.
+              Same-day delivery of professional tattoo inks, needles, machines, and studio supplies
+              to licensed tattoo shops across Tampa, St. Petersburg, Clearwater, and Hillsborough
+              County.
             </motion.p>
 
             <motion.div

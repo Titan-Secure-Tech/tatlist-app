@@ -21,13 +21,13 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Tampa Tattoo Supply | Professional Tattoo Supplies & Equipment | Tatlist',
+  title: 'Tatlist | Tampa Tattoo Supply Delivery & Logistics | Black Eye Products',
   description:
-    "Tampa Bay's premier tattoo supply delivery service. Professional tattoo inks, needles, machines, and equipment for licensed tattoo shops in Tampa, St. Petersburg, Clearwater, and Hillsborough County. Same-day delivery available.",
+    "Tampa Bay's premier delivery and logistics service for Black Eye Products Tattoo Supply. Same-day delivery of professional tattoo inks, needles, machines, and equipment to licensed tattoo shops in Tampa, St. Petersburg, Clearwater, and Hillsborough County.",
   keywords:
-    'Tampa tattoo supply, tattoo supplies Tampa FL, tattoo equipment Tampa, tattoo ink Tampa, tattoo needles Tampa, Tampa Bay tattoo supplies, Hillsborough County tattoo supply, St Petersburg tattoo supplies, Clearwater tattoo supplies, professional tattoo supplies Florida',
+    'Tampa tattoo delivery, tattoo supply delivery Tampa FL, Black Eye Products Tampa, tattoo supply logistics Tampa, same-day tattoo delivery, Tampa Bay tattoo delivery, Hillsborough County tattoo delivery, St Petersburg tattoo delivery, Clearwater tattoo delivery, tattoo shop delivery Florida',
   authors: [{ name: 'Tatlist' }],
-  applicationName: 'Tatlist - Tampa Tattoo Supply',
+  applicationName: 'Tatlist - Tattoo Supply Delivery',
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -48,19 +48,19 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'Tampa Tattoo Supply | Professional Equipment & Same-Day Delivery',
+    title: 'Tatlist | Tattoo Supply Delivery & Logistics for Black Eye Products',
     description:
-      "Tampa Bay's trusted source for professional tattoo supplies. Serving licensed tattoo shops throughout Tampa, St. Petersburg, and Clearwater with fast, reliable delivery.",
+      "Tampa Bay's premier delivery and logistics service for Black Eye Products Tattoo Supply. Serving licensed tattoo shops throughout Tampa, St. Petersburg, and Clearwater with fast, reliable same-day delivery.",
     type: 'website',
     locale: 'en_US',
-    siteName: 'Tatlist - Tampa Tattoo Supply',
+    siteName: 'Tatlist - Tattoo Supply Delivery',
     images: [{ url: 'https://tatlist.com/tatlist-logo.webp', width: 600, height: 200 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tampa Tattoo Supply | Professional Equipment & Delivery',
+    title: 'Tatlist | Tattoo Supply Delivery & Logistics',
     description:
-      'Professional tattoo supplies for Tampa Bay artists. Same-day delivery to licensed shops.',
+      'Delivery and logistics service for Black Eye Products Tattoo Supply. Same-day delivery to licensed Tampa Bay tattoo shops.',
     images: ['https://tatlist.com/tatlist-logo.webp'],
   },
   alternates: {
