@@ -1,12 +1,21 @@
 import Link from 'next/link'
 import { Package } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import type { OrderStatus } from '@/lib/types/orders'
+import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
+
+type OrderStatusType =
+  | 'pending'
+  | 'processing'
+  | 'ready_for_pickup'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'completed'
+  | 'cancelled'
 
 interface Order {
   id: string
   order_number: string
-  status: OrderStatus
+  status: OrderStatusType
   total: number
   subtotal: number
   delivery_fee: number
@@ -18,39 +27,6 @@ interface Order {
     quantity: number
     unit_price: number
   }[]
-}
-
-function getStatusColor(status: OrderStatus) {
-  switch (status) {
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800'
-    case 'processing':
-    case 'paid':
-      return 'bg-blue-100 text-blue-800'
-    case 'shipped':
-      return 'bg-purple-100 text-purple-800'
-    case 'delivered':
-      return 'bg-green-100 text-green-800'
-    case 'cancelled':
-      return 'bg-red-100 text-red-800'
-    case 'refunded':
-      return 'bg-gray-100 text-gray-800'
-    default:
-      return 'bg-gray-100 text-gray-800'
-  }
-}
-
-function getStatusLabel(status: OrderStatus) {
-  const labels: Record<OrderStatus, string> = {
-    pending: 'Pending',
-    processing: 'Processing',
-    paid: 'Paid',
-    shipped: 'Shipped',
-    delivered: 'Delivered',
-    cancelled: 'Cancelled',
-    refunded: 'Refunded',
-  }
-  return labels[status] || status
 }
 
 export default async function OrdersPage() {
@@ -139,7 +115,11 @@ export default async function OrdersPage() {
             const orderTotal = order.total || order.subtotal + order.delivery_fee + order.tax_amount
 
             return (
-              <div key={order.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <Link
+                key={order.id}
+                href={`/orders/${order.id}`}
+                className="block p-6 hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold text-black mb-1">
@@ -156,14 +136,10 @@ export default async function OrdersPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-black mb-1">${orderTotal.toFixed(2)}</p>
-                    <span
-                      className={`inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(order.status)}`}
-                    >
-                      {getStatusLabel(order.status)}
-                    </span>
+                    <OrderStatusBadge status={order.status} size="sm" />
                   </div>
                 </div>
-              </div>
+              </Link>
             )
           })}
         </div>
