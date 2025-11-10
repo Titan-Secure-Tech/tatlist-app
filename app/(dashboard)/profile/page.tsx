@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { User } from 'lucide-react'
 import { PushNotificationToggle } from '@/components/push-notifications/PushNotificationToggle'
 import { ContactPreferenceEditor } from '@/components/user/ContactPreferenceEditor'
+import { BusinessHoursEditor } from '@/components/user/BusinessHoursEditor'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -14,12 +15,14 @@ export default async function ProfilePage() {
     redirect('/login')
   }
 
-  // Fetch user profile data including contact preferences
+  // Fetch user profile data including contact preferences and business hours
   const { data: profile } = await supabase
     .from('users')
-    .select('contact_preference, phone')
+    .select('contact_preference, phone, user_type, business_hours')
     .eq('id', user.id)
     .single()
+
+  const isShopOwner = profile?.user_type === 'shop_owner'
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -76,6 +79,14 @@ export default async function ProfilePage() {
           initialPhone={profile?.phone || null}
         />
       </div>
+
+      {/* Business Hours (Shop Owners Only) */}
+      {isShopOwner && (
+        <div className="bg-white border border-gray-200 rounded-lg p-8">
+          <h2 className="text-xl font-bold text-black mb-4">Business Hours</h2>
+          <BusinessHoursEditor userId={user.id} initialHours={profile?.business_hours || null} />
+        </div>
+      )}
 
       {/* Push Notifications Settings */}
       <div className="bg-white border border-gray-200 rounded-lg p-8">
