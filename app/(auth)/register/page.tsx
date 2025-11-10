@@ -14,6 +14,7 @@ export default function RegisterPage() {
     firstName: '',
     lastName: '',
     phone: '',
+    contactPreference: '' as 'sms' | 'email' | 'both' | '',
     streetAddress: '',
     city: '',
     state: '',
@@ -141,6 +142,7 @@ export default function RegisterPage() {
             first_name: formData.firstName,
             last_name: formData.lastName,
             phone: formData.phone,
+            contact_preference: formData.contactPreference,
             street_address: formData.streetAddress,
             city: formData.city,
             state: formData.state,
@@ -234,7 +236,10 @@ export default function RegisterPage() {
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-              Phone <span className="text-red-500">*</span>
+              Phone{' '}
+              {(formData.contactPreference === 'sms' || formData.contactPreference === 'both') && (
+                <span className="text-red-500">*</span>
+              )}
             </label>
             <input
               id="phone"
@@ -244,8 +249,36 @@ export default function RegisterPage() {
               onChange={handleInputChange}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               placeholder="(555) 123-4567"
-              required
+              required={
+                formData.contactPreference === 'sms' || formData.contactPreference === 'both'
+              }
             />
+          </div>
+
+          <div>
+            <label htmlFor="contactPreference" className="block text-sm font-medium text-gray-700">
+              Preferred Contact Method <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="contactPreference"
+              value={formData.contactPreference}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  contactPreference: e.target.value as 'sms' | 'email' | 'both',
+                })
+              }
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+              required
+            >
+              <option value="">Select your preference...</option>
+              <option value="email">Email only</option>
+              <option value="sms">SMS/Text only</option>
+              <option value="both">Both Email and SMS</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              We&apos;ll use this to send you order updates and delivery notifications.
+            </p>
           </div>
 
           <div>

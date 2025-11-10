@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { User } from 'lucide-react'
 import { PushNotificationToggle } from '@/components/push-notifications/PushNotificationToggle'
+import { ContactPreferenceEditor } from '@/components/user/ContactPreferenceEditor'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -12,6 +13,13 @@ export default async function ProfilePage() {
   if (!user) {
     redirect('/login')
   }
+
+  // Fetch user profile data including contact preferences
+  const { data: profile } = await supabase
+    .from('users')
+    .select('contact_preference, phone')
+    .eq('id', user.id)
+    .single()
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -59,9 +67,19 @@ export default async function ProfilePage() {
         </div>
       </div>
 
+      {/* Contact Preferences */}
+      <div className="bg-white border border-gray-200 rounded-lg p-8">
+        <h2 className="text-xl font-bold text-black mb-4">Contact Preferences</h2>
+        <ContactPreferenceEditor
+          userId={user.id}
+          initialPreference={profile?.contact_preference || null}
+          initialPhone={profile?.phone || null}
+        />
+      </div>
+
       {/* Push Notifications Settings */}
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <h2 className="text-xl font-bold text-black mb-4">Notification Settings</h2>
+        <h2 className="text-xl font-bold text-black mb-4">Push Notification Settings</h2>
         <PushNotificationToggle />
       </div>
     </div>
