@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { notificationService } from '@/lib/notifications/service'
 
 const VALID_STATUS_TRANSITIONS: Record<string, string[]> = {
   pending: ['processing', 'cancelled'],
@@ -76,12 +77,30 @@ export async function PATCH(
         updated_at: new Date().toISOString(),
       })
       .eq('id', orderId)
-      .select()
+      .select('*, user_id')
       .single()
 
     if (updateError) {
       throw updateError
     }
+
+    // Send automatic notifications based on user's contact preference
+    // Run in background - don't wait for completion
+    notificationService
+      .sendOrderStatusNotification({
+        orderId,
+        userId: updatedOrder.user_id,
+        status,
+        message: notes,
+      })
+      .then(result => {
+        console.log(
+          `Notifications sent for order ${orderId}: Email=${result.emailSent}, SMS=${result.smsSent}`
+        )
+      })
+      .catch(error => {
+        console.error(`Failed to send notifications for order ${orderId}:`, error)
+      })
 
     return NextResponse.json({
       success: true,

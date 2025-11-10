@@ -2,7 +2,14 @@ import { Section, Text } from '@react-email/components'
 import * as React from 'react'
 import { BaseLayout } from './BaseLayout'
 
-type OrderStatus = 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'cancelled'
+type OrderStatus =
+  | 'pending'
+  | 'processing'
+  | 'ready_for_pickup'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'completed'
+  | 'cancelled'
 
 interface OrderStatusUpdateProps {
   orderId: string
@@ -13,21 +20,29 @@ interface OrderStatusUpdateProps {
 }
 
 const statusConfig: Record<OrderStatus, { label: string; color: string }> = {
-  preparing: {
-    label: 'Being Prepared',
-    color: '#FFA500',
+  pending: {
+    label: 'Order Received',
+    color: '#808080',
   },
-  ready: {
-    label: 'Ready for Delivery',
-    color: '#4CAF50',
+  processing: {
+    label: 'Being Processed',
+    color: '#2196F3',
+  },
+  ready_for_pickup: {
+    label: 'Ready for Pickup',
+    color: '#9C27B0',
   },
   out_for_delivery: {
     label: 'Out for Delivery',
-    color: '#2196F3',
+    color: '#FF9800',
   },
   delivered: {
     label: 'Delivered',
     color: '#4CAF50',
+  },
+  completed: {
+    label: 'Order Completed',
+    color: '#2E7D32',
   },
   cancelled: {
     label: 'Cancelled',
@@ -47,14 +62,18 @@ export function OrderStatusUpdate({
 
   const getStatusMessage = () => {
     switch (status) {
-      case 'preparing':
-        return 'Your order is being carefully prepared by our team.'
-      case 'ready':
-        return 'Your order is ready and will be shipped soon!'
+      case 'pending':
+        return 'We&apos;ve received your order and will start processing it soon.'
+      case 'processing':
+        return 'Your order is being carefully processed by our team.'
+      case 'ready_for_pickup':
+        return 'Your order is ready and waiting for pickup!'
       case 'out_for_delivery':
         return 'Your order is on its way to you!'
       case 'delivered':
         return 'Your order has been successfully delivered.'
+      case 'completed':
+        return 'Your order is complete. Thank you for your business!'
       case 'cancelled':
         return 'Your order has been cancelled.'
       default:
@@ -84,8 +103,37 @@ export function OrderStatusUpdate({
       </Section>
 
       {/* Status-specific information */}
-      {status === 'out_for_delivery' && (
+      {status === 'pending' && (
+        <Section style={infoBox('#f5f5f5', '#808080')}>
+          <Text style={infoTitle}>Order Received</Text>
+          <Text style={infoText}>
+            We&apos;ve received your order and will start processing it shortly. You&apos;ll receive
+            updates as your order progresses.
+          </Text>
+        </Section>
+      )}
+
+      {status === 'processing' && (
         <Section style={infoBox('#e3f2fd', '#2196F3')}>
+          <Text style={infoTitle}>Order Processing</Text>
+          <Text style={infoText}>
+            Your order is being carefully prepared. We&apos;ll notify you when it&apos;s ready.
+          </Text>
+        </Section>
+      )}
+
+      {status === 'ready_for_pickup' && (
+        <Section style={infoBox('#f3e5f5', '#9C27B0')}>
+          <Text style={infoTitle}>Ready for Pickup or Delivery</Text>
+          <Text style={infoText}>
+            Your order is packed and ready to go. You&apos;ll receive another update when it&apos;s
+            out for delivery.
+          </Text>
+        </Section>
+      )}
+
+      {status === 'out_for_delivery' && (
+        <Section style={infoBox('#fff3e0', '#FF9800')}>
           <Text style={infoTitle}>Your delivery is on the way</Text>
           <Text style={infoText}>Please ensure someone is available to receive the order.</Text>
         </Section>
@@ -93,9 +141,19 @@ export function OrderStatusUpdate({
 
       {status === 'delivered' && (
         <Section style={infoBox('#e8f5e9', '#4CAF50')}>
+          <Text style={infoTitle}>Successfully Delivered</Text>
+          <Text style={infoText}>
+            Your order has been delivered. We hope you enjoy your products!
+          </Text>
+        </Section>
+      )}
+
+      {status === 'completed' && (
+        <Section style={infoBox('#e8f5e9', '#2E7D32')}>
           <Text style={infoTitle}>Thank you for your order</Text>
           <Text style={infoText}>
-            We hope you enjoy your products. Feel free to order again anytime.
+            Your order is complete. We appreciate your business and hope you enjoy your products.
+            Feel free to order again anytime!
           </Text>
         </Section>
       )}
@@ -105,16 +163,6 @@ export function OrderStatusUpdate({
           <Text style={infoTitle}>We&apos;re sorry your order was cancelled</Text>
           <Text style={infoText}>
             If you have any questions, please contact our support team. We&apos;re here to help.
-          </Text>
-        </Section>
-      )}
-
-      {status === 'ready' && (
-        <Section style={infoBox('#fff9e6', '#FFA500')}>
-          <Text style={infoTitle}>Ready for pickup or delivery</Text>
-          <Text style={infoText}>
-            Your order is packed and ready to go. You&apos;ll receive another update when it&apos;s
-            out for delivery.
           </Text>
         </Section>
       )}

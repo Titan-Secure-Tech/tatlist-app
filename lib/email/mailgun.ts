@@ -132,16 +132,25 @@ export class MailgunService {
     orderData: {
       orderId: string
       customerName: string
-      status: 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'cancelled'
+      status:
+        | 'pending'
+        | 'processing'
+        | 'ready_for_pickup'
+        | 'out_for_delivery'
+        | 'delivered'
+        | 'completed'
+        | 'cancelled'
       message?: string
       estimatedTime?: string
     }
   ): Promise<boolean> {
     const statusMessages = {
-      preparing: 'Your order is being prepared',
-      ready: 'Your order is ready for delivery',
+      pending: 'Order received',
+      processing: 'Your order is being processed',
+      ready_for_pickup: 'Your order is ready for pickup',
       out_for_delivery: 'Your order is out for delivery',
       delivered: 'Your order has been delivered',
+      completed: 'Your order is complete',
       cancelled: 'Your order has been cancelled',
     }
 
