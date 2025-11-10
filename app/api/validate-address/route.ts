@@ -1,20 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validateDeliveryAddress, getDeliveryEstimate } from '@/lib/mapbox/client'
+import {
+  validateDeliveryAddress as validateWithGoogleMaps,
+  getDeliveryEstimate as getEstimateWithGoogleMaps,
+} from '@/lib/google-maps/client'
+import {
+  validateDeliveryAddress as validateWithMapbox,
+  getDeliveryEstimate as getEstimateWithMapbox,
+} from '@/lib/mapbox/client'
 
 export async function POST(request: NextRequest) {
   try {
-    const { address } = await request.json()
+    const { address, provider } = await request.json()
 
     if (!address) {
       return NextResponse.json({ error: 'Address is required' }, { status: 400 })
     }
 
-    // Validate the address and check if it's within delivery zone
-    const validationResult = await validateDeliveryAddress(address)
+    // Use Google Maps as primary, Mapbox as fallback
+    const useGoogleMaps = provider === 'google' || provider !== 'mapbox'
+
+    let validationResult
+    let getEstimate
+
+    if (useGoogleMaps) {
+      validationResult = await validateWithGoogleMaps(address)
+      getEstimate = getEstimateWithGoogleMaps
+    } else {
+      validationResult = await validateWithMapbox(address)
+      getEstimate = getEstimateWithMapbox
+    }
+
+    // If Google Maps fails, fallback to Mapbox
+    if (!validationResult.isValid && useGoogleMaps && provider !== 'google') {
+      console.log('Falling back to Mapbox for address validation')
+      validationResult = await validateWithMapbox(address)
+      getEstimate = getEstimateWithMapbox
+    }
 
     // If valid, get delivery estimate
     if (validationResult.isValid && validationResult.address?.coordinates) {
-      const estimate = await getDeliveryEstimate(
+      const estimate = await getEstimate(
         validationResult.address.coordinates.lat,
         validationResult.address.coordinates.lng
       )

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
+import GoogleMapsAutocomplete from '@/components/forms/GoogleMapsAutocomplete'
 import { MapPin, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 export default function RegisterPage() {
@@ -305,7 +305,7 @@ export default function RegisterPage() {
             <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">
               Street Address <span className="text-red-500">*</span>
             </label>
-            <AddressAutocomplete
+            <GoogleMapsAutocomplete
               id="streetAddress"
               value={formData.streetAddress}
               onChange={(value, components) => {
