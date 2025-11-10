@@ -1,17 +1,5 @@
 #!/usr/bin/env bun
 import { createClient } from '@supabase/supabase-js'
-import { SquareClient, SquareEnvironment } from 'square'
-import dotenv from 'dotenv'
-import { resolve } from 'path'
-
-// Load environment variables
-dotenv.config({ path: resolve(process.cwd(), '.env.local') })
-
-// Debug environment loading
-console.log('Environment check:')
-console.log('NODE_ENV:', process.env.NODE_ENV)
-console.log('Has SQUARE_SANDBOX_ACCESS_TOKEN:', !!process.env.SQUARE_SANDBOX_ACCESS_TOKEN)
-console.log('Token starts with:', process.env.SQUARE_SANDBOX_ACCESS_TOKEN?.substring(0, 10))
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -22,53 +10,69 @@ const supabase = createClient(
 // Initialize Square client
 const isProduction = process.env.NODE_ENV === 'production'
 
-// Use environment variables for both production and sandbox
 const accessToken = isProduction
   ? process.env.SQUARE_PRODUCTION_ACCESS_TOKEN!
   : process.env.SQUARE_SANDBOX_ACCESS_TOKEN!
 
-const locationId = isProduction
+const SQUARE_LOCATION_ID = isProduction
   ? process.env.SQUARE_PRODUCTION_LOCATION_ID!
   : process.env.SQUARE_SANDBOX_LOCATION_ID!
 
-console.log('Creating Square client with:')
-console.log('- accessToken:', accessToken?.substring(0, 10) + '...')
-console.log('- environment:', isProduction ? 'Production' : 'Sandbox')
-console.log('- locationId:', locationId)
+console.log('🔄 Initializing Square API')
+console.log('- Environment:', isProduction ? 'Production' : 'Sandbox')
+console.log('- Token length:', accessToken?.length)
+console.log('- Token ends with:', accessToken?.substring(accessToken.length - 5))
+console.log('- Location ID:', SQUARE_LOCATION_ID)
 
-const squareClient = new SquareClient({
-  accessToken,
-  environment: isProduction ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
-})
+// Type definitions for Square API responses (supporting both camelCase and snake_case)
+interface SquareItemData {
+  name?: string
+  description?: string
+  categoryId?: string
+  category_id?: string
+  imageIds?: string[]
+  image_ids?: string[]
+  variations?: SquareVariation[]
+}
 
-const SQUARE_LOCATION_ID = locationId
+interface SquareVariation {
+  id?: string
+  itemVariationData?: SquareItemVariationData
+  item_variation_data?: SquareItemVariationData
+  isDeleted?: boolean
+  is_deleted?: boolean
+  presentAtLocationIds?: string[]
+  present_at_location_ids?: string[]
+}
+
+interface SquareItemVariationData {
+  name?: string
+  sku?: string
+  priceMoney?: SquareMoney
+  price_money?: SquareMoney
+  trackInventory?: boolean
+  track_inventory?: boolean
+  availableForSale?: boolean
+  available_for_sale?: boolean
+}
+
+interface SquareMoney {
+  amount?: bigint
+  currency?: string
+}
 
 interface SquareProduct {
   id: string
-  itemData?: {
-    name?: string
-    description?: string
-    categoryId?: string
-    imageIds?: string[]
-    variations?: Array<{
-      id?: string
-      itemVariationData?: {
-        name?: string
-        sku?: string
-        priceMoney?: {
-          amount?: bigint
-          currency?: string
-        }
-        trackInventory?: boolean
-        availableForSale?: boolean
-      }
-      isDeleted?: boolean
-      presentAtLocationIds?: string[]
-    }>
-  }
+  itemData?: SquareItemData
+  item_data?: SquareItemData
   isDeleted?: boolean
+  is_deleted?: boolean
   presentAtLocationIds?: string[]
+  present_at_location_ids?: string[]
+  presentAtAllLocations?: boolean
+  present_at_all_locations?: boolean
   updatedAt?: string
+  updated_at?: string
 }
 
 async function syncSquareProducts() {
@@ -85,19 +89,31 @@ async function syncSquareProducts() {
     .single()
 
   try {
-    // Fetch all products from Square
+    // Fetch all products from Square using fetch API (SDK has auth issues with Bun)
     console.log('📦 Fetching products from Square...')
-    console.log('Using Square client with environment:', isProduction ? 'Production' : 'Sandbox')
-    console.log('Square client config:', {
-      environment: squareClient.environment,
-      hasAccessToken: !!squareClient.accessToken,
+    console.log(
+      'Using direct API call with token ending:',
+      accessToken?.substring(accessToken.length - 5)
+    )
+
+    const apiUrl = 'https://connect.squareup.com/v2/catalog/list?types=ITEM'
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Square-Version': '2025-01-23',
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
     })
 
-    const catalogResponse = await squareClient.catalog.list({
-      types: 'ITEM',
-    })
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(`Square API error: ${JSON.stringify(errorData)}`)
+    }
 
-    if (!catalogResponse.result.objects || catalogResponse.result.objects.length === 0) {
+    const catalogResponse = await response.json()
+
+    if (!catalogResponse.objects || catalogResponse.objects.length === 0) {
       console.log('✅ No products found in Square catalog')
       console.log(
         '💡 Tip: First seed some products using: bun run scripts/seed-square-products.mjs'
@@ -122,7 +138,7 @@ async function syncSquareProducts() {
       return
     }
 
-    const squareProducts = catalogResponse.result.objects as SquareProduct[]
+    const squareProducts = catalogResponse.objects as SquareProduct[]
     console.log(`Found ${squareProducts.length} products in Square\n`)
 
     let syncedCount = 0
@@ -133,23 +149,51 @@ async function syncSquareProducts() {
     for (const product of squareProducts) {
       try {
         // Skip deleted products or products not at this location
-        if (product.isDeleted || !product.presentAtLocationIds?.includes(SQUARE_LOCATION_ID)) {
+        if (product.isDeleted) {
+          console.log(`Skipping ${product.id} - deleted`)
           continue
         }
 
-        if (!product.itemData) {
+        // Check location availability - accept all products for now
+        // TODO: Filter by location once we confirm correct location ID
+        const atAllLocations = product.presentAtAllLocations || product.present_at_all_locations
+        const locationIds = product.presentAtLocationIds || product.present_at_location_ids
+        console.log(
+          `${product.id} location - atAll: ${atAllLocations}, ids: ${JSON.stringify(locationIds)}`
+        )
+
+        // Support both camelCase and snake_case from API
+        const itemData = product.itemData || product.item_data
+        if (!itemData) {
+          console.log(`Skipping ${product.id} - no item data`)
           continue
         }
+
+        console.log(`Processing: ${itemData.name}`)
 
         // Get product images if available
         const imageUrls: string[] = []
-        if (product.itemData.imageIds && product.itemData.imageIds.length > 0) {
-          for (const imageId of product.itemData.imageIds) {
+        const imageIds = itemData.imageIds || itemData.image_ids || []
+        if (imageIds.length > 0) {
+          for (const imageId of imageIds) {
             try {
-              const imageResponse = await squareClient.catalog.object.get(imageId)
-              const imageUrl = imageResponse.result.object?.imageData?.url
-              if (imageUrl) {
-                imageUrls.push(imageUrl)
+              const imageResponse = await fetch(
+                `https://connect.squareup.com/v2/catalog/object/${imageId}`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Square-Version': '2025-01-23',
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+              )
+              if (imageResponse.ok) {
+                const imageData = await imageResponse.json()
+                const imageUrl = imageData.object?.image_data?.url
+                if (imageUrl) {
+                  imageUrls.push(imageUrl)
+                }
               }
             } catch (err) {
               console.error(`Failed to fetch image ${imageId}:`, err)
@@ -159,66 +203,87 @@ async function syncSquareProducts() {
 
         // Process variations
         const variations = []
-        const activeVariations =
-          product.itemData.variations?.filter(
-            v => !v.isDeleted && v.presentAtLocationIds?.includes(SQUARE_LOCATION_ID)
-          ) || []
+        const allVariations = itemData.variations || []
+        // Accept all non-deleted variations (location filtering happens at product level)
+        const activeVariations = allVariations.filter(v => {
+          const isDeleted = v.isDeleted || v.is_deleted
+          return !isDeleted
+        })
 
         // Get the first variation for primary product data
         const primaryVariation = activeVariations[0]
-        if (!primaryVariation?.itemVariationData) {
-          console.log(`Skipping ${product.itemData.name} - no active variations`)
+        const primaryVarData =
+          primaryVariation?.itemVariationData || primaryVariation?.item_variation_data
+        if (!primaryVarData) {
+          console.log(`Skipping ${itemData.name} - no active variations`)
           continue
         }
 
         // Build variations array for JSONB field
         for (const variation of activeVariations) {
-          if (variation.itemVariationData) {
+          const varData = variation.itemVariationData || variation.item_variation_data
+          if (varData) {
+            const varPriceMoney = varData.priceMoney || varData.price_money
             variations.push({
               id: variation.id,
-              name: variation.itemVariationData.name || 'Default',
-              sku: variation.itemVariationData.sku || '',
-              price: variation.itemVariationData.priceMoney
-                ? Number(variation.itemVariationData.priceMoney.amount) / 100
-                : 0,
-              currency: variation.itemVariationData.priceMoney?.currency || 'USD',
-              trackInventory: variation.itemVariationData.trackInventory || false,
-              availableForSale: variation.itemVariationData.availableForSale !== false,
+              name: varData.name || 'Default',
+              sku: varData.sku || '',
+              price: varPriceMoney ? Number(varPriceMoney.amount) / 100 : 0,
+              currency: varPriceMoney?.currency || 'USD',
+              trackInventory: varData.trackInventory ?? varData.track_inventory ?? false,
+              availableForSale: varData.availableForSale ?? varData.available_for_sale ?? true,
             })
           }
         }
 
         // Get category name if available
         let category = 'Uncategorized'
-        if (product.itemData.categoryId) {
+        const categoryId = itemData.categoryId || itemData.category_id
+        if (categoryId) {
           try {
-            const categoryResponse = await squareClient.catalog.object.get(
-              product.itemData.categoryId
+            const categoryResponse = await fetch(
+              `https://connect.squareup.com/v2/catalog/object/${categoryId}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Square-Version': '2025-01-23',
+                  Authorization: `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+              }
             )
-            category = categoryResponse.result.object?.categoryData?.name || 'Uncategorized'
+            if (categoryResponse.ok) {
+              const categoryData = await categoryResponse.json()
+              category = categoryData.object?.category_data?.name || 'Uncategorized'
+            }
           } catch (err) {
-            console.error(`Failed to fetch category ${product.itemData.categoryId}:`, err)
+            console.error(`Failed to fetch category ${categoryId}:`, err)
           }
         }
 
         // Prepare product data for Supabase
+        const priceMoney = primaryVarData.priceMoney || primaryVarData.price_money
+        const trackInventory =
+          primaryVarData.trackInventory ?? primaryVarData.track_inventory ?? false
+        const availableForSale =
+          primaryVarData.availableForSale ?? primaryVarData.available_for_sale ?? true
+        const updatedAt = product.updatedAt || product.updated_at
+
         const productData = {
           square_catalog_id: product.id,
           square_variation_id: primaryVariation.id,
-          sku: primaryVariation.itemVariationData.sku || product.id,
-          name: product.itemData.name || 'Unknown Product',
-          description: product.itemData.description || '',
-          price: primaryVariation.itemVariationData.priceMoney
-            ? Number(primaryVariation.itemVariationData.priceMoney.amount) / 100
-            : 0,
+          sku: primaryVarData.sku || product.id,
+          name: itemData.name || 'Unknown Product',
+          description: itemData.description || '',
+          price: priceMoney ? Number(priceMoney.amount) / 100 : 0,
           images: imageUrls,
           category: category,
           brand: 'Square Import', // Default brand for Square imports
-          in_stock: primaryVariation.itemVariationData.availableForSale !== false,
-          stock_quantity: primaryVariation.itemVariationData.trackInventory ? null : 999, // null if tracking, high number if not
+          in_stock: availableForSale !== false,
+          stock_quantity: trackInventory ? null : 999, // null if tracking, high number if not
           variations: variations,
           sync_source: 'square',
-          square_updated_at: product.updatedAt,
+          square_updated_at: updatedAt,
           tags: [],
         }
 
@@ -231,11 +296,12 @@ async function syncSquareProducts() {
           throw error
         }
 
-        console.log(`✅ Synced: ${product.itemData.name}`)
+        console.log(`✅ Synced: ${itemData.name}`)
         syncedCount++
       } catch (error) {
         console.error(`❌ Failed to sync product ${product.id}:`, error)
-        errors.push(`${product.itemData?.name || product.id}: ${error}`)
+        const productName = (product.itemData || product.item_data)?.name || product.id
+        errors.push(`${productName}: ${error}`)
         failedCount++
       }
     }

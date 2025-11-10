@@ -86,3 +86,6 @@ bun.lockb
 # PWA - compiled service worker
 public/sw.js
 public/sw.js.map
+
+# macOS
+Library/
