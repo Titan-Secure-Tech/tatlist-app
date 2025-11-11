@@ -17,6 +17,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
+import { ProofOfDeliveryModal } from '@/components/driver/ProofOfDeliveryModal'
 
 type DeliveryStatus = 'pending' | 'assigned' | 'in_progress' | 'completed' | 'failed'
 type OrderStatus =
@@ -99,6 +100,7 @@ export default function DeliveryDetailPage({
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPODModal, setShowPODModal] = useState(false)
 
   useEffect(() => {
     fetchDeliveryDetails()
@@ -156,6 +158,13 @@ export default function DeliveryDetailPage({
     } finally {
       setUpdating(false)
     }
+  }
+
+  const handlePODSuccess = async () => {
+    setShowPODModal(false)
+
+    // Update delivery status to completed
+    await updateDeliveryStatus('completed')
   }
 
   const formatAddress = (address: DeliveryDetails['order']['delivery_address']) => {
@@ -385,9 +394,18 @@ export default function DeliveryDetailPage({
               {delivery.status === 'in_progress' && (
                 <>
                   <button
-                    onClick={() => updateDeliveryStatus('completed')}
+                    onClick={() => setShowPODModal(true)}
                     disabled={updating}
                     className="w-full px-4 py-3 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle className="h-4 w-4" />
+                    Mark as Delivered
+                  </button>
+
+                  <button
+                    onClick={() => updateDeliveryStatus('failed')}
+                    disabled={updating}
+                    className="w-full px-4 py-3 bg-red-600 text-white rounded-md font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {updating ? (
                       <>
@@ -396,19 +414,10 @@ export default function DeliveryDetailPage({
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="h-4 w-4" />
-                        Mark as Delivered
+                        <XCircle className="h-4 w-4" />
+                        Mark as Failed
                       </>
                     )}
-                  </button>
-
-                  <button
-                    onClick={() => updateDeliveryStatus('failed')}
-                    disabled={updating}
-                    className="w-full px-4 py-3 bg-red-600 text-white rounded-md font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    <XCircle className="h-4 w-4" />
-                    Mark as Failed
                   </button>
                 </>
               )}
@@ -457,6 +466,14 @@ export default function DeliveryDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Proof of Delivery Modal */}
+      <ProofOfDeliveryModal
+        deliveryId={deliveryId}
+        isOpen={showPODModal}
+        onClose={() => setShowPODModal(false)}
+        onSuccess={handlePODSuccess}
+      />
     </div>
   )
 }

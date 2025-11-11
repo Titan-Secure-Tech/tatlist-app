@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
 import { OrderStatusTimeline } from '@/components/orders/OrderStatusTimeline'
+import { ProofOfDeliveryDisplay } from '@/components/orders/ProofOfDeliveryDisplay'
 import { Package, MapPin, Calendar, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -32,7 +33,7 @@ export default async function OrderDetailPage({
     redirect('/login')
   }
 
-  // Fetch order details with items
+  // Fetch order details with items and delivery proof
   const { data: order, error } = await supabase
     .from('orders')
     .select(
@@ -47,6 +48,13 @@ export default async function OrderDetailPage({
           sku,
           images
         )
+      ),
+      delivery:deliveries (
+        proof_photo_url,
+        proof_signature_data,
+        recipient_name,
+        delivery_notes,
+        actual_delivery_time
       )
     `
     )
@@ -195,6 +203,19 @@ export default async function OrderDetailPage({
                 })}
               </p>
             </div>
+          )}
+
+          {/* Proof of Delivery */}
+          {order.delivery && order.delivery[0] && (
+            <ProofOfDeliveryDisplay
+              proof={{
+                photo_url: order.delivery[0].proof_photo_url,
+                signature_data: order.delivery[0].proof_signature_data,
+                recipient_name: order.delivery[0].recipient_name,
+                delivery_notes: order.delivery[0].delivery_notes,
+                delivered_at: order.delivery[0].actual_delivery_time,
+              }}
+            />
           )}
         </div>
       </div>
