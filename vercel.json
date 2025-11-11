@@ -10,7 +10,8 @@
     },
     {
       "path": "/api/alerts/monitor",
-      "schedule": "* * * * *"
+      "schedule": "* * * * *",
+      "method": "POST"
     }
   ]
 }
