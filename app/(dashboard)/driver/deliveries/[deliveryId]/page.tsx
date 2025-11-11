@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
 import { ProofOfDeliveryModal } from '@/components/driver/ProofOfDeliveryModal'
+import { DeliveryLocationTracker } from '@/components/driver/DeliveryLocationTracker'
 
 type DeliveryStatus = 'pending' | 'assigned' | 'in_progress' | 'completed' | 'failed'
 type OrderStatus =
@@ -247,6 +248,9 @@ export default function DeliveryDetailPage({
           {deliveryConfig.label}
         </span>
       </div>
+
+      {/* Location Tracking Indicator */}
+      <DeliveryLocationTracker deliveryId={deliveryId} deliveryStatus={delivery.status} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}

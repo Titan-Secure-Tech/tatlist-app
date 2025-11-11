@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { OrderStatusBadge } from '@/components/orders/OrderStatusBadge'
 import { OrderStatusTimeline } from '@/components/orders/OrderStatusTimeline'
 import { ProofOfDeliveryDisplay } from '@/components/orders/ProofOfDeliveryDisplay'
+import { DeliveryTrackingMap } from '@/components/tracking/DeliveryTrackingMap'
 import { Package, MapPin, Calendar, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -131,6 +132,14 @@ export default async function OrderDetailPage({
               ))}
             </div>
           </div>
+
+          {/* Real-Time Tracking */}
+          {(order.status === 'out_for_delivery' || order.status === 'ready_for_pickup') && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-black mb-4">Track Your Delivery</h2>
+              <DeliveryTrackingMap orderId={orderId} />
+            </div>
+          )}
 
           {/* Status Timeline */}
           <div className="bg-white border border-gray-200 rounded-lg p-6">
