@@ -1,6 +1,7 @@
 import mapboxSdk from '@mapbox/mapbox-sdk'
 import mapboxGeocoding from '@mapbox/mapbox-sdk/services/geocoding'
 import mapboxDirections from '@mapbox/mapbox-sdk/services/directions'
+import mapboxOptimization from '@mapbox/mapbox-sdk/services/optimization'
 
 // Initialize Mapbox client with conditional check
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
@@ -10,6 +11,7 @@ const baseClient = accessToken ? mapboxSdk({ accessToken }) : null
 
 export const geocodingClient = baseClient ? mapboxGeocoding(baseClient) : null
 export const directionsClient = baseClient ? mapboxDirections(baseClient) : null
+export const optimizationClient = baseClient ? mapboxOptimization(baseClient) : null
 
 // Tampa delivery center coordinates (downtown Tampa)
 export const DELIVERY_CENTER = {
@@ -261,6 +263,130 @@ export async function getDeliveryEstimate(
     }
   } catch (error) {
     console.error('Error getting delivery estimate:', error)
+    return null
+  }
+}
+
+/**
+ * Optimize route for multiple delivery stops
+ * Uses Mapbox Optimization API to find the best order to visit waypoints
+ */
+export interface RouteWaypoint {
+  latitude: number
+  longitude: number
+  address?: string
+  delivery_id?: string
+}
+
+export interface OptimizedRoute {
+  waypoint_order: number[]  // Optimized indices [2, 0, 3, 1]
+  total_distance_miles: number
+  total_duration_minutes: number
+  route_geometry: any  // GeoJSON polyline
+  turn_by_turn_directions: any[]  // Navigation steps
+  legs: Array<{
+    distance_miles: number
+    duration_minutes: number
+    from_waypoint: number
+    to_waypoint: number
+  }>
+}
+
+export async function optimizeDeliveryRoute(
+  waypoints: RouteWaypoint[],
+  options?: {
+    startLocation?: { latitude: number; longitude: number }  // Optional start (defaults to delivery center)
+    endLocation?: { latitude: number; longitude: number }    // Optional end (return to start)
+    roundTrip?: boolean  // True = return to start location
+  }
+): Promise<OptimizedRoute | null> {
+  try {
+    // Check if Mapbox client is available
+    if (!optimizationClient) {
+      console.error('Mapbox optimization client not initialized')
+      return null
+    }
+
+    // Validate waypoints count (Mapbox limit: 12 waypoints)
+    if (waypoints.length === 0) {
+      throw new Error('At least one waypoint is required')
+    }
+
+    if (waypoints.length > 12) {
+      throw new Error('Mapbox Optimization API supports maximum 12 waypoints')
+    }
+
+    // Prepare coordinates array
+    const start = options?.startLocation || DELIVERY_CENTER
+    const coordinates: Array<[number, number]> = []
+
+    // Add start location
+    coordinates.push([start.longitude, start.latitude])
+
+    // Add all delivery waypoints
+    waypoints.forEach((wp) => {
+      coordinates.push([wp.longitude, wp.latitude])
+    })
+
+    // Add end location if specified, otherwise Mapbox will optimize as open route
+    if (options?.roundTrip) {
+      coordinates.push([start.longitude, start.latitude])
+    } else if (options?.endLocation) {
+      coordinates.push([options.endLocation.longitude, options.endLocation.latitude])
+    }
+
+    // Call Mapbox Optimization API
+    const response = await optimizationClient
+      .getOptimization({
+        profile: 'driving-traffic',  // Use real-time traffic data
+        waypoints: coordinates.map((coord, index) => ({
+          coordinates: coord,
+          // First and last waypoints are fixed (start/end)
+          ...(index === 0 || (options?.roundTrip && index === coordinates.length - 1)
+            ? {}
+            : {}),
+        })),
+        source: 'first',  // Start from first waypoint
+        destination: options?.roundTrip ? 'last' : 'any',  // End at last or optimize end
+        roundtrip: options?.roundTrip || false,
+        overview: 'full',  // Get full route geometry
+        steps: true,  // Get turn-by-turn directions
+        geometries: 'geojson',  // Return GeoJSON format
+      })
+      .send()
+
+    const trip = response.body.trips[0]
+    if (!trip) {
+      throw new Error('No optimized route returned from Mapbox')
+    }
+
+    // Parse optimized waypoint order
+    // Mapbox returns waypoint indices in optimized order
+    const optimized_order = response.body.waypoints
+      .slice(1, options?.roundTrip ? -1 : undefined)  // Exclude start/end waypoints
+      .map((wp) => wp.waypoint_index - 1)  // Adjust index (subtract start waypoint)
+
+    // Extract route legs (segments between waypoints)
+    const legs = trip.legs.map((leg: any, index: number) => ({
+      distance_miles: leg.distance / MILES_TO_METERS,
+      duration_minutes: Math.ceil(leg.duration / 60),
+      from_waypoint: index,
+      to_waypoint: index + 1,
+    }))
+
+    // Build turn-by-turn directions from all legs
+    const directions = trip.legs.flatMap((leg: any) => leg.steps || [])
+
+    return {
+      waypoint_order: optimized_order,
+      total_distance_miles: trip.distance / MILES_TO_METERS,
+      total_duration_minutes: Math.ceil(trip.duration / 60),
+      route_geometry: trip.geometry,  // GeoJSON polyline
+      turn_by_turn_directions: directions,
+      legs,
+    }
+  } catch (error) {
+    console.error('Error optimizing delivery route:', error)
     return null
   }
 }

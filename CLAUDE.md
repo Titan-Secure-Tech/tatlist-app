@@ -134,6 +134,108 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 - Visit `/shop/checkout-v2` for the enhanced checkout with business validation
 - Original checkout remains at `/shop/checkout` for fallback
 
+### Geolocation Alerts & Real-Time Delivery Notifications
+
+**Features:**
+
+- ✅ Real-time proximity alerts ("Driver is 10 minutes away", "Driver is arriving now")
+- ✅ Distance-based alerts (2 miles, 1 mile, 0.5 miles away)
+- ✅ ETA-based alerts (10 minutes, 5 minutes, arriving now)
+- ✅ Multi-channel notifications (Email + SMS via Twilio)
+- ✅ Customer notification preferences management
+- ✅ Quiet hours support to avoid disturbing customers
+- ✅ Alert deduplication to prevent spam
+- ✅ Admin dashboard for configuring alert thresholds
+- ✅ Automated monitoring via cron job (runs every minute)
+
+**Alert Types:**
+
+1. **ETA Alerts**: Triggered when estimated arrival time reaches threshold
+   - 10 minutes away
+   - 5 minutes away
+   - Arriving now (< 2 minutes)
+
+2. **Distance Alerts**: Triggered when driver distance reaches threshold
+   - 2 miles away
+   - 1 mile away
+   - 0.5 miles away
+
+**System Architecture:**
+
+- **Monitoring Service** (`/lib/alerts/monitoring-service.ts`): Tracks active deliveries and calculates distances/ETAs
+- **Notification Service** (`/lib/alerts/notification-service.ts`): Sends alerts via email/SMS based on preferences
+- **Email Service** (`/lib/email/mailgun.ts`): Sends email notifications using Mailgun
+- **SMS Service** (`/lib/sms/twilio.ts`): Sends SMS notifications using Twilio
+- **Cron Job** (`/api/alerts/monitor`): Runs every minute to check deliveries and trigger alerts
+- **Admin Interface** (`/admin/alerts`): Configure alert thresholds and view statistics
+- **Customer Preferences** (`/customer/settings/notifications`): Manage notification preferences
+
+**Required Environment Variables:**
+
+```bash
+# Twilio Configuration (SMS Notifications)
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_phone_number  # Format: +1XXXXXXXXXX
+
+# Mailgun Configuration (Email Notifications)
+MAILGUN_BASE_URL=https://api.mailgun.net
+MAILGUN_DOMAIN=your_domain.com
+MAILGUN_SENDING_KEY=your_private_api_key
+
+# Cron Job Security
+CRON_SECRET=your_random_secret_key  # Used to authenticate cron job requests
+```
+
+**Database Tables:**
+
+- `alert_thresholds`: Configurable rules for triggering alerts
+- `geolocation_alerts`: Log of all alerts sent to customers
+- `customer_notification_preferences`: User preferences for notifications
+
+**Testing the Alert System:**
+
+1. **Admin Configuration**:
+   - Visit `/admin/alerts` to view alert thresholds and statistics
+   - Enable/disable specific alert types
+   - Configure notification channels (email, SMS, or both)
+
+2. **Customer Preferences**:
+   - Visit `/customer/settings/notifications` to manage preferences
+   - Set notification channels and quiet hours
+   - Add phone number for SMS alerts
+
+3. **Trigger Alerts Manually**:
+   ```bash
+   # Development only - trigger monitoring manually
+   curl http://localhost:7500/api/alerts/monitor
+   ```
+
+4. **Cron Job** (Production):
+   - Vercel cron job runs every minute automatically
+   - Monitors all `in_progress` deliveries
+   - Triggers alerts when thresholds are met
+
+**Alert Flow:**
+
+1. Driver updates location during delivery
+2. Cron job runs every minute and checks active deliveries
+3. System calculates distance and ETA from driver to destination
+4. If threshold is met and alert hasn't been sent recently:
+   - Check customer preferences and quiet hours
+   - Send notification via preferred channel(s)
+   - Log alert to database
+5. Customer receives email and/or SMS notification
+
+**Migration:**
+
+```bash
+# Apply geolocation alerts migration
+bunx supabase db push --include-all
+
+# Migration file: supabase/migrations/20251110070000_add_geolocation_alerts.sql
+```
+
 ### Supabase Development & Management
 
 ```bash
