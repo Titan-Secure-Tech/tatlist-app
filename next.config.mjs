@@ -6,10 +6,9 @@ const nextConfig = {
   // Empty turbopack config to silence migration warning
   turbopack: {},
 
-  // Enable Partial Prerendering (PPR) incrementally for optimal performance
-  // PPR prerenders static page shells at the edge and streams dynamic content
+  // Experimental features
   experimental: {
-    ppr: 'incremental', // Enable PPR on a per-page basis
+    // cacheComponents disabled temporarily due to conflicts with route segment configs
   },
 
   // Headers for Apple Pay domain verification
