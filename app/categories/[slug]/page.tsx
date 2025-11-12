@@ -10,47 +10,60 @@ interface CategoryPageProps {
   }>
 }
 
-// Enable PPR for this dynamic route
-export const experimental_ppr = true
+// Force dynamic rendering for Supabase data fetching
+export const dynamic = 'force-dynamic'
 
-// Map URL slugs to category names
-const categoryMap: Record<string, string> = {
-  // Original categories
-  machines: 'Tattoo Machines',
-  needles: 'Needles & Cartridges',
-  inks: 'Inks & Colors',
-  aftercare: 'Aftercare',
-  'tattoo-machines': 'Tattoo Machines',
-  'needles-cartridges': 'Needles & Cartridges',
-  'inks-colors': 'Inks & Colors',
-  // Lucky Supply categories
-  'art-stencil': 'Art and stencil supplies',
-  'art-and-stencil-supplies': 'Art and stencil supplies',
-  'medical-supplies': 'Medical Supplies and Sterilization Equipment',
-  'medical-supplies-sterilization': 'Medical Supplies and Sterilization Equipment',
-  'tattoo-parts': 'Tattoo Parts',
-  'shop-furniture': 'Tattoo Shop Furniture and Supplies',
-  'tattoo-shop-furniture': 'Tattoo Shop Furniture and Supplies',
-}
-
-// Generate static params for known categories
+// Generate static params on-demand
 export async function generateStaticParams() {
-  return Object.keys(categoryMap).map(slug => ({
-    slug,
-  }))
+  // Return empty array to generate pages on-demand with ISR
+  return []
 }
 
 // Separate component for dynamic content
 async function CategoryContent({ slug }: { slug: string }) {
-  const categoryName = categoryMap[slug] || decodeURIComponent(slug)
-
   const supabase = await createClient()
+
+  // First, fetch the category details by slug
+  const { data: category, error: categoryError } = await supabase
+    .from('categories')
+    .select(
+      `
+      id,
+      slug,
+      name,
+      description,
+      collection_id,
+      collections (
+        name
+      )
+    `
+    )
+    .eq('slug', slug)
+    .single()
+
+  if (categoryError || !category) {
+    console.error('Error fetching category:', categoryError)
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-black mb-4">Category Not Found</h1>
+        <p className="text-gray-600 mb-8">
+          The category you&apos;re looking for doesn&apos;t exist.
+        </p>
+        <Link
+          href="/categories"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+        >
+          Back to Categories
+        </Link>
+      </div>
+    )
+  }
 
   // Fetch products for this category
   const { data: products, error } = await supabase
     .from('products')
     .select('*')
-    .ilike('category', categoryName)
+    .eq('category_id', category.id)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -79,7 +92,8 @@ async function CategoryContent({ slug }: { slug: string }) {
 
         <div className="text-center py-16">
           <Package className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-          <h1 className="text-3xl font-bold text-black mb-4">{categoryName}</h1>
+          <h1 className="text-3xl font-bold text-black mb-4">{category.name}</h1>
+          {category.description && <p className="text-gray-600 mb-4">{category.description}</p>}
           <p className="text-gray-600 mb-8">
             No products found in this category yet. Check back soon!
           </p>
@@ -111,7 +125,10 @@ async function CategoryContent({ slug }: { slug: string }) {
 
       {/* Category Title */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-black mb-4">{categoryName}</h1>
+        <h1 className="text-4xl font-bold text-black mb-4">{category.name}</h1>
+        {category.description && (
+          <p className="text-lg text-gray-600 mb-4">{category.description}</p>
+        )}
         <p className="text-gray-600">
           {products.length} {products.length === 1 ? 'product' : 'products'} available
         </p>
