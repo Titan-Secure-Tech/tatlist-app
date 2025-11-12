@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AnimatedProductDetail from '@/components/products/AnimatedProductDetail'
 
-// Enable PPR for product pages
-export const experimental_ppr = true
+// Force dynamic rendering for Supabase data fetching
+export const dynamic = 'force-dynamic'
 
 // Generate static params for top products
 export async function generateStaticParams() {
