@@ -1,262 +1,101 @@
-'use client'
-
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, ShoppingCart, Plus, Minus } from 'lucide-react'
-import { toast } from 'sonner'
-import { useShoppingCart } from '@/lib/store/cart-store'
 import Image from 'next/image'
-import Link from 'next/link'
-import { CartProvider } from '@/components/providers/CartProvider'
 
-interface ProductVariation {
-  id: string
-  name: string
-  sku: string
-  price: number
-  currency: string
-  trackInventory: boolean
-  availableForSale: boolean
-  stockStatus: string
-}
+// ISR: Revalidate every hour (3600 seconds)
+export const revalidate = 3600
 
-interface SquareProduct {
-  id: string
-  name: string
-  description: string
-  category: string
-  imageUrl: string
-  variations: ProductVariation[]
-  isDeleted: boolean
-  presentAtLocation: boolean
-}
+// Enable dynamic params for on-demand generation
+export const dynamicParams = true
 
-function ShopContent() {
-  const [products, setProducts] = useState<SquareProduct[]>([])
-  const [loading, setLoading] = useState(true)
-  const [quantities, setQuantities] = useState<Record<string, number>>({})
-  const { addItem, cartCount, cartDetails } = useShoppingCart()
+export default async function ShopPage() {
+  const supabase = await createClient()
 
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('/api/square/products')
-      const data = await response.json()
-
-      if (data.products) {
-        setProducts(data.products)
-        // Initialize quantities
-        const initialQuantities: Record<string, number> = {}
-        data.products.forEach((product: SquareProduct) => {
-          product.variations.forEach(variation => {
-            initialQuantities[variation.id] = 1
-          })
-        })
-        setQuantities(initialQuantities)
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error)
-      toast.error('Failed to load products')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleAddToCart = (product: SquareProduct, variation: ProductVariation) => {
-    const quantity = quantities[variation.id] || 1
-
-    try {
-      addItem({
-        id: variation.id,
-        name: `${product.name} - ${variation.name}`,
-        price: Math.round(variation.price * 100), // Convert to cents for use-shopping-cart
-        currency: variation.currency,
-        image: product.imageUrl,
-        description: product.description,
-        variant: variation.name,
-        quantity: quantity,
-      })
-
-      toast.success(`Added ${quantity} ${product.name} to cart`)
-    } catch (error) {
-      console.error('Error adding to cart:', error)
-      toast.error('Failed to add item to cart')
-    }
-  }
-
-  const updateQuantity = (variationId: string, change: number) => {
-    setQuantities(prev => ({
-      ...prev,
-      [variationId]: Math.max(1, (prev[variationId] || 1) + change),
-    }))
-  }
-
-  const isInCart = (variationId: string) => {
-    return cartDetails && cartDetails[variationId]
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading products...</p>
-        </div>
-      </div>
+  // Optimized: Single query with aggregated product counts (fixes N+1 query problem)
+  const { data: collections } = await supabase
+    .from('collections')
+    .select(
+      `
+      *,
+      products(count)
+    `
     )
+    .order('sort_order', { ascending: true })
+
+  // Extract counts from the aggregated response
+  const collectionCounts = new Map<string, number>()
+  if (collections) {
+    collections.forEach(collection => {
+      collectionCounts.set(
+        collection.id,
+        (collection as { products?: Array<{ count: number }> }).products?.[0]?.count || 0
+      )
+    })
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Tattoo Equipment</h1>
-          <p className="text-muted-foreground">Professional tattoo supplies and equipment</p>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Shop Tattoo Supplies</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Browse our extensive catalog of professional tattoo equipment and supplies from top
+            brands
+          </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Badge variant="secondary" className="text-sm">
-            {products.length} Products Available
-          </Badge>
-          <Button asChild>
-            <Link href="/checkout">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart ({cartCount || 0})
-            </Link>
-          </Button>
-        </div>
-      </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map(product => (
-          <Card key={product.id} className="flex flex-col">
-            <div className="aspect-square relative overflow-hidden rounded-t-lg">
-              <Image
-                src={product.imageUrl}
-                alt={product.name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              />
-            </div>
+        {/* Collections Grid */}
+        {collections && collections.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {collections.map((collection, index) => {
+              const productCount = collectionCounts.get(collection.id) || 0
 
-            <CardContent className="flex-1 p-6">
-              <div className="mb-2">
-                <Badge variant="outline" className="text-xs">
-                  {product.category}
-                </Badge>
-              </div>
-
-              <h3 className="font-semibold mb-2 line-clamp-2">{product.name}</h3>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                {product.description}
-              </p>
-
-              {/* Variations */}
-              <div className="space-y-3">
-                {product.variations.map(variation => (
-                  <div key={variation.id} className="border rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <p className="font-medium">{variation.name}</p>
-                        <p className="text-sm text-muted-foreground">SKU: {variation.sku}</p>
+              return (
+                <Link key={collection.id} href={`/shop/${collection.slug}`} className="group">
+                  <Card className="h-full transition-all hover:shadow-lg">
+                    {collection.image_url && (
+                      <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                        <Image
+                          src={collection.image_url}
+                          alt={collection.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority={index < 3}
+                          loading={index < 3 ? undefined : 'lazy'}
+                        />
                       </div>
-                      <p className="font-bold text-lg">${variation.price.toFixed(2)}</p>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      {/* Quantity Controls */}
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => updateQuantity(variation.id, -1)}
-                          disabled={quantities[variation.id] <= 1}
-                          className="h-8 w-8"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center text-sm font-medium">
-                          {quantities[variation.id] || 1}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => updateQuantity(variation.id, 1)}
-                          className="h-8 w-8"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
+                    )}
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                          {collection.name}
+                        </h3>
+                        <Badge variant="secondary">{productCount}</Badge>
                       </div>
-
-                      {/* Add to Cart Button */}
-                      <Button
-                        onClick={() => handleAddToCart(product, variation)}
-                        disabled={!variation.availableForSale}
-                        size="sm"
-                        className="ml-2"
-                      >
-                        {isInCart(variation.id) ? (
-                          <>
-                            <ShoppingCart className="h-3 w-3 mr-1" />
-                            Update Cart
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="h-3 w-3 mr-1" />
-                            Add to Cart
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {products.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No products available</p>
-          <Button onClick={fetchProducts}>Refresh</Button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function ShopPage() {
-  return (
-    <CartProvider>
-      <main className="min-h-screen bg-white">
-        <nav className="border-b bg-white/95 backdrop-blur sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link href="/" className="text-xl font-bold">
-                Tatlist
-              </Link>
-              <div className="flex items-center space-x-4">
-                <Link href="/shop" className="text-sm font-medium">
-                  Shop
+                      {collection.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {collection.description}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
                 </Link>
-                <Link href="/checkout" className="text-sm font-medium">
-                  Checkout
-                </Link>
-              </div>
-            </div>
+              )
+            })}
           </div>
-        </nav>
-        <ShopContent />
-      </main>
-    </CartProvider>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground mb-4">No collections available</p>
+            <p className="text-sm text-muted-foreground">
+              Run the migration and import script to populate the catalog
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

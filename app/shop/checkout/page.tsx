@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { CartProvider } from '@/components/providers/CartProvider'
 import { useSandbox } from '@/lib/contexts/sandbox-context'
+import { CartSuggestions } from '@/components/shop/cart-suggestions'
 
 interface CustomerInfo {
   name: string
@@ -402,8 +403,11 @@ export default function CheckoutPage() {
             </div>
           </div>
         </nav>
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
           <CheckoutContent />
+
+          {/* Cart Suggestions */}
+          <CartSuggestions />
         </div>
       </main>
     </CartProvider>

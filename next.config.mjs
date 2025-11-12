@@ -6,10 +6,10 @@ const nextConfig = {
   // Empty turbopack config to silence migration warning
   turbopack: {},
 
-  // Enable Cache Components (formerly Partial Prerendering) for optimal performance
-  // Temporarily disabled due to conflicts with blog/[slug] dynamic route
+  // Enable Partial Prerendering (PPR) incrementally for optimal performance
+  // PPR prerenders static page shells at the edge and streams dynamic content
   experimental: {
-    // cacheComponents: true,
+    ppr: 'incremental', // Enable PPR on a per-page basis
   },
 
   // Headers for Apple Pay domain verification
@@ -43,8 +43,21 @@ const nextConfig = {
       ],
     };
   },
-  // Image configuration for remote patterns
+  // Image configuration for remote patterns and optimization
   images: {
+    // Cache optimized images for 30 days (improves performance and reduces costs)
+    minimumCacheTTL: 2592000,
+
+    // Device-specific image sizes for responsive images
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+
+    // Image sizes for different use cases
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+
+    // Image formats (prefer modern formats like WebP and AVIF)
+    formats: ['image/webp'],
+
+    // Remote image patterns
     remotePatterns: [
       {
         protocol: 'https',
