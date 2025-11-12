@@ -17,14 +17,23 @@ import { Package, Truck, Shield, Home } from 'lucide-react'
 import { ProductImageGallery } from '@/components/shop/product-image-gallery'
 import { AddToCartButton } from '@/components/shop/add-to-cart-button'
 
+// Force dynamic rendering for Supabase data fetching
+export const dynamic = 'force-dynamic'
+
 // ISR: Revalidate every hour (3600 seconds)
 export const revalidate = 3600
 
 // Enable dynamic params for on-demand generation
 export const dynamicParams = true
 
-// Generate static params for top 100 products at build time
+// Generate static params on-demand
 export async function generateStaticParams() {
+  // Return empty array to generate pages on-demand with ISR
+  return []
+}
+
+async function _generateStaticParamsUnused() {
+  // Kept for reference - original implementation
   const supabase = await createClient()
 
   // Pre-render top 100 most recently created products
