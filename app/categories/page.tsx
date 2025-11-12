@@ -1,166 +1,152 @@
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Grid3x3, Package, Store, Sparkles } from 'lucide-react'
+import { Grid3x3, Package, Store, Sparkles, LucideIcon } from 'lucide-react'
 import CategoryCard from '@/components/categories/CategoryCard'
 
-// Category group configuration following kingpintattoosupply.com pattern
-const categoryGroups = [
-  {
-    name: 'Tattoo Supplies',
-    icon: Package,
-    description: 'Essential tools and materials for tattooing',
-    categories: [
-      'Tattoo Machines',
-      'Needles & Cartridges',
-      'Inks & Colors',
-      'Tattoo Parts',
-      'Power Supplies',
-      'Tubes & Grips',
-      'Art and stencil supplies',
-    ],
-  },
-  {
-    name: 'Shop Supplies',
-    icon: Store,
-    description: 'Professional equipment for your tattoo shop',
-    categories: [
-      'Tattoo Shop Furniture and Supplies',
-      'Medical Supplies and Sterilization Equipment',
-      'Aftercare',
-    ],
-  },
-  {
-    name: 'Piercing and Jewelry',
-    icon: Sparkles,
-    description: 'Body piercing supplies and jewelry',
-    categories: ['Piercing', 'Body Jewelry'],
-  },
-]
-
-// Helper function to create URL-friendly slugs from category names
-function categoryToSlug(category: string): string {
-  const slugMap: Record<string, string> = {
-    'Art and stencil supplies': 'art-stencil',
-    'Medical Supplies and Sterilization Equipment': 'medical-supplies',
-    'Tattoo Parts': 'tattoo-parts',
-    'Tattoo Shop Furniture and Supplies': 'shop-furniture',
-    'Tattoo Machines': 'machines',
-    'Needles & Cartridges': 'needles',
-    'Inks & Colors': 'inks',
-    Aftercare: 'aftercare',
-    Piercing: 'piercing',
-    'Body Jewelry': 'body-jewelry',
-  }
-
-  return slugMap[category] || category.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+// Icon mapping for collections
+const collectionIcons: Record<string, LucideIcon> = {
+  'tattoo-supplies': Package,
+  'shop-supplies': Store,
+  'piercing-jewelry': Sparkles,
 }
 
 // Map categories to Unsplash images with tattoo shop themes
-function getCategoryImage(category: string): string {
+function getCategoryImage(categorySlug: string): string {
   const imageMap: Record<string, string> = {
-    'Needles & Cartridges':
-      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo needles close-up
-    'Inks & Colors':
-      'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop', // Colorful ink bottles
-    'Tattoo Machines':
-      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo machine/needles
-    'Tattoo Parts':
-      'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop', // Tattoo equipment parts
-    Aftercare: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop', // Skincare/aftercare products
-    'Tattoo Shop Furniture and Supplies':
-      'https://images.unsplash.com/photo-1554224311-beee910c1967?w=800&h=800&fit=crop', // Tattoo shop interior
-    'Medical Supplies and Sterilization Equipment':
-      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop', // Medical/sterile equipment
-    'Art and stencil supplies':
-      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop', // Art supplies and stencils
-    'Power Supplies':
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop', // Power supply/electronics
-    'Tubes & Grips':
-      'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop', // Tattoo grips and tubes
-    'Body Jewelry':
-      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop', // Body jewelry/piercings
-    Piercing: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop', // Piercing tools
-    Cartridges: 'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop', // Tattoo cartridges
+    'tattoo-needles':
+      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop',
+    'tattoo-ink':
+      'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop',
+    'tattoo-machines':
+      'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=800&h=800&fit=crop',
+    'machine-parts':
+      'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop',
+    'tattoo-aftercare':
+      'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop',
+    'safety-hygiene':
+      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop',
+    'tattoo-markers':
+      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop',
+    'power-supplies':
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
+    'grips-tubes':
+      'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop',
+    'body-jewelry':
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop',
+    'nose-jewelry':
+      'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop',
+    'cleaning-supplies':
+      'https://images.unsplash.com/photo-1554224311-beee910c1967?w=800&h=800&fit=crop',
+    'cables-cords':
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
+    'foot-switches':
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
+    apparel: 'https://images.unsplash.com/photo-1556306535-38febf6782e7?w=800&h=800&fit=crop',
+    'bags-storage':
+      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=800&fit=crop',
+    'books-education':
+      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=800&fit=crop',
+    'first-aid':
+      'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=800&h=800&fit=crop',
+    'paper-supplies':
+      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=800&fit=crop',
+    'specialty-jewelry':
+      'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&h=800&fit=crop',
   }
 
   return (
-    imageMap[category] ||
+    imageMap[categorySlug] ||
     'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop'
   )
 }
 
-// Get Unsplash attribution for category images
-function getCategoryImageCredit(category: string): { photographer: string; url: string } {
-  const creditMap: Record<string, { photographer: string; url: string }> = {
-    'Needles & Cartridges': {
-      photographer: 'Kristian Angelo',
-      url: 'https://unsplash.com/@kristian_angelo',
-    },
-    'Inks & Colors': { photographer: 'Lucas Lenzi', url: 'https://unsplash.com/@lucaslenzi' },
-    'Tattoo Machines': {
-      photographer: 'Kristian Angelo',
-      url: 'https://unsplash.com/@kristian_angelo',
-    },
-    'Tattoo Parts': { photographer: 'Allef Vinicius', url: 'https://unsplash.com/@seteales' },
-    Aftercare: { photographer: 'Christin Hume', url: 'https://unsplash.com/@christinhumephoto' },
-    'Tattoo Shop Furniture and Supplies': {
-      photographer: 'Daniil Silantev',
-      url: 'https://unsplash.com/@betagamma',
-    },
-    'Medical Supplies and Sterilization Equipment': {
-      photographer: 'Myriam Zilles',
-      url: 'https://unsplash.com/@myriamzilles',
-    },
-    'Art and stencil supplies': {
-      photographer: 'Kelli Tungay',
-      url: 'https://unsplash.com/@kellitungay',
-    },
-    'Power Supplies': {
-      photographer: 'Alexandre Debiève',
-      url: 'https://unsplash.com/@alexkixa',
-    },
-    'Tubes & Grips': {
-      photographer: 'Ksenia Chernaya',
-      url: 'https://unsplash.com/@ksenia_chernaya',
-    },
-    'Body Jewelry': {
-      photographer: 'Sabrianna',
-      url: 'https://unsplash.com/@sabrinnaringquist',
-    },
-    Piercing: { photographer: 'Septian Simon', url: 'https://unsplash.com/@septiansimon' },
-  }
-
-  return creditMap[category] || { photographer: 'Unsplash', url: 'https://unsplash.com' }
+// Get Unsplash attribution for category images (simplified)
+function getCategoryImageCredit(): { photographer: string; url: string } {
+  return { photographer: 'Unsplash', url: 'https://unsplash.com' }
 }
 
 async function CategoriesContent() {
   const supabase = await createClient()
 
-  // Fetch unique categories from products
-  const { data: categories, error } = await supabase
-    .from('products')
-    .select('category')
-    .order('category')
+  // Fetch collections with their categories and product counts
+  const { data: collections, error: collectionsError } = await supabase
+    .from('collections')
+    .select(
+      `
+      id,
+      slug,
+      name,
+      description,
+      sort_order
+    `
+    )
+    .order('sort_order')
 
-  // Get unique categories and count
-  const uniqueCategories = categories
-    ? Array.from(new Set(categories.map(item => item.category)))
-    : []
+  if (collectionsError) {
+    console.error('Error fetching collections:', collectionsError)
+    return (
+      <div className="text-center py-12">
+        <Grid3x3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-black mb-4">Error Loading Categories</h1>
+        <p className="text-gray-600 mb-8">Unable to load product categories</p>
+        <Link
+          href="/products"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+        >
+          Browse All Products
+        </Link>
+      </div>
+    )
+  }
 
-  // Get count for each category
-  const categoryData = await Promise.all(
-    uniqueCategories.map(async category => {
-      const { count } = await supabase
-        .from('products')
-        .select('*', { count: 'exact', head: true })
-        .eq('category', category)
+  // Fetch categories with product counts for each collection
+  const collectionsWithCategories = await Promise.all(
+    (collections || []).map(async collection => {
+      const { data: categories } = await supabase
+        .from('categories')
+        .select(
+          `
+          id,
+          slug,
+          name,
+          description,
+          sort_order
+        `
+        )
+        .eq('collection_id', collection.id)
+        .order('sort_order')
 
-      return { name: category, count: count || 0 }
+      // Get product count for each category
+      const categoriesWithCounts = await Promise.all(
+        (categories || []).map(async category => {
+          const { count } = await supabase
+            .from('products')
+            .select('*', { count: 'exact', head: true })
+            .eq('category_id', category.id)
+            .not('category_id', 'is', null)
+
+          return {
+            ...category,
+            count: count || 0,
+          }
+        })
+      )
+
+      // Filter out categories with no products
+      const categoriesWithProducts = categoriesWithCounts.filter(cat => cat.count > 0)
+
+      return {
+        ...collection,
+        categories: categoriesWithProducts,
+      }
     })
   )
 
-  if (error || categoryData.length === 0) {
+  // Filter out collections with no categories that have products
+  const collectionsWithProducts = collectionsWithCategories.filter(col => col.categories.length > 0)
+
+  if (collectionsWithProducts.length === 0) {
     return (
       <div className="text-center py-12">
         <Grid3x3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -187,38 +173,33 @@ async function CategoriesContent() {
         </p>
       </div>
 
-      {/* Category Groups */}
+      {/* Collections with Categories */}
       <div className="space-y-16">
-        {categoryGroups.map(group => {
-          const Icon = group.icon
-          // Filter categories that exist in the database
-          const groupCategories = categoryData.filter(cat => group.categories.includes(cat.name))
-
-          // Skip group if no categories have products
-          if (groupCategories.length === 0) return null
+        {collectionsWithProducts.map(collection => {
+          const Icon = collectionIcons[collection.slug] || Package
 
           return (
-            <div key={group.name}>
-              {/* Group Header */}
+            <div key={collection.id}>
+              {/* Collection Header */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-3 bg-black rounded-lg">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-black">{group.name}</h2>
-                  <p className="text-gray-600">{group.description}</p>
+                  <h2 className="text-2xl font-bold text-black">{collection.name}</h2>
+                  <p className="text-gray-600">{collection.description}</p>
                 </div>
               </div>
 
-              {/* Categories in this group */}
+              {/* Categories in this collection */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {groupCategories.map(category => (
+                {collection.categories.map(category => (
                   <CategoryCard
-                    key={category.name}
-                    category={category}
-                    slug={categoryToSlug(category.name)}
-                    imageUrl={getCategoryImage(category.name)}
-                    credit={getCategoryImageCredit(category.name)}
+                    key={category.id}
+                    category={{ name: category.name, count: category.count }}
+                    slug={category.slug}
+                    imageUrl={getCategoryImage(category.slug)}
+                    credit={getCategoryImageCredit()}
                   />
                 ))}
               </div>
