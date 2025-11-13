@@ -170,10 +170,23 @@ NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
 - **Admin Interface** (`/admin/alerts`): Configure alert thresholds and view statistics
 - **Customer Preferences** (`/customer/settings/notifications`): Manage notification preferences
 
+**Phone Verification:**
+
+✅ **Phone Verification System Implemented** - Customers can now verify their phone numbers to receive SMS notifications:
+
+- **SMS Verification Codes**: 6-digit codes sent via Twilio
+- **Security Features**: Rate limiting (3 requests/min), code expiry (10 min), attempt limiting (3 attempts)
+- **User Experience**: Countdown timer, resend functionality, clear error messages
+- **API Routes**:
+  - `POST /api/verification/send-code` - Sends verification code
+  - `POST /api/verification/verify-code` - Verifies code and updates database
+- **Service**: `PhoneVerificationService` (`/lib/verification/phone-verification.ts`)
+- **Documentation**: See `/lib/verification/README.md` for detailed documentation
+
 **Required Environment Variables:**
 
 ```bash
-# Twilio Configuration (SMS Notifications)
+# Twilio Configuration (SMS Notifications & Phone Verification)
 TWILIO_ACCOUNT_SID=your_account_sid
 TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_PHONE_NUMBER=your_twilio_phone_number  # Format: +1XXXXXXXXXX
@@ -206,6 +219,7 @@ CRON_SECRET=your_random_secret_key  # Used to authenticate cron job requests
    - Add phone number for SMS alerts
 
 3. **Trigger Alerts Manually**:
+
    ```bash
    # Development only - trigger monitoring manually
    curl http://localhost:7500/api/alerts/monitor

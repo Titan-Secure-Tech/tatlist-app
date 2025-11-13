@@ -5,80 +5,183 @@
  * Issue #55: Implement Geolocation Alerts
  */
 
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-type NotificationChannel = 'email' | 'sms' | 'both';
+type NotificationChannel = 'email' | 'sms' | 'both'
 
 interface NotificationPreferences {
-  id: string;
-  user_id: string;
-  preferred_channel: NotificationChannel;
-  email_enabled: boolean;
-  sms_enabled: boolean;
-  phone_number: string | null;
-  phone_verified: boolean;
-  enable_eta_alerts: boolean;
-  enable_distance_alerts: boolean;
-  enable_arrival_alerts: boolean;
-  quiet_hours_start: string | null;
-  quiet_hours_end: string | null;
+  id: string
+  user_id: string
+  preferred_channel: NotificationChannel
+  email_enabled: boolean
+  sms_enabled: boolean
+  phone_number: string | null
+  phone_verified: boolean
+  enable_eta_alerts: boolean
+  enable_distance_alerts: boolean
+  enable_arrival_alerts: boolean
+  quiet_hours_start: string | null
+  quiet_hours_end: string | null
 }
 
 interface NotificationPreferencesFormProps {
-  preferences: NotificationPreferences;
+  preferences: NotificationPreferences
 }
 
-export function NotificationPreferencesForm({
-  preferences,
-}: NotificationPreferencesFormProps) {
-  const router = useRouter();
-  const [formData, setFormData] = useState(preferences);
-  const [saving, setSaving] = useState(false);
+export function NotificationPreferencesForm({ preferences }: NotificationPreferencesFormProps) {
+  const router = useRouter()
+  const [formData, setFormData] = useState(preferences)
+  const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
+
+  // Verification state
+  const [verificationState, setVerificationState] = useState<
+    'idle' | 'sending' | 'code_sent' | 'verifying'
+  >('idle')
+  const [verificationCode, setVerificationCode] = useState('')
+  const [verificationError, setVerificationError] = useState<string | null>(null)
+  const [expiresIn, setExpiresIn] = useState<number | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setMessage(null);
+    e.preventDefault()
+    setSaving(true)
+    setMessage(null)
 
     try {
       const response = await fetch('/api/customer/notification-preferences', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to update preferences');
+        throw new Error('Failed to update preferences')
       }
 
       setMessage({
         type: 'success',
         text: 'Preferences updated successfully!',
-      });
+      })
 
-      router.refresh();
+      router.refresh()
     } catch (error) {
-      console.error('Error updating preferences:', error);
+      console.error('Error updating preferences:', error)
       setMessage({
         type: 'error',
         text: 'Failed to update preferences. Please try again.',
-      });
+      })
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
-  const handlePhoneVerification = async () => {
-    // TODO: Implement phone verification flow
-    alert('Phone verification coming soon!');
-  };
+  // Countdown timer for code expiry
+  useEffect(() => {
+    if (expiresIn === null || expiresIn <= 0) {
+      return
+    }
+
+    const timer = setInterval(() => {
+      setExpiresIn(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [expiresIn])
+
+  const handleSendVerificationCode = async () => {
+    if (!formData.phone_number) {
+      setVerificationError('Please enter a phone number')
+      return
+    }
+
+    setVerificationState('sending')
+    setVerificationError(null)
+
+    try {
+      const response = await fetch('/api/verification/send-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: formData.phone_number }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send verification code')
+      }
+
+      setVerificationState('code_sent')
+      setExpiresIn(600) // 10 minutes in seconds
+      setVerificationCode('')
+    } catch (error) {
+      console.error('Error sending verification code:', error)
+      setVerificationError(
+        error instanceof Error ? error.message : 'Failed to send verification code'
+      )
+      setVerificationState('idle')
+    }
+  }
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode || verificationCode.length !== 6) {
+      setVerificationError('Please enter a 6-digit verification code')
+      return
+    }
+
+    setVerificationState('verifying')
+    setVerificationError(null)
+
+    try {
+      const response = await fetch('/api/verification/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phoneNumber: formData.phone_number,
+          code: verificationCode,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Invalid verification code')
+      }
+
+      // Update form data to reflect verified status
+      setFormData({ ...formData, phone_verified: true })
+      setVerificationState('idle')
+      setVerificationCode('')
+      setMessage({
+        type: 'success',
+        text: 'Phone number verified successfully!',
+      })
+
+      // Refresh page to update UI
+      router.refresh()
+    } catch (error) {
+      console.error('Error verifying code:', error)
+      setVerificationError(error instanceof Error ? error.message : 'Failed to verify code')
+      setVerificationState('code_sent')
+    }
+  }
+
+  const handleResendCode = () => {
+    setVerificationCode('')
+    setVerificationError(null)
+    handleSendVerificationCode()
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -105,7 +208,7 @@ export function NotificationPreferencesForm({
               <input
                 type="checkbox"
                 checked={formData.email_enabled}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({
                     ...formData,
                     email_enabled: e.target.checked,
@@ -113,13 +216,9 @@ export function NotificationPreferencesForm({
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-900">
-                Email Notifications
-              </span>
+              <span className="text-sm font-medium text-gray-900">Email Notifications</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">
-              Receive delivery alerts via email
-            </p>
+            <p className="text-sm text-gray-500 mt-1 ml-7">Receive delivery alerts via email</p>
           </div>
 
           <div>
@@ -127,14 +226,10 @@ export function NotificationPreferencesForm({
               <input
                 type="checkbox"
                 checked={formData.sms_enabled}
-                onChange={(e) =>
-                  setFormData({ ...formData, sms_enabled: e.target.checked })
-                }
+                onChange={e => setFormData({ ...formData, sms_enabled: e.target.checked })}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-900">
-                SMS Notifications
-              </span>
+              <span className="text-sm font-medium text-gray-900">SMS Notifications</span>
             </label>
             <p className="text-sm text-gray-500 mt-1 ml-7">
               Receive delivery alerts via text message
@@ -150,35 +245,112 @@ export function NotificationPreferencesForm({
                     <input
                       type="tel"
                       value={formData.phone_number || ''}
-                      onChange={(e) =>
+                      onChange={e => {
                         setFormData({
                           ...formData,
                           phone_number: e.target.value,
                         })
-                      }
+                        // Reset verification state when phone number changes
+                        if (verificationState !== 'idle') {
+                          setVerificationState('idle')
+                          setVerificationCode('')
+                          setVerificationError(null)
+                        }
+                      }}
                       placeholder="+1 (555) 123-4567"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      disabled={
+                        verificationState === 'sending' || verificationState === 'verifying'
+                      }
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50"
                     />
-                    {formData.phone_number && !formData.phone_verified && (
-                      <button
-                        type="button"
-                        onClick={handlePhoneVerification}
-                        className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700"
-                      >
-                        Verify
-                      </button>
-                    )}
+                    {formData.phone_number &&
+                      !formData.phone_verified &&
+                      verificationState === 'idle' && (
+                        <button
+                          type="button"
+                          onClick={handleSendVerificationCode}
+                          disabled={verificationState === 'sending'}
+                          className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-50"
+                        >
+                          {verificationState === 'sending' ? 'Sending...' : 'Send Code'}
+                        </button>
+                      )}
                   </div>
+
+                  {/* Verification Code Input */}
+                  {verificationState === 'code_sent' && (
+                    <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                      <p className="text-sm text-blue-900 mb-3">
+                        We&apos;ve sent a 6-digit verification code to{' '}
+                        <span className="font-medium">{formData.phone_number}</span>
+                      </p>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={verificationCode}
+                          onChange={e => {
+                            const value = e.target.value.replace(/\D/g, '')
+                            if (value.length <= 6) {
+                              setVerificationCode(value)
+                            }
+                          }}
+                          placeholder="Enter 6-digit code"
+                          maxLength={6}
+                          className="flex-1 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-center text-lg tracking-widest font-mono"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyCode}
+                          disabled={verificationCode.length !== 6}
+                          className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-50"
+                        >
+                          Verify
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        {expiresIn && expiresIn > 0 ? (
+                          <p className="text-xs text-blue-700">
+                            Code expires in {Math.floor(expiresIn / 60)}:
+                            {String(expiresIn % 60).padStart(2, '0')}
+                          </p>
+                        ) : (
+                          <p className="text-xs text-red-600">Code expired</p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={handleResendCode}
+                          className="text-xs text-blue-700 hover:text-blue-900 underline"
+                        >
+                          Resend code
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {verificationState === 'verifying' && (
+                    <p className="text-sm text-blue-600 mt-2">Verifying code...</p>
+                  )}
+
+                  {/* Verification Error */}
+                  {verificationError && (
+                    <p className="text-sm text-red-600 mt-2">{verificationError}</p>
+                  )}
+
+                  {/* Verification Success */}
                   {formData.phone_verified && (
-                    <p className="text-sm text-green-600 mt-1">
-                      ✓ Phone number verified
+                    <p className="text-sm text-green-600 mt-2">
+                      ✓ Phone number verified - you&apos;ll receive SMS alerts
                     </p>
                   )}
-                  {formData.phone_number && !formData.phone_verified && (
-                    <p className="text-sm text-orange-600 mt-1">
-                      ⚠ Phone number not verified. SMS alerts will not be sent.
-                    </p>
-                  )}
+
+                  {/* Not Verified Warning */}
+                  {formData.phone_number &&
+                    !formData.phone_verified &&
+                    verificationState === 'idle' && (
+                      <p className="text-sm text-orange-600 mt-2">
+                        ⚠ Phone number not verified. SMS alerts will not be sent until verified.
+                      </p>
+                    )}
                 </div>
               </div>
             )}
@@ -199,7 +371,7 @@ export function NotificationPreferencesForm({
               <input
                 type="checkbox"
                 checked={formData.enable_eta_alerts}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({
                     ...formData,
                     enable_eta_alerts: e.target.checked,
@@ -207,9 +379,7 @@ export function NotificationPreferencesForm({
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-900">
-                ⏱️ ETA Alerts
-              </span>
+              <span className="text-sm font-medium text-gray-900">⏱️ ETA Alerts</span>
             </label>
             <p className="text-sm text-gray-500 mt-1 ml-7">
               Notify when driver is 10 minutes, 5 minutes away
@@ -221,7 +391,7 @@ export function NotificationPreferencesForm({
               <input
                 type="checkbox"
                 checked={formData.enable_distance_alerts}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({
                     ...formData,
                     enable_distance_alerts: e.target.checked,
@@ -229,9 +399,7 @@ export function NotificationPreferencesForm({
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-900">
-                🚗 Distance Alerts
-              </span>
+              <span className="text-sm font-medium text-gray-900">🚗 Distance Alerts</span>
             </label>
             <p className="text-sm text-gray-500 mt-1 ml-7">
               Notify when driver is 2 miles, 1 mile, 0.5 miles away
@@ -243,7 +411,7 @@ export function NotificationPreferencesForm({
               <input
                 type="checkbox"
                 checked={formData.enable_arrival_alerts}
-                onChange={(e) =>
+                onChange={e =>
                   setFormData({
                     ...formData,
                     enable_arrival_alerts: e.target.checked,
@@ -251,9 +419,7 @@ export function NotificationPreferencesForm({
                 }
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-900">
-                📍 Arrival Alert
-              </span>
+              <span className="text-sm font-medium text-gray-900">📍 Arrival Alert</span>
             </label>
             <p className="text-sm text-gray-500 mt-1 ml-7">
               Notify when driver is arriving now (urgent)
@@ -271,13 +437,11 @@ export function NotificationPreferencesForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Start Time
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
             <input
               type="time"
               value={formData.quiet_hours_start || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({
                   ...formData,
                   quiet_hours_start: e.target.value || null,
@@ -288,13 +452,11 @@ export function NotificationPreferencesForm({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              End Time
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
             <input
               type="time"
               value={formData.quiet_hours_end || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFormData({
                   ...formData,
                   quiet_hours_end: e.target.value || null,
@@ -307,8 +469,7 @@ export function NotificationPreferencesForm({
 
         {formData.quiet_hours_start && formData.quiet_hours_end && (
           <p className="text-sm text-gray-600 mt-2">
-            No notifications between {formData.quiet_hours_start} and{' '}
-            {formData.quiet_hours_end}
+            No notifications between {formData.quiet_hours_start} and {formData.quiet_hours_end}
           </p>
         )}
       </div>
@@ -324,5 +485,5 @@ export function NotificationPreferencesForm({
         </button>
       </div>
     </form>
-  );
+  )
 }
