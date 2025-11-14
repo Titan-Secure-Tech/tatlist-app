@@ -240,7 +240,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                   toggleInventory()
                 }}
                 type="button"
-                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer"
+                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer flex items-center justify-center"
                 whileTap={{ scale: 0.95 }}
                 aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
               >
@@ -262,7 +262,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                       e.stopPropagation()
                       setShowQuickView(true)
                     }}
-                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10"
+                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10 flex items-center justify-center"
                     whileTap={{ scale: 0.95 }}
                   >
                     <Eye className="h-4 w-4 text-gray-600" />
