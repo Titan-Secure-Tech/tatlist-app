@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart, Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CirclePlus, CircleMinus, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import FavoritesPopup from '@/components/inventory/FavoritesPopup'
+import CollectionModal from '@/components/inventory/CollectionModal'
 
 interface ProductDetailProps {
   product: Product
@@ -18,7 +18,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorited, setIsFavorited] = useState(false)
-  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false)
+  const [showCollectionModal, setShowCollectionModal] = useState(false)
   const router = useRouter()
   const { addItem } = useShoppingCart()
   const supabase = createClient()
@@ -52,24 +52,52 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      toast.error('Please sign in to add favorites')
+      toast.error('Please sign in to add to inventory')
       return
     }
 
     if (isFavorited) {
-      // Remove from favorites
+      // Optimistic update - change to plus icon immediately
+      setIsFavorited(false)
+
+      // Remove from inventory in background
       const { error } = await supabase
         .from('favorites')
         .delete()
         .match({ user_id: user.id, product_id: product.id })
 
-      if (!error) {
-        setIsFavorited(false)
-        toast.success('Removed from favorites')
+      if (error) {
+        // Rollback on error
+        setIsFavorited(true)
+        toast.error('Failed to remove from inventory')
+        console.error('Error removing from inventory:', error)
+      } else {
+        toast.success('Removed from inventory')
       }
     } else {
-      // Show popup to select list
-      setShowFavoritesPopup(true)
+      // Optimistic update - change to minus icon immediately
+      setIsFavorited(true)
+
+      // Show toast with "Add to Collection" button immediately
+      toast.success('Added to inventory', {
+        action: {
+          label: 'Add to Collection',
+          onClick: () => setShowCollectionModal(true),
+        },
+        duration: 5000,
+      })
+
+      // Add to general inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .insert({ user_id: user.id, product_id: product.id })
+
+      if (error) {
+        // Rollback on error
+        setIsFavorited(false)
+        toast.error('Failed to add to inventory')
+        console.error('Error adding to inventory:', error)
+      }
     }
   }
 
@@ -262,11 +290,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 onClick={toggleFavorite}
                 type="button"
                 className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={isFavorited ? 'Remove from inventory' : 'Add to inventory'}
               >
-                <Heart
-                  className={`h-5 w-5 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'}`}
-                />
+                {isFavorited ? (
+                  <CircleMinus className="h-5 w-5 text-black transition-colors" />
+                ) : (
+                  <CirclePlus className="h-5 w-5 text-gray-400 hover:text-black transition-colors" />
+                )}
               </button>
             </div>
           </div>
@@ -311,14 +341,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         </div>
       </div>
 
-      <FavoritesPopup
+      <CollectionModal
         productId={product.id}
         productName={product.name}
-        isOpen={showFavoritesPopup}
-        onClose={() => {
-          setShowFavoritesPopup(false)
-          setIsFavorited(true)
-        }}
+        isOpen={showCollectionModal}
+        onClose={() => setShowCollectionModal(false)}
       />
     </div>
   )

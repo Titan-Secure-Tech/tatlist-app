@@ -127,10 +127,10 @@ export default function InventoryListDetail({
 
       {showAddProducts && (
         <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-          <h3 className="font-semibold mb-3">Add from Favorites</h3>
+          <h3 className="font-semibold mb-3">Add from Inventory</h3>
           {favoriteProducts.length === 0 ? (
             <p className="text-gray-600">
-              No favorite products yet. Heart products to add them here.
+              No inventory products yet. Add products to your inventory to see them here.
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -159,7 +159,7 @@ export default function InventoryListDetail({
       {items.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-600 mb-4">This list is empty.</p>
-          <p className="text-sm text-gray-500">Add products from your favorites to get started.</p>
+          <p className="text-sm text-gray-500">Add products from your inventory to get started.</p>
         </div>
       ) : (
         <>

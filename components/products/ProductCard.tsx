@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
-import FavoritesPopup from '@/components/inventory/FavoritesPopup'
+import CollectionModal from '@/components/inventory/CollectionModal'
 import { useRouter } from 'next/navigation'
 
 interface ProductCardProps {
@@ -19,7 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isInInventory, setIsInInventory] = useState(false)
   const [quantity, setQuantity] = useState(1)
   const [imageError, setImageError] = useState(false)
-  const [showInventoryPopup, setShowInventoryPopup] = useState(false)
+  const [showCollectionModal, setShowCollectionModal] = useState(false)
   const supabase = createClient()
   const { addItem } = useShoppingCart()
   const router = useRouter()
@@ -76,8 +76,29 @@ export default function ProductCard({ product }: ProductCardProps) {
     } else {
       // Optimistic update - change to minus icon immediately
       setIsInInventory(true)
-      // Show popup to select list
-      setShowInventoryPopup(true)
+
+      // Show toast with "Add to Collection" button immediately
+      toast.success('Added to inventory', {
+        action: {
+          label: 'Add to Collection',
+          onClick: () => setShowCollectionModal(true),
+        },
+        duration: 5000,
+      })
+
+      // Add to general inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .insert({ user_id: user.id, product_id: product.id })
+
+      if (error) {
+        // Rollback on error
+        setIsInInventory(false)
+        toast.error('Failed to add to inventory')
+        console.error('Error adding to inventory:', error)
+      } else {
+        router.refresh() // Refresh server components
+      }
     }
   }
 
@@ -193,17 +214,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
       </button>
 
-      <FavoritesPopup
+      <CollectionModal
         productId={product.id}
         productName={product.name}
-        isOpen={showInventoryPopup}
-        onClose={(wasSuccessful = false) => {
-          setShowInventoryPopup(false)
-          // If user cancelled without adding to list, revert the optimistic update
-          if (!wasSuccessful) {
-            setIsInInventory(false)
-          }
-        }}
+        isOpen={showCollectionModal}
+        onClose={() => setShowCollectionModal(false)}
       />
     </div>
   )

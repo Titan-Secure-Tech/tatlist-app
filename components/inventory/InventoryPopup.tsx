@@ -12,19 +12,19 @@ interface InventoryList {
   item_count?: number
 }
 
-interface FavoritesPopupProps {
+interface InventoryPopupProps {
   productId: string
   productName: string
   isOpen: boolean
   onClose: (wasSuccessful?: boolean) => void
 }
 
-export default function FavoritesPopup({
+export default function InventoryPopup({
   productId,
   productName,
   isOpen,
   onClose,
-}: FavoritesPopupProps) {
+}: InventoryPopupProps) {
   const [inventoryLists, setInventoryLists] = useState<InventoryList[]>([])
   const [isCreatingNew, setIsCreatingNew] = useState(false)
   const [newListName, setNewListName] = useState('')
@@ -121,7 +121,7 @@ export default function FavoritesPopup({
         setIsLoading(false)
         onClose(false)
       } else {
-        // Also add to general favorites table for backwards compatibility
+        // Also add to general favorites table (database table name)
         await supabase
           .from('favorites')
           .upsert({ user_id: user.id, product_id: productId }, { onConflict: 'user_id,product_id' })
