@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import {
-  Heart,
+  CirclePlus,
+  CircleMinus,
   ShoppingBag,
   Truck,
   Shield,
@@ -19,6 +20,7 @@ import { Product } from '@/types'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface AnimatedProductDetailProps {
   product: Product
@@ -27,7 +29,7 @@ interface AnimatedProductDetailProps {
 export default function AnimatedProductDetail({ product }: AnimatedProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isInInventory, setIsInInventory] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
 
   const { addItem } = useShoppingCart()
@@ -46,19 +48,50 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
     addItem(cartItem, { count: quantity })
   }
 
-  const toggleFavorite = async () => {
+  const toggleInventory = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) return
-
-    if (isFavorited) {
-      await supabase.from('favorites').delete().match({ user_id: user.id, product_id: product.id })
-    } else {
-      await supabase.from('favorites').insert({ user_id: user.id, product_id: product.id })
+    if (!user) {
+      toast.error('Please sign in to add to inventory')
+      return
     }
 
-    setIsFavorited(!isFavorited)
+    if (isInInventory) {
+      // Optimistic update - change to plus icon immediately
+      setIsInInventory(false)
+
+      // Remove from inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .match({ user_id: user.id, product_id: product.id })
+
+      if (error) {
+        // Rollback on error
+        setIsInInventory(true)
+        toast.error('Failed to remove from inventory')
+        console.error('Error removing from inventory:', error)
+      } else {
+        toast.success('Removed from inventory')
+      }
+    } else {
+      // Optimistic update - change to minus icon immediately
+      setIsInInventory(true)
+      toast.success('Added to inventory')
+
+      // Add to inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .insert({ user_id: user.id, product_id: product.id })
+
+      if (error) {
+        // Rollback on error
+        setIsInInventory(false)
+        toast.error('Failed to add to inventory')
+        console.error('Error adding to inventory:', error)
+      }
+    }
   }
 
   const features = [
@@ -262,12 +295,17 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
               </motion.button>
 
               <motion.button
-                onClick={toggleFavorite}
+                onClick={toggleInventory}
                 className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
               >
-                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : ''}`} />
+                {isInInventory ? (
+                  <CircleMinus className="h-5 w-5 text-black transition-colors" />
+                ) : (
+                  <CirclePlus className="h-5 w-5 text-gray-400 hover:text-black transition-colors" />
+                )}
               </motion.button>
             </div>
 

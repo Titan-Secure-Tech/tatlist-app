@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart, ShoppingBag, Eye } from 'lucide-react'
+import { CirclePlus, CircleMinus, ShoppingBag, Eye } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -16,7 +16,7 @@ interface AnimatedProductCardProps {
 }
 
 export default function AnimatedProductCard({ product, index = 0 }: AnimatedProductCardProps) {
-  const [isFavorited, setIsFavorited] = useState(false)
+  const [isInInventory, setIsInInventory] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [imageError, setImageError] = useState(false)
@@ -25,7 +25,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
   const { addItem } = useShoppingCart()
 
   useEffect(() => {
-    const checkFavorite = async () => {
+    const checkInventory = async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -37,10 +37,10 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
         .match({ user_id: user.id, product_id: product.id })
         .maybeSingle()
 
-      if (data) setIsFavorited(true)
+      if (data) setIsInInventory(true)
     }
 
-    checkFavorite()
+    checkInventory()
   }, [product.id, supabase])
 
   useEffect(() => {
@@ -49,57 +49,53 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
         setCurrentImageIndex(prev => (prev + 1) % product.images.length)
       }, 1500)
       return () => clearInterval(interval)
-    } else {
-      setCurrentImageIndex(0)
     }
   }, [isHovered, product.images])
 
-  const toggleFavorite = async () => {
+  const toggleInventory = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-      toast.error('Please sign in to add favorites')
+      toast.error('Please sign in to add to inventory')
       return
     }
 
-    try {
-      if (isFavorited) {
-        const { error } = await supabase
-          .from('favorites')
-          .delete()
-          .match({ user_id: user.id, product_id: product.id })
+    if (isInInventory) {
+      // Optimistic update - change to plus icon immediately
+      setIsInInventory(false)
 
-        if (error) throw error
+      // Remove from inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .match({ user_id: user.id, product_id: product.id })
 
-        setIsFavorited(false)
-        toast.success('Removed from favorites')
+      if (error) {
+        // Rollback on error
+        setIsInInventory(true)
+        toast.error('Failed to remove from inventory')
+        console.error('Error removing from inventory:', error)
       } else {
-        // Use upsert to handle potential duplicates
-        const { error } = await supabase
-          .from('favorites')
-          .upsert(
-            { user_id: user.id, product_id: product.id },
-            { onConflict: 'user_id,product_id' }
-          )
-
-        if (error) {
-          // If upsert fails, it might already exist, so just set as favorited
-          if (error.code === '23505' || error.message?.includes('duplicate')) {
-            setIsFavorited(true)
-            toast.info('Already in favorites')
-          } else {
-            throw error
-          }
-        } else {
-          setIsFavorited(true)
-          toast.success('Added to favorites!')
-        }
+        toast.success('Removed from inventory')
       }
-    } catch (error) {
-      console.error('Error toggling favorite:', error)
-      toast.error('Failed to update favorites')
+    } else {
+      // Optimistic update - change to minus icon immediately
+      setIsInInventory(true)
+      toast.success('Added to inventory')
+
+      // Add to inventory in background
+      const { error } = await supabase
+        .from('favorites')
+        .insert({ user_id: user.id, product_id: product.id })
+
+      if (error) {
+        // Rollback on error
+        setIsInInventory(false)
+        toast.error('Failed to add to inventory')
+        console.error('Error adding to inventory:', error)
+      }
     }
   }
 
@@ -168,7 +164,10 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
         animate="visible"
         whileHover="hover"
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={() => {
+          setIsHovered(false)
+          setCurrentImageIndex(0)
+        }}
       >
         {/* Image Container */}
         <Link href={`/products/${product.id}`} className="block">
@@ -229,7 +228,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
               </div>
             )}
 
-            {/* Quick action buttons - Always visible for favorites, hover for quick view */}
+            {/* Quick action buttons - Always visible for inventory, hover for quick view */}
             <div className="absolute top-3 right-3 flex flex-col gap-2 z-20">
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -238,17 +237,18 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                 onClick={e => {
                   e.preventDefault()
                   e.stopPropagation()
-                  toggleFavorite()
+                  toggleInventory()
                 }}
                 type="button"
                 className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer"
                 whileTap={{ scale: 0.95 }}
+                aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
               >
-                <Heart
-                  className={`h-4 w-4 transition-colors ${
-                    isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'
-                  }`}
-                />
+                {isInInventory ? (
+                  <CircleMinus className="h-4 w-4 text-black transition-colors" />
+                ) : (
+                  <CirclePlus className="h-4 w-4 text-gray-400 hover:text-black transition-colors" />
+                )}
               </motion.button>
               <AnimatePresence>
                 {isHovered && (
