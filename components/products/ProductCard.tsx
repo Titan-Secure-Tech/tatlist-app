@@ -83,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           label: 'Add to Collection',
           onClick: () => setShowCollectionModal(true),
         },
-        duration: 5000,
+        duration: 15000, // Persist for 15 seconds to give user time to add to collection
       })
 
       // Add to general inventory in background
