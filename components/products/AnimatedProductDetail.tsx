@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import {
@@ -21,6 +21,8 @@ import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import CollectionModal from '@/components/inventory/CollectionModal'
+import { useRouter } from 'next/navigation'
 
 interface AnimatedProductDetailProps {
   product: Product
@@ -31,9 +33,57 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
   const [quantity, setQuantity] = useState(1)
   const [isInInventory, setIsInInventory] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
+  const [showCollectionModal, setShowCollectionModal] = useState(false)
 
   const { addItem } = useShoppingCart()
   const supabase = createClient()
+  const router = useRouter()
+
+  // Check if product is in any collection or favorites
+  useEffect(() => {
+    const checkInventory = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return
+
+      // Check if in any of user's collections
+      const { data: userCollections } = await supabase
+        .from('inventory_lists')
+        .select('id')
+        .eq('user_id', user.id)
+
+      if (userCollections && userCollections.length > 0) {
+        const collectionIds = userCollections.map(c => c.id)
+        const { data: inCollection } = await supabase
+          .from('inventory_list_items')
+          .select('id')
+          .eq('product_id', product.id)
+          .in('inventory_list_id', collectionIds)
+          .limit(1)
+          .maybeSingle()
+
+        if (inCollection) {
+          setIsInInventory(true)
+          return
+        }
+      }
+
+      // Check if in favorites
+      const { data: inFavorites } = await supabase
+        .from('favorites')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('product_id', product.id)
+        .maybeSingle()
+
+      if (inFavorites) {
+        setIsInInventory(true)
+      }
+    }
+
+    checkInventory()
+  }, [product.id, supabase])
 
   const handleAddToCart = () => {
     const cartItem = {
@@ -58,38 +108,95 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
     }
 
     if (isInInventory) {
-      // Optimistic update - change to plus icon immediately
+      // Remove from all collections and favorites
       setIsInInventory(false)
 
-      // Remove from inventory in background
-      const { error } = await supabase
+      // Remove from collections
+      const { error: collectionError } = await supabase
+        .from('inventory_list_items')
+        .delete()
+        .eq('product_id', product.id)
+
+      // Remove from favorites
+      const { error: favError } = await supabase
         .from('favorites')
         .delete()
         .match({ user_id: user.id, product_id: product.id })
 
-      if (error) {
-        // Rollback on error
+      if (collectionError && favError) {
         setIsInInventory(true)
         toast.error('Failed to remove from inventory')
-        console.error('Error removing from inventory:', error)
+        console.error('Error removing from inventory:', { collectionError, favError })
       } else {
         toast.success('Removed from inventory')
+        router.refresh()
       }
     } else {
-      // Optimistic update - change to minus icon immediately
-      setIsInInventory(true)
-      toast.success('Added to inventory')
+      // Get most recent collection
+      const { data: collections } = await supabase
+        .from('inventory_lists')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
 
-      // Add to inventory in background
-      const { error } = await supabase
-        .from('favorites')
-        .insert({ user_id: user.id, product_id: product.id })
+      if (collections && collections.length > 0) {
+        // Add to most recent collection
+        const mostRecentCollection = collections[0]
 
-      if (error) {
-        // Rollback on error
-        setIsInInventory(false)
-        toast.error('Failed to add to inventory')
-        console.error('Error adding to inventory:', error)
+        // Check if already in this collection
+        const { data: existing } = await supabase
+          .from('inventory_list_items')
+          .select('id, quantity')
+          .eq('inventory_list_id', mostRecentCollection.id)
+          .eq('product_id', product.id)
+          .maybeSingle()
+
+        if (existing) {
+          // Increment quantity
+          const { error } = await supabase
+            .from('inventory_list_items')
+            .update({ quantity: existing.quantity + 1 })
+            .eq('id', existing.id)
+
+          if (error) {
+            toast.error('Failed to add to collection')
+            console.error('Error updating quantity:', error)
+          } else {
+            setIsInInventory(true)
+            toast.success(`Added to "${mostRecentCollection.name}"`, {
+              action: {
+                label: 'View Collection',
+                onClick: () => router.push('/inventory-lists'),
+              },
+            })
+            router.refresh()
+          }
+        } else {
+          // Add new item to collection
+          const { error } = await supabase.from('inventory_list_items').insert({
+            inventory_list_id: mostRecentCollection.id,
+            product_id: product.id,
+            quantity: 1,
+          })
+
+          if (error) {
+            toast.error('Failed to add to collection')
+            console.error('Error adding to collection:', error)
+          } else {
+            setIsInInventory(true)
+            toast.success(`Added to "${mostRecentCollection.name}"`, {
+              action: {
+                label: 'View Collection',
+                onClick: () => router.push('/inventory-lists'),
+              },
+            })
+            router.refresh()
+          }
+        }
+      } else {
+        // No collections exist - show modal to create one
+        setShowCollectionModal(true)
       }
     }
   }
@@ -403,6 +510,19 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
           </div>
         </motion.div>
       </div>
+
+      {/* Collection Modal */}
+      <CollectionModal
+        productId={product.id}
+        productName={product.name}
+        isOpen={showCollectionModal}
+        onClose={() => {
+          setShowCollectionModal(false)
+          // Update inventory status
+          setIsInInventory(true)
+          router.refresh()
+        }}
+      />
     </motion.div>
   )
 }
