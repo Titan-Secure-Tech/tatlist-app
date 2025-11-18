@@ -1,21 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X, Truck, MapPin } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function AnnouncementBanner() {
-  const [isVisible, setIsVisible] = useState(true)
-  const [hasBeenClosed, setHasBeenClosed] = useState(false)
-
-  useEffect(() => {
+  const [hasBeenClosed, setHasBeenClosed] = useState(() => {
     // Check if banner was previously closed in this session
-    const closed = sessionStorage.getItem('announcementBannerClosed')
-    if (closed === 'true') {
-      setIsVisible(false)
-      setHasBeenClosed(true)
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('announcementBannerClosed') === 'true'
     }
-  }, [])
+    return false
+  })
+  const [isVisible, setIsVisible] = useState(!hasBeenClosed)
 
   const handleClose = () => {
     setIsVisible(false)
@@ -56,8 +53,8 @@ export default function AnnouncementBanner() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <div className="bg-white p-1 rounded">
-                      <svg viewBox="0 0 44 44" className="w-5 h-5">
+                    <div className="bg-white p-1.5 sm:p-1 rounded">
+                      <svg viewBox="0 0 44 44" className="w-7 h-7 sm:w-5 sm:h-5">
                         <path
                           fill="#000"
                           d="M36.65 0h-29.296c-4.061 0-7.354 3.292-7.354 7.354v29.296c0 4.062 3.293 7.354 7.354 7.354h29.296c4.062 0 7.354-3.292 7.354-7.354v-29.296c.001-4.062-3.291-7.354-7.354-7.354zm-17.969 33.744c0 1.282-1.039 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.039-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624zm10.624 0c0 1.282-1.038 2.32-2.32 2.32s-2.32-1.038-2.32-2.32v-10.624c0-1.282 1.038-2.32 2.32-2.32s2.32 1.038 2.32 2.32v10.624z"
@@ -77,9 +74,9 @@ export default function AnnouncementBanner() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <Truck className="w-5 h-5 text-green-400" />
+                    <Truck className="w-7 h-7 sm:w-5 sm:h-5 text-green-400" />
                     <span className="text-sm font-medium">Fast delivery in Tampa, FL area</span>
-                    <MapPin className="w-4 h-4 text-green-400" />
+                    <MapPin className="w-6 h-6 sm:w-4 sm:h-4 text-green-400" />
                   </motion.div>
 
                   {/* Separator */}
@@ -113,7 +110,7 @@ export default function AnnouncementBanner() {
                   transition={{ duration: 0.2 }}
                   aria-label="Close announcement"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-6 h-6 sm:w-5 sm:h-5" />
                 </motion.button>
               </div>
 

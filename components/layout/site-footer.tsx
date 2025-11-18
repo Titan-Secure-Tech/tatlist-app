@@ -5,8 +5,8 @@ export function SiteFooter() {
   return (
     <footer className="border-t bg-background">
       <div className="container max-w-screen-2xl flex flex-col gap-4 py-10 px-4 sm:px-6 lg:px-8 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-2">
-          <Logo />
+        <div className="flex flex-col items-center gap-4 md:flex-row md:gap-2 md:items-center">
+          <Logo className="[&_img]:h-12 md:[&_img]:h-16" />
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
             POWERED BY{' '}
             <Link
