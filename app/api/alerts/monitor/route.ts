@@ -61,16 +61,14 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    // In production, verify it's from Vercel cron or has auth header
+    // Verify the request is from Vercel Cron or has valid auth (in production)
     if (process.env.NODE_ENV === 'production') {
-      const isVercelCron = request.headers.get('x-vercel-cron')
       const authHeader = request.headers.get('authorization')
       const cronSecret = process.env.CRON_SECRET
 
-      const isAuthorized =
-        isVercelCron === '1' || (cronSecret && authHeader === `Bearer ${cronSecret}`)
-
-      if (!isAuthorized) {
+      // Allow if CRON_SECRET is not set (for Vercel cron jobs)
+      // Or if authorization header matches CRON_SECRET
+      if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
     }

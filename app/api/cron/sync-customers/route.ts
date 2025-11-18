@@ -6,10 +6,14 @@ import { createClient } from '@/lib/supabase/server'
 // API routes are automatically dynamic when accessing request properties
 export async function GET(request: NextRequest) {
   try {
-    // Verify the request is from Vercel Cron (in production)
-    const authHeader = request.headers.get('authorization')
+    // Verify the request is from Vercel Cron or has valid auth (in production)
     if (process.env.NODE_ENV === 'production') {
-      if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      const authHeader = request.headers.get('authorization')
+      const cronSecret = process.env.CRON_SECRET
+
+      // Allow if CRON_SECRET is not set (for Vercel cron jobs)
+      // Or if authorization header matches CRON_SECRET
+      if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
     }

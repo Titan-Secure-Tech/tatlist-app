@@ -56,20 +56,20 @@ export async function ShopNavigation() {
 
         {/* Direct Links */}
         <NavigationMenuItem>
-          <Link href="/shop" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink asChild>
+            <Link href="/shop" className={navigationMenuTriggerStyle()}>
               All Products
-            </NavigationMenuLink>
-          </Link>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/shop/checkout" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink asChild>
+            <Link href="/shop/checkout" className={navigationMenuTriggerStyle()}>
               <ShoppingCart className="h-4 w-4 mr-2" />
               Cart
-            </NavigationMenuLink>
-          </Link>
+            </Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
