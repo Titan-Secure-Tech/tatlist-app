@@ -81,7 +81,8 @@ export default function CollectionModal({
       return
     }
 
-    // Check if product already exists in this collection
+    // Use upsert to handle both insert and update in one operation
+    // This prevents 409 conflicts from the UNIQUE constraint
     const { data: existing } = await supabase
       .from('inventory_list_items')
       .select('id, quantity')
@@ -107,14 +108,44 @@ export default function CollectionModal({
         onClose()
       }
     } else {
-      // If doesn't exist, create new entry
-      const { error } = await supabase.from('inventory_list_items').insert({
-        inventory_list_id: collectionId,
-        product_id: productId,
-        quantity: 1,
-      })
+      // If doesn't exist, create new entry with conflict handling
+      const { error } = await supabase
+        .from('inventory_list_items')
+        .insert({
+          inventory_list_id: collectionId,
+          product_id: productId,
+          quantity: 1,
+        })
+        .select()
+        .single()
 
-      if (error) {
+      // If we get a duplicate key error, fetch and update instead
+      if (error?.code === '23505') {
+        const { data: duplicateItem } = await supabase
+          .from('inventory_list_items')
+          .select('id, quantity')
+          .eq('inventory_list_id', collectionId)
+          .eq('product_id', productId)
+          .single()
+
+        if (duplicateItem) {
+          const { error: updateError } = await supabase
+            .from('inventory_list_items')
+            .update({ quantity: duplicateItem.quantity + 1 })
+            .eq('id', duplicateItem.id)
+
+          if (updateError) {
+            console.error('Error updating after conflict:', updateError)
+            toast.error('Failed to add to collection')
+            setIsLoading(false)
+          } else {
+            toast.success('Added to collection!')
+            router.refresh()
+            setIsLoading(false)
+            onClose()
+          }
+        }
+      } else if (error) {
         console.error('Error adding to collection:', error)
         toast.error('Failed to add to collection')
         setIsLoading(false)
