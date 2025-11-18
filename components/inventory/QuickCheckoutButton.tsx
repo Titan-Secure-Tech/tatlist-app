@@ -48,17 +48,15 @@ export default function QuickCheckoutButton({
     items.forEach(item => {
       if (item.product && item.product.in_stock) {
         try {
-          addItem(
-            {
-              id: item.product.id,
-              name: item.product.name,
-              price: Math.round(item.product.price * 100), // price in cents
-              currency: 'USD',
-              image: item.product.images?.[0],
-              description: item.product.name,
-            },
-            { count: item.quantity }
-          )
+          addItem({
+            id: item.product.id,
+            name: item.product.name,
+            price: Math.round(item.product.price * 100), // price in cents
+            quantity: item.quantity,
+            currency: 'USD',
+            image: item.product.images?.[0],
+            description: item.product.name,
+          })
           addedCount++
         } catch (error) {
           console.error(`Failed to add ${item.product.name} to cart:`, error)
@@ -71,22 +69,21 @@ export default function QuickCheckoutButton({
     if (addedCount > 0) {
       if (skippedCount > 0) {
         toast.success(
-          `Added ${addedCount} ${addedCount === 1 ? 'item' : 'items'} to cart (${skippedCount} out of stock ${skippedCount === 1 ? 'item' : 'items'} skipped)`,
+          `Added ${addedCount} ${addedCount === 1 ? 'item' : 'items'} (${skippedCount} out of stock ${skippedCount === 1 ? 'item' : 'items'} skipped)`,
           {
-            action: {
-              label: 'View Cart',
-              onClick: () => router.push('/cart'),
-            },
+            duration: 3000,
           }
         )
       } else {
-        toast.success(`Added all items from "${collectionName}" to cart!`, {
-          action: {
-            label: 'Checkout',
-            onClick: () => router.push('/cart'),
-          },
-        })
+        toast.success(
+          `Express checkout: ${addedCount} ${addedCount === 1 ? 'item' : 'items'} ready!`,
+          {
+            duration: 3000,
+          }
+        )
       }
+      // Navigate directly to checkout, bypassing the cart page
+      router.push('/shop/checkout-v2')
     } else {
       toast.error('No items available to add to cart')
     }
