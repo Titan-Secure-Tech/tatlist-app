@@ -149,7 +149,7 @@ export default function RegisterPage() {
             zip_code: formData.zipCode,
             user_type: formData.userType,
             shop_name: formData.userType === 'shop_owner' ? formData.shopName : null,
-            tax_id: formData.userType === 'shop_owner' ? formData.taxId : null,
+            tax_id: (formData.userType === 'shop_owner' || formData.userType === 'tattoo_artist') ? formData.taxId : null,
             business_name: formData.businessName || null,
             business_address: formData.businessAddress || null,
             tax_exempt_status: formData.taxExempt,
@@ -467,37 +467,37 @@ export default function RegisterPage() {
           </div>
 
           {formData.userType === 'shop_owner' && (
-            <>
-              <div>
-                <label htmlFor="shopName" className="block text-sm font-medium text-gray-700">
-                  Tattoo Shop Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="shopName"
-                  name="shopName"
-                  type="text"
-                  value={formData.shopName}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-                  required
-                />
-              </div>
+            <div>
+              <label htmlFor="shopName" className="block text-sm font-medium text-gray-700">
+                Tattoo Shop Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="shopName"
+                name="shopName"
+                type="text"
+                value={formData.shopName}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                required
+              />
+            </div>
+          )}
 
-              <div>
-                <label htmlFor="taxId" className="block text-sm font-medium text-gray-700">
-                  Tax Identification Number
-                </label>
-                <input
-                  id="taxId"
-                  name="taxId"
-                  type="text"
-                  value={formData.taxId}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-                  placeholder="XX-XXXXXXX"
-                />
-              </div>
-            </>
+          {(formData.userType === 'shop_owner' || formData.userType === 'tattoo_artist') && (
+            <div>
+              <label htmlFor="taxId" className="block text-sm font-medium text-gray-700">
+                Tax Identification Number
+              </label>
+              <input
+                id="taxId"
+                name="taxId"
+                type="text"
+                value={formData.taxId}
+                onChange={handleInputChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                placeholder="XX-XXXXXXX"
+              />
+            </div>
           )}
 
           <div>
