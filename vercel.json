@@ -3,6 +3,19 @@
   "installCommand": "bun install",
   "framework": "nextjs",
   "regions": ["iad1"],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.tatlist.com"
+        }
+      ],
+      "destination": "https://tatlist.com/:path*",
+      "permanent": true
+    }
+  ],
   "crons": [
     {
       "path": "/api/cron/sync-customers",
