@@ -1,15 +1,7 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  // Redirect www to non-www for consistent cookie handling
-  const hostname = request.headers.get('host')
-  if (hostname?.startsWith('www.')) {
-    const newUrl = request.nextUrl.clone()
-    newUrl.host = hostname.replace('www.', '')
-    return NextResponse.redirect(newUrl, { status: 301 })
-  }
-
   // Skip middleware for static files, API routes, and Apple Pay verification
   if (
     request.nextUrl.pathname.startsWith('/_next') ||
