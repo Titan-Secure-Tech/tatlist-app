@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
     next,
     error,
     error_description,
+    host: request.headers.get('host'),
+    cookies: request.cookies.getAll().map(c => c.name),
     params: Object.fromEntries(searchParams.entries()),
   })
 
@@ -64,13 +66,15 @@ export async function GET(request: NextRequest) {
         ) {
           // This might be a duplicate callback or expired code
           // Try to check if user is already authenticated
-          const { data: { session } } = await supabase.auth.getSession()
-          
+          const {
+            data: { session },
+          } = await supabase.auth.getSession()
+
           if (session) {
             console.log('User already has session, redirecting to dashboard')
             return NextResponse.redirect(`${origin}/dashboard`)
           }
-          
+
           // Clear auth cookies and redirect to login
           const errorResponse = NextResponse.redirect(
             `${origin}/login?error=${encodeURIComponent('Authentication expired. Please try again.')}`
