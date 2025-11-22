@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ShopNavigation } from '@/components/navigation/shop-nav'
 import { CartProvider } from '@/components/providers/CartProvider'
+import { CartIcon } from '@/components/cart/cart-icon'
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,8 +15,15 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
               Tatlist
             </Link>
 
-            {/* Navigation */}
-            <ShopNavigation />
+            {/* Navigation - Hidden on mobile */}
+            <div className="hidden md:block">
+              <ShopNavigation />
+            </div>
+
+            {/* Cart Icon - Always visible on mobile and desktop */}
+            <div className="md:hidden">
+              <CartIcon variant="outline" size="icon" />
+            </div>
           </div>
         </header>
 

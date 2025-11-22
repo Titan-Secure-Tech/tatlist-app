@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
 import { MobileNav } from './mobile-nav'
+import { CartIcon } from '@/components/cart/cart-icon'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 
@@ -74,7 +75,10 @@ export function SiteHeader() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* Search can be added here later */}
           </div>
-          <nav className="flex items-center">
+          <nav className="flex items-center gap-2">
+            {/* Cart Icon - Always visible */}
+            <CartIcon variant="ghost" size="icon" />
+
             {!loading &&
               (user ? (
                 <Button asChild size="sm">
