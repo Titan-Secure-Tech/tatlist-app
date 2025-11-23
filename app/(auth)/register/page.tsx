@@ -25,11 +25,25 @@ export default function RegisterPage() {
     businessName: '',
     businessAddress: '',
     taxExempt: false,
+    useBusinessAddressForDelivery: true,
+    deliveryStreetAddress: '',
+    deliveryCity: '',
+    deliveryState: '',
+    deliveryZipCode: '',
   })
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [addressValidation, setAddressValidation] = useState<{
+    isValidating: boolean
+    isValid: boolean | null
+    error: string | null
+  }>({
+    isValidating: false,
+    isValid: null,
+    error: null,
+  })
+  const [deliveryAddressValidation, setDeliveryAddressValidation] = useState<{
     isValidating: boolean
     isValid: boolean | null
     error: string | null
@@ -92,6 +106,57 @@ export default function RegisterPage() {
     }
   }
 
+  const validateDeliveryAddress = async () => {
+    setDeliveryAddressValidation({
+      isValidating: true,
+      isValid: null,
+      error: null,
+    })
+
+    const fullDeliveryAddress = `${formData.deliveryStreetAddress}, ${formData.deliveryCity}, ${formData.deliveryState} ${formData.deliveryZipCode}`
+
+    try {
+      const response = await fetch('/api/validate-address', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: fullDeliveryAddress }),
+      })
+
+      const result = await response.json()
+
+      if (result.isValid) {
+        setDeliveryAddressValidation({
+          isValidating: false,
+          isValid: true,
+          error: null,
+        })
+
+        // Update form with validated address components if provided
+        if (result.address) {
+          setFormData(prev => ({
+            ...prev,
+            deliveryStreetAddress: result.address.street || prev.deliveryStreetAddress,
+            deliveryCity: result.address.city || prev.deliveryCity,
+            deliveryState: result.address.state || prev.deliveryState,
+            deliveryZipCode: result.address.zipCode || prev.deliveryZipCode,
+          }))
+        }
+      } else {
+        setDeliveryAddressValidation({
+          isValidating: false,
+          isValid: false,
+          error: result.error || 'Delivery address validation failed',
+        })
+      }
+    } catch {
+      setDeliveryAddressValidation({
+        isValidating: false,
+        isValid: false,
+        error: 'Unable to validate delivery address. Please try again.',
+      })
+    }
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
 
@@ -99,14 +164,23 @@ export default function RegisterPage() {
       const { checked } = e.target as HTMLInputElement
       setFormData({ ...formData, [name]: checked })
     } else {
-      // Uppercase state abbreviation
-      const finalValue = name === 'state' ? value.toUpperCase() : value
+      // Uppercase state abbreviation for both business and delivery addresses
+      const finalValue = (name === 'state' || name === 'deliveryState') ? value.toUpperCase() : value
       setFormData({ ...formData, [name]: finalValue })
     }
 
     // Reset validation when address changes
     if (['streetAddress', 'city', 'state', 'zipCode'].includes(name)) {
       setAddressValidation({
+        isValidating: false,
+        isValid: null,
+        error: null,
+      })
+    }
+
+    // Reset delivery address validation when delivery address changes
+    if (['deliveryStreetAddress', 'deliveryCity', 'deliveryState', 'deliveryZipCode'].includes(name)) {
+      setDeliveryAddressValidation({
         isValidating: false,
         isValid: null,
         error: null,
@@ -156,6 +230,11 @@ export default function RegisterPage() {
             business_name: formData.businessName || null,
             business_address: formData.businessAddress || null,
             tax_exempt_status: formData.taxExempt,
+            use_business_address_for_delivery: formData.useBusinessAddressForDelivery,
+            delivery_street_address: formData.useBusinessAddressForDelivery ? null : formData.deliveryStreetAddress || null,
+            delivery_city: formData.useBusinessAddressForDelivery ? null : formData.deliveryCity || null,
+            delivery_state: formData.useBusinessAddressForDelivery ? null : formData.deliveryState || null,
+            delivery_zip_code: formData.useBusinessAddressForDelivery ? null : formData.deliveryZipCode || null,
           })
 
           if (profileError) throw profileError
@@ -530,6 +609,170 @@ export default function RegisterPage() {
               I have tax exempt status
             </label>
           </div>
+        </div>
+
+        {/* Delivery Address */}
+        <div className="space-y-4 pt-4 border-t border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Delivery Address</h2>
+          <p className="text-sm text-gray-600">
+            Choose where you'd like your tattoo supplies delivered. You can use your business address or specify a different delivery address.
+          </p>
+
+          <div className="flex items-center">
+            <input
+              id="useBusinessAddressForDelivery"
+              name="useBusinessAddressForDelivery"
+              type="checkbox"
+              checked={formData.useBusinessAddressForDelivery}
+              onChange={handleInputChange}
+              className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
+            />
+            <label htmlFor="useBusinessAddressForDelivery" className="ml-2 block text-sm text-gray-700">
+              Use my business address for deliveries
+            </label>
+          </div>
+
+          {!formData.useBusinessAddressForDelivery && (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="deliveryStreetAddress" className="block text-sm font-medium text-gray-700">
+                  Delivery Street Address <span className="text-red-500">*</span>
+                </label>
+                <AddressAutocomplete
+                  id="deliveryStreetAddress"
+                  value={formData.deliveryStreetAddress}
+                  onChange={(value, components) => {
+                    if (components) {
+                      setFormData({
+                        ...formData,
+                        deliveryStreetAddress: components.streetAddress,
+                        deliveryCity: components.city,
+                        deliveryState: components.state,
+                        deliveryZipCode: components.zipCode,
+                      })
+                      // Reset validation when autocomplete populates address
+                      setDeliveryAddressValidation({
+                        isValidating: false,
+                        isValid: null,
+                        error: null,
+                      })
+                    } else {
+                      setFormData({ ...formData, deliveryStreetAddress: value })
+                      // Reset validation when manual input changes
+                      setDeliveryAddressValidation({
+                        isValidating: false,
+                        isValid: null,
+                        error: null,
+                      })
+                    }
+                  }}
+                  placeholder="Start typing your delivery address..."
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                />
+              </div>
+
+              <div className="grid grid-cols-6 gap-4">
+                <div className="col-span-3">
+                  <label htmlFor="deliveryCity" className="block text-sm font-medium text-gray-700">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="deliveryCity"
+                    name="deliveryCity"
+                    type="text"
+                    value={formData.deliveryCity}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                    required
+                  />
+                </div>
+
+                <div className="col-span-1">
+                  <label htmlFor="deliveryState" className="block text-sm font-medium text-gray-700">
+                    State <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="deliveryState"
+                    name="deliveryState"
+                    type="text"
+                    value={formData.deliveryState}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                    placeholder="FL"
+                    maxLength={2}
+                    required
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <label htmlFor="deliveryZipCode" className="block text-sm font-medium text-gray-700">
+                    ZIP Code <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="deliveryZipCode"
+                    name="deliveryZipCode"
+                    type="text"
+                    value={formData.deliveryZipCode}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                    placeholder="12345"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Delivery Address Validation Button */}
+              <div>
+                <button
+                  type="button"
+                  onClick={validateDeliveryAddress}
+                  disabled={
+                    deliveryAddressValidation.isValidating ||
+                    !formData.deliveryStreetAddress ||
+                    !formData.deliveryCity ||
+                    !formData.deliveryState ||
+                    !formData.deliveryZipCode
+                  }
+                  className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {deliveryAddressValidation.isValidating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Validating...
+                    </>
+                  ) : (
+                    <>
+                      <MapPin className="h-4 w-4" />
+                      Validate Delivery Address
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Delivery Address Validation Success Message */}
+              {deliveryAddressValidation.isValid && (
+                <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-green-800">
+                    <p className="font-medium">Delivery address validated successfully</p>
+                    <p className="text-green-700">This address is within our delivery area.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Delivery Address Validation Error Message */}
+              {deliveryAddressValidation.isValid === false && (
+                <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-red-800">
+                    <p className="font-medium">Delivery address validation failed</p>
+                    <p className="text-red-700">{deliveryAddressValidation.error}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {error && <div className="text-red-600 text-sm">{error}</div>}
