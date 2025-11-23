@@ -1,9 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Plus, ShoppingCart } from 'lucide-react'
+import { Plus, ShoppingCart, Minus } from 'lucide-react'
 import DeleteInventoryListButton from '@/components/inventory/DeleteInventoryListButton'
 import QuickCheckoutButton from '@/components/inventory/QuickCheckoutButton'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 type InventoryListItem = {
   id: string
@@ -34,67 +38,121 @@ type GeneralInventoryProduct = {
   sku: string
 }
 
-export default async function InventoryListsPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default function InventoryListsPage() {
+  const supabase = createClient()
+  const router = useRouter()
+  const [user, setUser] = useState<any>(null)
+  const [inventoryLists, setInventoryLists] = useState<InventoryList[]>([])
+  const [generalInventory, setGeneralInventory] = useState<GeneralInventoryProduct[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Fetch collections (inventory lists)
-  const { data: inventoryLists } = await supabase
-    .from('inventory_lists')
-    .select(
-      `
-      *,
-      inventory_list_items (
-        id,
-        quantity,
-        product:products (
-          id,
-          name,
-          sku,
-          price,
-          images,
-          in_stock
+  useEffect(() => {
+    async function fetchData() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      
+      if (!user) {
+        router.push('/login')
+        return
+      }
+      
+      setUser(user)
+
+      // Fetch collections (inventory lists)
+      const { data: inventoryListsData } = await supabase
+        .from('inventory_lists')
+        .select(
+          `
+          *,
+          inventory_list_items (
+            id,
+            quantity,
+            product:products (
+              id,
+              name,
+              sku,
+              price,
+              images,
+              in_stock
+            )
+          )
+        `
+        )
+        .eq('user_id', user?.id)
+        .order('updated_at', { ascending: false })
+
+      // Fetch general inventory (items in favorites but not in any collection)
+      const { data: favoriteProducts } = await supabase
+        .from('favorites')
+        .select(
+          `
+          product:products (
+            id,
+            name,
+            price,
+            images,
+            in_stock,
+            sku
+          )
+        `
+        )
+        .eq('user_id', user?.id)
+
+      // Filter out products that are already in collections
+      const productsInCollections = new Set(
+        (inventoryListsData || []).flatMap(list =>
+          (list.inventory_list_items || [])
+            .map(item => item.product?.id)
+            .filter((id): id is string => id !== null && id !== undefined)
         )
       )
-    `
-    )
-    .eq('user_id', user?.id)
-    .order('updated_at', { ascending: false })
 
-  // Fetch general inventory (items in favorites but not in any collection)
-  const { data: favoriteProducts } = await supabase
-    .from('favorites')
-    .select(
-      `
-      product:products (
-        id,
-        name,
-        price,
-        images,
-        in_stock,
-        sku
+      const generalInventoryData = (favoriteProducts || [])
+        .map(fav => fav.product)
+        .filter(
+          (product): product is GeneralInventoryProduct =>
+            product !== null && !productsInCollections.has(product.id)
+        )
+
+      setInventoryLists(inventoryListsData || [])
+      setGeneralInventory(generalInventoryData)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  const updateQuantity = async (itemId: string, newQuantity: number) => {
+    if (newQuantity < 1) return
+
+    const { error } = await supabase
+      .from('inventory_list_items')
+      .update({ quantity: newQuantity })
+      .eq('id', itemId)
+
+    if (!error) {
+      setInventoryLists(prevLists => 
+        prevLists.map(list => ({
+          ...list,
+          inventory_list_items: list.inventory_list_items?.map(item => 
+            item.id === itemId ? { ...item, quantity: newQuantity } : item
+          )
+        }))
       )
-    `
-    )
-    .eq('user_id', user?.id)
+    }
+  }
 
-  // Filter out products that are already in collections
-  const productsInCollections = new Set(
-    (inventoryLists || []).flatMap(list =>
-      (list.inventory_list_items || [])
-        .map(item => item.product?.id)
-        .filter((id): id is string => id !== null && id !== undefined)
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading inventory lists...</p>
+        </div>
+      </div>
     )
-  )
-
-  const generalInventory = (favoriteProducts || [])
-    .map(fav => fav.product)
-    .filter(
-      (product): product is GeneralInventoryProduct =>
-        product !== null && !productsInCollections.has(product.id)
-    )
+  }
 
   return (
     <div className="space-y-8">
@@ -210,32 +268,55 @@ export default async function InventoryListsPage() {
                 {list.inventory_list_items && list.inventory_list_items.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pb-2">
                     {list.inventory_list_items.slice(0, 5).map((item: InventoryListItem) => (
-                      <Link
+                      <div
                         key={item.id}
-                        href={`/products/${item.product?.id}`}
-                        className="flex-shrink-0 w-24 border border-gray-200 rounded-lg p-2 hover:bg-gray-50"
+                        className="flex-shrink-0 w-32 border border-gray-200 rounded-lg p-2 hover:bg-gray-50"
                       >
-                        <div className="relative w-full aspect-square mb-1 bg-gray-100 rounded overflow-hidden">
-                          {item.product?.images && item.product.images.length > 0 ? (
-                            <Image
-                              src={item.product.images[0]}
-                              alt={item.product.name}
-                              fill
-                              sizes="96px"
-                              className="object-contain"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              📦
-                            </div>
-                          )}
+                        <Link href={`/products/${item.product?.id}`}>
+                          <div className="relative w-full aspect-square mb-1 bg-gray-100 rounded overflow-hidden">
+                            {item.product?.images && item.product.images.length > 0 ? (
+                              <Image
+                                src={item.product.images[0]}
+                                alt={item.product?.name || 'Product'}
+                                fill
+                                sizes="128px"
+                                className="object-contain"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                📦
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-2 mb-1">{item.product?.name}</p>
+                        </Link>
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-center space-x-1">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                updateQuantity(item.id, item.quantity - 1)
+                              }}
+                              className="w-6 h-6 flex items-center justify-center text-xs border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="text-xs font-medium w-6 text-center">{item.quantity}</span>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault()
+                                updateQuantity(item.id, item.quantity + 1)
+                              }}
+                              className="w-6 h-6 flex items-center justify-center text-xs border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
-                        <p className="text-xs text-gray-600 line-clamp-2">{item.product?.name}</p>
-                        <p className="text-xs text-gray-500">×{item.quantity}</p>
-                      </Link>
+                      </div>
                     ))}
                     {list.inventory_list_items.length > 5 && (
-                      <div className="flex-shrink-0 w-24 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
+                      <div className="flex-shrink-0 w-32 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
                         +{list.inventory_list_items.length - 5} more
                       </div>
                     )}
