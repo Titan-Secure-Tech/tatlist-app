@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Loader2, MapPin, AlertCircle, CheckCircle } from 'lucide-react'
+import { Loader2, MapPin, AlertCircle, CheckCircle, Package, Truck } from 'lucide-react'
 
 export interface BusinessDetails {
   businessName: string
@@ -16,6 +16,7 @@ export interface BusinessDetails {
   zipCode: string
   phone: string
   email: string
+  fulfillmentType: 'delivery' | 'pickup'
   validated?: boolean
   coordinates?: {
     lat: number
@@ -39,6 +40,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
     zipCode: initialValues.zipCode || '',
     phone: initialValues.phone || '',
     email: initialValues.email || '',
+    fulfillmentType: initialValues.fulfillmentType || 'delivery',
   })
 
   const [validationState, setValidationState] = useState<{
@@ -130,7 +132,13 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Ensure address is validated before submission
+    // Skip validation for pickup orders
+    if (formData.fulfillmentType === 'pickup') {
+      onSubmit(formData)
+      return
+    }
+
+    // Ensure address is validated before submission for delivery
     if (!validationState.isValid) {
       await validateAddress()
       return
@@ -144,6 +152,39 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
+        {/* Fulfillment Type Toggle */}
+        <div>
+          <Label className="mb-3 block">
+            Fulfillment Method <span className="text-red-500">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, fulfillmentType: 'delivery' })}
+              className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                formData.fulfillmentType === 'delivery'
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+            >
+              <Truck className="w-5 h-5" />
+              <span className="font-medium">Delivery</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, fulfillmentType: 'pickup' })}
+              className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                formData.fulfillmentType === 'pickup'
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-300 hover:border-gray-400'
+              }`}
+            >
+              <Package className="w-5 h-5" />
+              <span className="font-medium">Pickup</span>
+            </button>
+          </div>
+        </div>
+
         <div>
           <Label htmlFor="businessName">
             Business Name <span className="text-red-500">*</span>
@@ -175,122 +216,142 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
           </p>
         </div>
 
-        <div className="space-y-4 border-t pt-4">
-          <h3 className="font-semibold">Delivery Address</h3>
+        {formData.fulfillmentType === 'delivery' && (
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-semibold">Delivery Address</h3>
 
-          <div>
-            <Label htmlFor="street">
-              Street Address <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="street"
-              name="street"
-              value={formData.street}
-              onChange={handleInputChange}
-              placeholder="123 Main St"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="city">
-                City <span className="text-red-500">*</span>
+              <Label htmlFor="street">
+                Street Address <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="city"
-                name="city"
-                value={formData.city}
+                id="street"
+                name="street"
+                value={formData.street}
                 onChange={handleInputChange}
-                placeholder="Tampa"
+                placeholder="123 Main St"
                 required
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="city">
+                  City <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  placeholder="Tampa"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="state">
+                  State <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="state"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="FL"
+                  maxLength={2}
+                  required
+                />
+              </div>
+            </div>
+
             <div>
-              <Label htmlFor="state">
-                State <span className="text-red-500">*</span>
+              <Label htmlFor="zipCode">
+                ZIP Code <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="state"
-                name="state"
-                value={formData.state}
+                id="zipCode"
+                name="zipCode"
+                value={formData.zipCode}
                 onChange={handleInputChange}
-                placeholder="FL"
-                maxLength={2}
+                placeholder="33601"
+                maxLength={5}
                 required
               />
             </div>
-          </div>
 
-          <div>
-            <Label htmlFor="zipCode">
-              ZIP Code <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="zipCode"
-              name="zipCode"
-              value={formData.zipCode}
-              onChange={handleInputChange}
-              placeholder="33601"
-              maxLength={5}
-              required
-            />
-          </div>
+            <Button
+              type="button"
+              onClick={validateAddress}
+              disabled={
+                !formData.street ||
+                !formData.city ||
+                !formData.zipCode ||
+                validationState.isValidating
+              }
+              variant="outline"
+              className="w-full"
+            >
+              {validationState.isValidating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Validating Address...
+                </>
+              ) : (
+                <>
+                  <MapPin className="mr-2 h-4 w-4" />
+                  Validate Delivery Address
+                </>
+              )}
+            </Button>
 
-          <Button
-            type="button"
-            onClick={validateAddress}
-            disabled={
-              !formData.street ||
-              !formData.city ||
-              !formData.zipCode ||
-              validationState.isValidating
-            }
-            variant="outline"
-            className="w-full"
-          >
-            {validationState.isValidating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Validating Address...
-              </>
-            ) : (
-              <>
-                <MapPin className="mr-2 h-4 w-4" />
-                Validate Delivery Address
-              </>
+            {validationState.isValid === true && (
+              <Alert className="border-green-200 bg-green-50">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-800">Address Validated</AlertTitle>
+                <AlertDescription className="text-green-700">
+                  {validationState.distance && validationState.distance > 0 ? (
+                    <>
+                      Your business is {validationState.distance.toFixed(1)} miles from our delivery
+                      center. Delivery available!
+                    </>
+                  ) : (
+                    <>
+                      Your address is in our Tampa Bay delivery area. Delivery details will be
+                      confirmed after order placement.
+                    </>
+                  )}
+                </AlertDescription>
+              </Alert>
             )}
-          </Button>
 
-          {validationState.isValid === true && (
-            <Alert className="border-green-200 bg-green-50">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800">Address Validated</AlertTitle>
-              <AlertDescription className="text-green-700">
-                {validationState.distance && validationState.distance > 0 ? (
-                  <>
-                    Your business is {validationState.distance.toFixed(1)} miles from our delivery
-                    center. Delivery available!
-                  </>
-                ) : (
-                  <>
-                    Your address is in our Tampa Bay delivery area. Delivery details will be
-                    confirmed after order placement.
-                  </>
-                )}
-              </AlertDescription>
-            </Alert>
-          )}
+            {validationState.isValid === false && (
+              <Alert className="border-red-200 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertTitle className="text-red-800">Delivery Not Available</AlertTitle>
+                <AlertDescription className="text-red-700">
+                  {validationState.error}
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        )}
 
-          {validationState.isValid === false && (
-            <Alert className="border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertTitle className="text-red-800">Delivery Not Available</AlertTitle>
-              <AlertDescription className="text-red-700">{validationState.error}</AlertDescription>
-            </Alert>
-          )}
-        </div>
+        {formData.fulfillmentType === 'pickup' && (
+          <Alert className="border-blue-200 bg-blue-50">
+            <Package className="h-4 w-4 text-blue-600" />
+            <AlertTitle className="text-blue-800">Pickup Location</AlertTitle>
+            <AlertDescription className="text-blue-700">
+              <p className="font-semibold mb-2">Black Eye Tattoo</p>
+              <p>1234 Main Street</p>
+              <p>Tampa, FL 33601</p>
+              <p className="mt-2 text-sm">
+                Orders are typically ready for pickup within 2-4 hours. We&apos;ll send you an email
+                and SMS when your order is ready.
+              </p>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="space-y-4 border-t pt-4">
           <h3 className="font-semibold">Contact Information</h3>
@@ -329,7 +390,11 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
       <Button
         type="submit"
-        disabled={!validationState.isValid || validationState.isValidating}
+        disabled={
+          formData.fulfillmentType === 'delivery'
+            ? !validationState.isValid || validationState.isValidating
+            : false
+        }
         className="w-full"
       >
         Continue to Payment

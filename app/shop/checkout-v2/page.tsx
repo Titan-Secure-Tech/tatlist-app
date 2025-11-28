@@ -11,8 +11,22 @@ import { Separator } from '@/components/ui/separator'
 import { CartProvider } from '@/components/providers/CartProvider'
 import { BusinessDetailsForm, BusinessDetails } from '@/components/checkout/business-details-form'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
 
 type CheckoutStep = 'business' | 'payment'
+
+interface UserProfile {
+  email: string
+  first_name?: string
+  last_name?: string
+  phone?: string
+  street_address?: string
+  city?: string
+  state?: string
+  zip_code?: string
+  business_name?: string
+  shop_name?: string
+}
 
 function CheckoutContent() {
   const { cartDetails, cartCount, totalPrice, clearCart } = useShoppingCart()
@@ -20,10 +34,49 @@ function CheckoutContent() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('business')
   const [businessDetails, setBusinessDetails] = useState<BusinessDetails | null>(null)
+  const [initialValues, setInitialValues] = useState<Partial<BusinessDetails>>({})
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
 
   useEffect(() => {
     setMounted(true)
+    loadUserProfile()
   }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select(
+            'email, first_name, last_name, phone, street_address, city, state, zip_code, business_name, shop_name'
+          )
+          .eq('id', user.id)
+          .single()
+
+        if (!error && profile) {
+          const userProfile = profile as UserProfile
+          setInitialValues({
+            businessName: userProfile.business_name || userProfile.shop_name || '',
+            street: userProfile.street_address || '',
+            city: userProfile.city || '',
+            state: userProfile.state || '',
+            zipCode: userProfile.zip_code || '',
+            phone: userProfile.phone || '',
+            email: userProfile.email || user.email || '',
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error)
+    } finally {
+      setIsLoadingProfile(false)
+    }
+  }
 
   const handleBusinessDetailsSubmit = (details: BusinessDetails) => {
     setBusinessDetails(details)
@@ -58,12 +111,20 @@ function CheckoutContent() {
         },
         body: JSON.stringify({
           items: cartItems,
-          deliveryAddress: {
-            line1: businessDetails.street,
-            city: businessDetails.city,
-            state: businessDetails.state,
-            postalCode: businessDetails.zipCode,
-          },
+          deliveryAddress:
+            businessDetails.fulfillmentType === 'delivery'
+              ? {
+                  line1: businessDetails.street,
+                  city: businessDetails.city,
+                  state: businessDetails.state,
+                  postalCode: businessDetails.zipCode,
+                }
+              : {
+                  line1: '1234 Main Street',
+                  city: 'Tampa',
+                  state: 'FL',
+                  postalCode: '33601',
+                },
           customerInfo: {
             name: businessDetails.businessName,
             email: businessDetails.email,
@@ -75,6 +136,7 @@ function CheckoutContent() {
             coordinates: businessDetails.coordinates,
             distance: businessDetails.distance,
           },
+          fulfillmentType: businessDetails.fulfillmentType,
         }),
       })
 
@@ -99,7 +161,7 @@ function CheckoutContent() {
     }
   }
 
-  if (!mounted) {
+  if (!mounted || isLoadingProfile) {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">
@@ -198,7 +260,7 @@ function CheckoutContent() {
                 </Alert>
                 <BusinessDetailsForm
                   onSubmit={handleBusinessDetailsSubmit}
-                  initialValues={businessDetails || undefined}
+                  initialValues={businessDetails || initialValues}
                 />
               </CardContent>
             </Card>

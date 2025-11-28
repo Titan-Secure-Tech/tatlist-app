@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { SquarePaymentForm } from '@/components/square-payment-form'
+import { createClient } from '@/lib/supabase/client'
 
 interface CustomerInfo {
   name: string
@@ -27,12 +28,24 @@ interface DeliveryAddress {
   postalCode: string
 }
 
+interface UserProfile {
+  email: string
+  first_name?: string
+  last_name?: string
+  phone?: string
+  street_address?: string
+  city?: string
+  state?: string
+  zip_code?: string
+}
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { cartDetails, cartCount, totalPrice, clearCart } = useShoppingCart()
   const [mounted, setMounted] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true)
 
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
@@ -50,7 +63,48 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true)
+    loadUserProfile()
   }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select('email, first_name, last_name, phone, street_address, city, state, zip_code')
+          .eq('id', user.id)
+          .single()
+
+        if (!error && profile) {
+          const userProfile = profile as UserProfile
+          const fullName = [userProfile.first_name, userProfile.last_name].filter(Boolean).join(' ')
+
+          setCustomerInfo({
+            name: fullName || '',
+            email: userProfile.email || user.email || '',
+            phone: userProfile.phone || '',
+          })
+
+          setDeliveryAddress({
+            line1: userProfile.street_address || '',
+            line2: '',
+            city: userProfile.city || '',
+            state: userProfile.state || '',
+            postalCode: userProfile.zip_code || '',
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error)
+    } finally {
+      setIsLoadingProfile(false)
+    }
+  }
 
   const handleCustomerInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -124,7 +178,7 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!mounted) {
+  if (!mounted || isLoadingProfile) {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">

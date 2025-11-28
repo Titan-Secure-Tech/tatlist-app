@@ -36,11 +36,13 @@ export async function POST(request: NextRequest) {
       deliveryAddress,
       customerInfo,
       notes,
+      fulfillmentType = 'delivery',
     }: {
       items: CartItem[]
       deliveryAddress: DeliveryAddress
       customerInfo: CustomerInfo
       notes?: string
+      fulfillmentType?: 'delivery' | 'pickup'
     } = body
 
     if (!items || items.length === 0) {
@@ -253,11 +255,11 @@ export async function POST(request: NextRequest) {
           payment_status: 'pending',
           total: total,
           subtotal: subtotal,
-          delivery_fee: deliveryFee,
+          delivery_fee: fulfillmentType === 'delivery' ? deliveryFee : 0,
           tax_amount: 0,
           currency: 'USD',
-          fulfillment_type: 'delivery',
-          delivery_address: deliveryAddress,
+          fulfillment_type: fulfillmentType,
+          delivery_address: fulfillmentType === 'delivery' ? deliveryAddress : null,
           notes: notes,
         })
         .select()
@@ -321,11 +323,11 @@ export async function POST(request: NextRequest) {
           payment_status: 'pending',
           total: total,
           subtotal: subtotal,
-          delivery_fee: deliveryFee,
+          delivery_fee: fulfillmentType === 'delivery' ? deliveryFee : 0,
           tax_amount: 0,
           currency: 'USD',
-          fulfillment_type: 'delivery',
-          delivery_address: deliveryAddress,
+          fulfillment_type: fulfillmentType,
+          delivery_address: fulfillmentType === 'delivery' ? deliveryAddress : null,
           notes: notes,
         })
         .select()

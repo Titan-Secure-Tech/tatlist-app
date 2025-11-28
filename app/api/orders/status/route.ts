@@ -5,7 +5,9 @@ import { mailgunService } from '@/lib/email/mailgun'
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // Check if user is authenticated and has admin privileges
     // For now, we'll just check if they're authenticated
@@ -15,19 +17,21 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { 
-      orderId, 
-      status, 
-      message, 
-      estimatedTime,
-      sendEmail = true 
-    } = body
+    const { orderId, status, message, estimatedTime, sendEmail = true } = body
 
     if (!orderId || !status) {
       return NextResponse.json({ error: 'Order ID and status are required' }, { status: 400 })
     }
 
-    const validStatuses = ['pending', 'preparing', 'ready', 'out_for_delivery', 'delivered', 'cancelled']
+    const validStatuses = [
+      'pending',
+      'preparing',
+      'ready',
+      'ready_for_pickup',
+      'out_for_delivery',
+      'delivered',
+      'cancelled',
+    ]
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
@@ -35,9 +39,9 @@ export async function POST(request: NextRequest) {
     // Update order status in database
     const { data: order, error: updateError } = await supabase
       .from('orders')
-      .update({ 
+      .update({
         status,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', orderId)
       .select()
@@ -51,13 +55,38 @@ export async function POST(request: NextRequest) {
     // Send status update email if requested
     if (sendEmail && order.customer_email) {
       try {
-        await mailgunService.sendOrderStatusUpdate(order.customer_email, {
-          orderId: order.id,
-          customerName: order.customer_name,
-          status: status as 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'cancelled',
-          message,
-          estimatedTime
-        })
+        // Send pickup ready notification for pickup orders
+        if (status === 'ready_for_pickup' && order.fulfillment_type === 'pickup') {
+          // Fetch order items for email
+          const { data: orderItems } = await supabase
+            .from('order_items')
+            .select('product_name, quantity')
+            .eq('order_id', order.id)
+
+          await mailgunService.sendPickupReadyNotification(order.customer_email, {
+            orderId: order.id,
+            customerName: order.customer_name,
+            items:
+              orderItems?.map(item => ({
+                name: item.product_name,
+                quantity: item.quantity,
+              })) || [],
+          })
+        } else {
+          // Send regular status update email
+          await mailgunService.sendOrderStatusUpdate(order.customer_email, {
+            orderId: order.id,
+            customerName: order.customer_name,
+            status: status as
+              | 'preparing'
+              | 'ready'
+              | 'out_for_delivery'
+              | 'delivered'
+              | 'cancelled',
+            message,
+            estimatedTime,
+          })
+        }
       } catch (emailError) {
         console.error('Failed to send status update email:', emailError)
         // Don't fail the request if email fails
@@ -67,7 +96,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       order,
-      emailSent: sendEmail
+      emailSent: sendEmail,
     })
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
@@ -105,9 +134,6 @@ export async function GET(request: NextRequest) {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Order fetch error:', error)
-    return NextResponse.json(
-      { error: errorMessage || 'Failed to fetch order' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: errorMessage || 'Failed to fetch order' }, { status: 500 })
   }
 }

@@ -2,6 +2,7 @@ import { render } from '@react-email/components'
 import { OrderConfirmation } from './templates/OrderConfirmation'
 import { OrderStatusUpdate } from './templates/OrderStatusUpdate'
 import { ContactForm } from './templates/ContactForm'
+import { PickupReady } from './templates/PickupReady'
 
 interface EmailConfig {
   to: string | string[]
@@ -117,8 +118,11 @@ export class MailgunService {
       })
     )
 
+    // Send to both customer and fulfillment team
+    const recipients = [to, 'blackeyemobile@gmail.com']
+
     return this.sendEmail({
-      to,
+      to: recipients,
       subject: `Order Confirmation - #${orderData.orderId.slice(0, 8).toUpperCase()}`,
       html,
       text: `Order confirmation for order #${orderData.orderId.slice(0, 8).toUpperCase()}. Total: $${orderData.total.toFixed(2)}`,
@@ -226,6 +230,50 @@ export class MailgunService {
       text: `Privacy inquiry from ${inquiryData.name} (${inquiryData.email}): ${inquiryData.message}`,
       from: `Tatlist Privacy <noreply@${this.domain}>`,
       replyTo: inquiryData.email,
+    })
+  }
+
+  async sendPickupReadyNotification(
+    to: string,
+    orderData: {
+      orderId: string
+      customerName: string
+      items: Array<{ name: string; quantity: number }>
+      pickupLocation?: {
+        name: string
+        address: string
+        city: string
+        state: string
+        zipCode: string
+        hours?: string
+      }
+    }
+  ): Promise<boolean> {
+    const defaultPickupLocation = {
+      name: 'Black Eye Tattoo',
+      address: '1234 Main Street',
+      city: 'Tampa',
+      state: 'FL',
+      zipCode: '33601',
+      hours: '10:00 AM - 8:00 PM',
+    }
+
+    const html = await render(
+      PickupReady({
+        orderId: orderData.orderId,
+        customerName: orderData.customerName,
+        items: orderData.items,
+        pickupLocation: orderData.pickupLocation || defaultPickupLocation,
+      })
+    )
+
+    return this.sendEmail({
+      to,
+      subject: `Order Ready for Pickup - #${orderData.orderId.slice(0, 8).toUpperCase()}`,
+      html,
+      text: `Your Tatlist order #${orderData.orderId.slice(0, 8).toUpperCase()} is ready for pickup at ${(orderData.pickupLocation || defaultPickupLocation).name}.`,
+      from: `Tatlist Pickup <pickup@${this.domain}>`,
+      replyTo: 'support@tatlist.com',
     })
   }
 }

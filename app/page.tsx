@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HeroSection from '@/components/home/HeroSection'
 import ValueProposition from '@/components/home/ValueProposition'
+import Testimonials from '@/components/home/Testimonials'
 import { OAuthHandler } from '@/components/OAuth-handler'
 
 async function HomeContent() {
@@ -24,6 +25,9 @@ async function HomeContent() {
 
       {/* Value Proposition Section */}
       <ValueProposition />
+
+      {/* Testimonials Section */}
+      <Testimonials />
     </div>
   )
 }
