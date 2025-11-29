@@ -1,7 +1,27 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  // Block common bot/scanner paths (WordPress, PHP, etc.)
+  const blockedPaths = [
+    '/wp-content',
+    '/wp-includes',
+    '/wp-admin',
+    '/wordpress',
+    '/wp-login',
+    '/.env',
+    '/phpmyadmin',
+    '/xmlrpc.php',
+    '/admin',
+    '/.git',
+    '/backup',
+    '/backups',
+  ]
+
+  if (blockedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+    return new NextResponse('Not Found', { status: 404 })
+  }
+
   // Skip middleware for static files, API routes, and Apple Pay verification
   if (
     request.nextUrl.pathname.startsWith('/_next') ||
