@@ -1,8 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, ShoppingCart } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import DeleteInventoryListButton from '@/components/inventory/DeleteInventoryListButton'
 import QuickCheckoutButton from '@/components/inventory/QuickCheckoutButton'
+import { InventoryItemQuantity } from '@/components/inventory/InventoryItemQuantity'
 import Image from 'next/image'
 
 type InventoryListItem = {
@@ -210,29 +211,34 @@ export default async function InventoryListsPage() {
                 {list.inventory_list_items && list.inventory_list_items.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pb-2">
                     {list.inventory_list_items.slice(0, 5).map((item: InventoryListItem) => (
-                      <Link
+                      <div
                         key={item.id}
-                        href={`/products/${item.product?.id}`}
                         className="flex-shrink-0 w-24 border border-gray-200 rounded-lg p-2 hover:bg-gray-50"
                       >
-                        <div className="relative w-full aspect-square mb-1 bg-gray-100 rounded overflow-hidden">
-                          {item.product?.images && item.product.images.length > 0 ? (
-                            <Image
-                              src={item.product.images[0]}
-                              alt={item.product.name}
-                              fill
-                              sizes="96px"
-                              className="object-contain"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                              📦
-                            </div>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-600 line-clamp-2">{item.product?.name}</p>
-                        <p className="text-xs text-gray-500">×{item.quantity}</p>
-                      </Link>
+                        <Link href={`/products/${item.product?.id}`}>
+                          <div className="relative w-full aspect-square mb-1 bg-gray-100 rounded overflow-hidden">
+                            {item.product?.images && item.product.images.length > 0 ? (
+                              <Image
+                                src={item.product.images[0]}
+                                alt={item.product.name}
+                                fill
+                                sizes="96px"
+                                className="object-contain"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                📦
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-2">{item.product?.name}</p>
+                        </Link>
+                        <InventoryItemQuantity
+                          itemId={item.id}
+                          initialQuantity={item.quantity}
+                          productName={item.product?.name || 'Product'}
+                        />
+                      </div>
                     ))}
                     {list.inventory_list_items.length > 5 && (
                       <div className="flex-shrink-0 w-24 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
