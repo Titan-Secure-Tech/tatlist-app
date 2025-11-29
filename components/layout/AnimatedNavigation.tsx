@@ -101,7 +101,7 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
 
   return (
     <header
-      className="fixed left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
+      className="fixed left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
       style={{ top: `${bannerHeight}px` }}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
