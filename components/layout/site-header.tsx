@@ -44,6 +44,7 @@ interface User {
 }
 
 export function SiteHeader() {
+  const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -65,6 +66,19 @@ export function SiteHeader() {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  // Don't render on dashboard pages - they have their own navigation
+  const isDashboardRoute =
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/products') ||
+    pathname?.startsWith('/inventory-lists') ||
+    pathname?.startsWith('/orders') ||
+    pathname?.startsWith('/profile') ||
+    pathname?.startsWith('/admin')
+
+  if (isDashboardRoute) {
+    return null
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
