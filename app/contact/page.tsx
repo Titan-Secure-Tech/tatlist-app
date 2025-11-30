@@ -9,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner'
 import { Mail, MapPin, Phone, Loader2 } from 'lucide-react'
 
+// Disable static generation for this page
+export const dynamic = 'force-dynamic'
+
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
