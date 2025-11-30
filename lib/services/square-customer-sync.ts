@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { getSquareConfig } from '@/lib/square/client-config'
 
-// Initialize Square client dynamically based on environment
+// This function is deprecated - use getSquareConfig() directly
+// Kept for backward compatibility
 function initializeSquareClient(useSandbox: boolean = false) {
   const config = getSquareConfig(useSandbox)
   return config.client
@@ -178,8 +179,11 @@ export class SquareCustomerSyncService {
 
     try {
       // List all Square customers
-      const client = initializeSquareClient()
-      const response = await client.customersApi.listCustomers()
+      const config = getSquareConfig()
+      if (!config?.client) {
+        throw new Error('Square client not initialized')
+      }
+      const response = await config.client.customersApi.listCustomers()
 
       if (response.result.customers) {
         for (const squareCustomer of response.result.customers) {
@@ -234,8 +238,11 @@ export class SquareCustomerSyncService {
    */
   private async findSquareCustomerByEmail(email: string): Promise<SquareCustomer | null> {
     try {
-      const client = initializeSquareClient()
-      const response = await client.customersApi.searchCustomers({
+      const config = getSquareConfig()
+      if (!config?.client) {
+        throw new Error('Square client not initialized')
+      }
+      const response = await config.client.customersApi.searchCustomers({
         filter: {
           emailAddress: {
             exact: email.toLowerCase(),
@@ -261,8 +268,11 @@ export class SquareCustomerSyncService {
     user: Record<string, unknown>
   ): Promise<SquareCustomer | null> {
     try {
-      const client = initializeSquareClient()
-      const response = await client.customersApi.createCustomer({
+      const config = getSquareConfig()
+      if (!config?.client) {
+        throw new Error('Square client not initialized')
+      }
+      const response = await config.client.customersApi.createCustomer({
         givenName: user.first_name || user.full_name?.split(' ')[0],
         familyName: user.last_name || user.full_name?.split(' ').slice(1).join(' '),
         emailAddress: user.email,
@@ -293,8 +303,11 @@ export class SquareCustomerSyncService {
 
       if (!user) return
 
-      const client = initializeSquareClient()
-      await client.customersApi.updateCustomer(linkedCustomer.square_customer_id as string, {
+      const config = getSquareConfig()
+      if (!config?.client) {
+        throw new Error('Square client not initialized')
+      }
+      await config.client.customersApi.updateCustomer(linkedCustomer.square_customer_id as string, {
         givenName: user.first_name,
         familyName: user.last_name,
         phoneNumber: user.phone,
@@ -394,8 +407,11 @@ export class SquareCustomerSyncService {
 
       if (!squareCustomer) {
         // Create new Square customer
-        const client = initializeSquareClient()
-        const response = await client.customersApi.createCustomer({
+        const config = getSquareConfig()
+        if (!config?.client) {
+          throw new Error('Square client not initialized')
+        }
+        const response = await config.client.customersApi.createCustomer({
           emailAddress: email.toLowerCase(),
           givenName: customerData.givenName,
           familyName: customerData.familyName,
