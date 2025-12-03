@@ -14,7 +14,7 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[]
-  addItem: (item: CartItem) => void
+  addItem: (item: CartItem, options?: { count?: number }) => void
   removeItem: (id: string) => void
   incrementItem: (id: string) => void
   decrementItem: (id: string) => void
@@ -34,17 +34,18 @@ export const useCartStore = create<CartStore>()(
       totalPrice: 0,
       formattedTotalPrice: '$0.00',
 
-      addItem: item => {
+      addItem: (item, options) => {
         set(state => {
           const existingItem = state.items.find(i => i.id === item.id)
+          const quantityToAdd = options?.count || item.quantity || 1
           let newItems: CartItem[]
 
           if (existingItem) {
             newItems = state.items.map(i =>
-              i.id === item.id ? { ...i, quantity: i.quantity + (item.quantity || 1) } : i
+              i.id === item.id ? { ...i, quantity: i.quantity + quantityToAdd } : i
             )
           } else {
-            newItems = [...state.items, { ...item, quantity: item.quantity || 1 }]
+            newItems = [...state.items, { ...item, quantity: quantityToAdd }]
           }
 
           const cartDetails = newItems.reduce(
