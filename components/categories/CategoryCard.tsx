@@ -10,7 +10,7 @@ interface CategoryCardProps {
   }
   slug: string
   imageUrl: string
-  credit: {
+  credit?: {
     photographer: string
     url: string
   }
@@ -31,29 +31,31 @@ export default function CategoryCard({ category, slug, imageUrl, credit }: Categ
           height={800}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        {/* Photo credit overlay */}
-        <div className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-2 py-1 rounded z-20">
-          Photo by{' '}
-          <span
-            className="underline hover:text-white cursor-pointer"
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-              window.open(credit.url, '_blank', 'noopener,noreferrer')
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
+        {/* Photo credit overlay - only show for external images */}
+        {credit && (
+          <div className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/50 px-2 py-1 rounded z-20">
+            Photo by{' '}
+            <span
+              className="underline hover:text-white cursor-pointer"
+              onClick={e => {
                 e.preventDefault()
                 e.stopPropagation()
                 window.open(credit.url, '_blank', 'noopener,noreferrer')
-              }
-            }}
-            role="link"
-            tabIndex={0}
-          >
-            {credit.photographer}
-          </span>
-        </div>
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  window.open(credit.url, '_blank', 'noopener,noreferrer')
+                }
+              }}
+              role="link"
+              tabIndex={0}
+            >
+              {credit.photographer}
+            </span>
+          </div>
+        )}
       </div>
       <div className="p-6 bg-white">
         <h3 className="text-xl font-bold text-black mb-2 group-hover:underline">{category.name}</h3>

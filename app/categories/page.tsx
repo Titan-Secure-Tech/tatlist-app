@@ -11,60 +11,8 @@ const collectionIcons: Record<string, LucideIcon> = {
   'piercing-jewelry': Sparkles,
 }
 
-// Map categories to Unsplash images with tattoo shop themes
-function getCategoryImage(categorySlug: string): string {
-  const imageMap: Record<string, string> = {
-    'tattoo-needles':
-      'https://images.unsplash.com/photo-1590246814883-57c511e2aa90?w=800&h=800&fit=crop',
-    'tattoo-ink':
-      'https://images.unsplash.com/photo-1611587785105-ad37535b6989?w=800&h=800&fit=crop',
-    'tattoo-machines':
-      'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=800&h=800&fit=crop',
-    'machine-parts':
-      'https://images.unsplash.com/photo-1606902965551-dce093cda6e7?w=800&h=800&fit=crop',
-    'tattoo-aftercare':
-      'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&h=800&fit=crop',
-    'safety-hygiene':
-      'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=800&fit=crop',
-    'tattoo-markers':
-      'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&h=800&fit=crop',
-    'power-supplies':
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
-    'grips-tubes':
-      'https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=800&h=800&fit=crop',
-    'body-jewelry':
-      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=800&fit=crop',
-    'nose-jewelry':
-      'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800&h=800&fit=crop',
-    'cleaning-supplies':
-      'https://images.unsplash.com/photo-1554224311-beee910c1967?w=800&h=800&fit=crop',
-    'cables-cords':
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
-    'foot-switches':
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=800&fit=crop',
-    apparel: 'https://images.unsplash.com/photo-1556306535-38febf6782e7?w=800&h=800&fit=crop',
-    'bags-storage':
-      'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=800&fit=crop',
-    'books-education':
-      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=800&fit=crop',
-    'first-aid':
-      'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=800&h=800&fit=crop',
-    'paper-supplies':
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=800&fit=crop',
-    'specialty-jewelry':
-      'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&h=800&fit=crop',
-  }
-
-  return (
-    imageMap[categorySlug] ||
-    'https://images.unsplash.com/photo-1568515387631-c9a793f5b86f?w=800&h=800&fit=crop'
-  )
-}
-
-// Get Unsplash attribution for category images (simplified)
-function getCategoryImageCredit(): { photographer: string; url: string } {
-  return { photographer: 'Unsplash', url: 'https://unsplash.com' }
-}
+// Fallback image if no product image is available
+const FALLBACK_IMAGE = '/category-placeholder.svg'
 
 async function CategoriesContent() {
   const supabase = await createClient()
@@ -117,7 +65,7 @@ async function CategoriesContent() {
         .eq('collection_id', collection.id)
         .order('sort_order')
 
-      // Get product count for each category
+      // Get product count and first product image for each category
       const categoriesWithCounts = await Promise.all(
         (categories || []).map(async category => {
           const { count } = await supabase
@@ -126,9 +74,19 @@ async function CategoriesContent() {
             .eq('category_id', category.id)
             .not('category_id', 'is', null)
 
+          // Get first product's image
+          const { data: firstProduct } = await supabase
+            .from('products')
+            .select('image_url')
+            .eq('category_id', category.id)
+            .not('image_url', 'is', null)
+            .limit(1)
+            .single()
+
           return {
             ...category,
             count: count || 0,
+            imageUrl: firstProduct?.image_url || FALLBACK_IMAGE,
           }
         })
       )
@@ -198,8 +156,7 @@ async function CategoriesContent() {
                     key={category.id}
                     category={{ name: category.name, count: category.count }}
                     slug={category.slug}
-                    imageUrl={getCategoryImage(category.slug)}
-                    credit={getCategoryImageCredit()}
+                    imageUrl={category.imageUrl}
                   />
                 ))}
               </div>

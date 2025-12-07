@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronDown, ChevronRight, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -39,6 +39,9 @@ export function HierarchicalFilter({
 }: HierarchicalFilterProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  // State for collapsing the entire filter section
+  const [isFilterOpen, setIsFilterOpen] = useState(true)
 
   // Auto-expand the selected collection by initializing with it
   const [expandedCollections, setExpandedCollections] = useState<Set<string>>(() => {
@@ -86,9 +89,19 @@ export function HierarchicalFilter({
 
   return (
     <Card className="p-4">
-      {/* Header */}
+      {/* Header with Collapse Toggle */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-lg">Filter by Category</h3>
+        <button
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          className="flex items-center gap-2 font-semibold text-lg hover:text-primary transition-colors"
+        >
+          {isFilterOpen ? (
+            <ChevronDown className="h-5 w-5" />
+          ) : (
+            <ChevronRight className="h-5 w-5" />
+          )}
+          Filter by Category
+        </button>
         {hasActiveFilters && (
           <Button
             variant="ghost"
@@ -102,8 +115,9 @@ export function HierarchicalFilter({
         )}
       </div>
 
-      {/* Collections List */}
-      <div className="space-y-2">
+      {/* Collections List - Only show when expanded */}
+      {isFilterOpen && (
+        <div className="space-y-2">
         {collections.map(collection => {
           const isExpanded = expandedCollections.has(collection.id)
           const isSelected = selectedCollectionId === collection.id
@@ -170,7 +184,8 @@ export function HierarchicalFilter({
             </div>
           )
         })}
-      </div>
+        </div>
+      )}
 
       {/* Active Filter Display */}
       {hasActiveFilters && (
