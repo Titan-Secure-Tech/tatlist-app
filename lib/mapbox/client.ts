@@ -184,9 +184,22 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
 
     // Parse address components from Mapbox response
     const context = feature.context || []
+
+    // Get full street address with house number
+    // Mapbox returns house number in 'address' field and street name in 'text' field
+    let streetAddress = ''
+    if (feature.address) {
+      streetAddress = `${feature.address} ${feature.text}`
+    } else {
+      // Fallback: try to extract from place_name
+      // place_name format: "2780 East Fowler Avenue, Tampa, Florida 33612, United States"
+      const addressMatch = feature.place_name?.match(/^([^,]+)/)
+      streetAddress = addressMatch ? addressMatch[1] : feature.text || ''
+    }
+
     const addressComponents = {
       formatted: feature.place_name || address,
-      street: feature.text || '',
+      street: streetAddress,
       city: context.find(c => (c as { id: string; text: string }).id.includes('place'))?.text || '',
       state:
         context.find(c => (c as { id: string; text: string }).id.includes('region'))?.text || 'FL',

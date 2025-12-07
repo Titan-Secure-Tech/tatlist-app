@@ -61,6 +61,7 @@ const STATE_ABBREVIATIONS: Record<string, string> = {
 interface AddressSuggestion {
   place_name: string
   text: string
+  address?: string // House number
   context?: Array<{ id: string; text: string; short_code?: string }>
   center: [number, number]
 }
@@ -163,8 +164,16 @@ export default function AddressAutocomplete({
       zipCode: '',
     }
 
-    // Get street address (the main text)
-    components.streetAddress = suggestion.text
+    // Get full street address with house number
+    // Mapbox returns house number in 'address' field and street name in 'text' field
+    if (suggestion.address) {
+      components.streetAddress = `${suggestion.address} ${suggestion.text}`
+    } else {
+      // Fallback: try to extract from place_name
+      // place_name format: "2780 East Fowler Avenue, Tampa, Florida 33612, United States"
+      const addressMatch = suggestion.place_name.match(/^([^,]+)/)
+      components.streetAddress = addressMatch ? addressMatch[1] : suggestion.text
+    }
 
     // Parse context for city, state, and zip
     suggestion.context?.forEach(ctx => {
