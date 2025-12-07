@@ -14,7 +14,8 @@ const collectionIcons: Record<string, LucideIcon> = {
 // Fallback image if no product image is available
 const FALLBACK_IMAGE = '/category-placeholder.svg'
 
-async function CategoriesContent() {
+// Exported for testing
+export async function CategoriesContent() {
   const supabase = await createClient()
 
   // Fetch collections with their categories and product counts

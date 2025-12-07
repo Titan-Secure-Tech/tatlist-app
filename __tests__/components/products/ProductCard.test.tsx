@@ -121,16 +121,15 @@ describe('ProductCard', () => {
     })
   })
 
-  it('handles favorite toggle functionality', async () => {
+  it('handles inventory toggle functionality', async () => {
     const user = userEvent.setup()
-    const { container } = render(<ProductCard product={mockProduct} />)
+    render(<ProductCard product={mockProduct} />)
 
-    // Find favorite button by heart icon since it has no accessible name
-    const heartIcon = container.querySelector('svg[class*="lucide-heart"]')
-    const favoriteButton = heartIcon?.closest('button')
-    expect(favoriteButton).toBeInTheDocument()
+    // Find inventory toggle button by its aria-label (uses CirclePlus/CircleMinus icons)
+    const inventoryButton = screen.getByRole('button', { name: /add to inventory/i })
+    expect(inventoryButton).toBeInTheDocument()
 
-    await user.click(favoriteButton)
+    await user.click(inventoryButton)
     // The actual toggle behavior is handled by useEffect and Supabase calls
     // We're testing that the button exists and is clickable
   })
