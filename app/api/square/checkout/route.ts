@@ -296,96 +296,38 @@ export async function POST(request: NextRequest) {
         sandboxMode: useSandbox,
       })
     } catch (squareError) {
-      console.error('Square API error, falling back to mock:', squareError)
-
-      // Fallback to mock payment link
-      const mockOrderId = `MOCK_${Date.now()}_${Math.random().toString(36).substring(7).toUpperCase()}`
-
-      // Still create order in Supabase for mock
-      const orderItems: OrderItem[] = items.map(item => ({
-        product_name: item.name,
-        variant_name: item.variant,
-        quantity: item.quantity,
-        unit_price: item.price,
-        total_price: item.price * item.quantity,
-      }))
-
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          square_order_id: mockOrderId,
-          square_customer_id: squareCustomerId,
-          user_id: user?.id,
-          customer_email: customerInfo.email,
-          customer_name: customerInfo.name,
-          customer_phone: customerInfo.phone,
-          status: 'pending',
-          payment_status: 'pending',
-          total: total,
-          subtotal: subtotal,
-          delivery_fee: fulfillmentType === 'delivery' ? deliveryFee : 0,
-          tax_amount: 0,
-          currency: 'USD',
-          fulfillment_type: fulfillmentType,
-          delivery_address: fulfillmentType === 'delivery' ? deliveryAddress : null,
-          notes: notes,
-        })
-        .select()
-        .single()
-
-      if (orderError) {
-        console.error('Failed to create order in Supabase:', orderError)
-      }
-
-      // Create order items in normalized table
-      if (order) {
-        await supabase.from('order_items').insert(
-          orderItems.map(item => ({
-            ...item,
-            order_id: order.id,
-          }))
-        )
-      }
-
-      const mockPaymentLink = `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success?orderId=${order?.id || mockOrderId}&orderNumber=${order?.order_number}&total=${total.toFixed(2)}`
-
-      return NextResponse.json({
-        orderId: order?.id || mockOrderId,
-        orderNumber: order?.order_number,
-        squareOrderId: mockOrderId,
-        paymentLink: mockPaymentLink,
-        order: {
-          id: mockOrderId,
-          locationId: SQUARE_LOCATION_ID,
-          lineItems: items.map(item => ({
-            quantity: item.quantity.toString(),
-            name: item.name,
-            price: item.price,
-          })),
-          totalMoney: {
-            amount: Math.round(total * 100),
-            currency: 'USD',
-          },
-          fulfillments: [
-            {
-              type: 'DELIVERY',
-              deliveryDetails: {
-                recipient: {
-                  displayName: customerInfo.name,
-                  email: customerInfo.email,
-                  phoneNumber: customerInfo.phone,
-                },
-                recipientAddress: deliveryAddress,
-              },
-            },
-          ],
-        },
-        total: total,
-        source: 'mock_fallback',
-        note: 'Using mock data due to Square API authentication issues',
-        environment: environment,
-        sandboxMode: useSandbox,
+      // Log detailed error information for debugging
+      console.error('Square API Error Details:', {
+        error: squareError,
+        environment,
+        useSandbox,
+        sandboxReason,
+        email: customerInfo.email,
+        errorMessage: squareError instanceof Error ? squareError.message : 'Unknown error',
+        errorStack: squareError instanceof Error ? squareError.stack : undefined,
       })
+
+      // In production, NEVER fall back to mock payment - always fail properly
+      // This ensures we never skip payment collection
+      const errorMessage =
+        squareError instanceof Error
+          ? squareError.message
+          : 'Failed to create payment link with Square'
+
+      return NextResponse.json(
+        {
+          error: 'Payment processing is currently unavailable. Please try again later.',
+          details: errorMessage,
+          environment,
+          debugInfo: {
+            hasAccessToken: !!squareConfig.client,
+            hasLocationId: !!SQUARE_LOCATION_ID,
+            environment,
+            useSandbox,
+          },
+        },
+        { status: 500 }
+      )
     }
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
