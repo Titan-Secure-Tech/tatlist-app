@@ -1,15 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import { toast } from 'sonner'
 import {
-  isZipCodeSupported,
   getDeliveryFee,
   getEstimatedDeliveryTime,
   isDeliveryAvailable,
   DELIVERY_CONFIG,
 } from '@/lib/config/delivery'
+import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
+import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 
 interface DeliveryAddress {
   line1: string
@@ -23,6 +24,13 @@ interface CustomerInfo {
   name: string
   email: string
   phone: string
+}
+
+interface AddressValidation {
+  isValidating: boolean
+  isValid: boolean | null
+  error: string | null
+  distance: number | null
 }
 
 export default function CheckoutForm() {
@@ -44,11 +52,66 @@ export default function CheckoutForm() {
     postalCode: '',
   })
 
+  const [addressValidation, setAddressValidation] = useState<AddressValidation>({
+    isValidating: false,
+    isValid: null,
+    error: null,
+    distance: null,
+  })
+
   const subtotal = (totalPrice || 0) / 100 // use-shopping-cart uses cents
   const deliveryFee = getDeliveryFee(deliveryAddress.postalCode) || DELIVERY_CONFIG.flatFee
   const total = subtotal + deliveryFee
-  const isValidZipCode =
-    deliveryAddress.postalCode.length === 5 ? isZipCodeSupported(deliveryAddress.postalCode) : true
+
+  // Validate address with Tampa Bay area check
+  const validateAddress = useCallback(
+    async (address?: { line1: string; city: string; state: string; postalCode: string }) => {
+      const addressToValidate = address || deliveryAddress
+
+      setAddressValidation({
+        isValidating: true,
+        isValid: null,
+        error: null,
+        distance: null,
+      })
+
+      const fullAddress = `${addressToValidate.line1}, ${addressToValidate.city}, ${addressToValidate.state} ${addressToValidate.postalCode}`
+
+      try {
+        const response = await fetch('/api/validate-address', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: fullAddress }),
+        })
+
+        const result = await response.json()
+
+        if (result.isValid) {
+          setAddressValidation({
+            isValidating: false,
+            isValid: true,
+            error: null,
+            distance: result.distance,
+          })
+        } else {
+          setAddressValidation({
+            isValidating: false,
+            isValid: false,
+            error: result.error,
+            distance: result.distance,
+          })
+        }
+      } catch {
+        setAddressValidation({
+          isValidating: false,
+          isValid: false,
+          error: 'Unable to validate address. Please try again.',
+          distance: null,
+        })
+      }
+    },
+    [deliveryAddress]
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,8 +126,13 @@ export default function CheckoutForm() {
       return
     }
 
-    if (!isZipCodeSupported(deliveryAddress.postalCode)) {
-      toast.error("Sorry, we don't deliver to this ZIP code yet.")
+    // Check if address has been validated and is within Tampa Bay area
+    if (addressValidation.isValid !== true) {
+      toast.error('Please enter a valid address within our Tampa Bay delivery area.')
+      // Trigger validation if not already done
+      if (addressValidation.isValid === null && deliveryAddress.line1) {
+        validateAddress()
+      }
       return
     }
 
@@ -166,18 +234,54 @@ export default function CheckoutForm() {
       {/* Delivery Address */}
       <div className="bg-white p-6 rounded-lg border border-gray-200">
         <h2 className="text-xl font-semibold mb-4">Delivery Address</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          We deliver to the Tampa Bay area. Start typing your address for suggestions.
+        </p>
 
         <div className="space-y-4">
           <div>
             <label htmlFor="line1" className="block text-sm font-medium text-gray-700 mb-1">
               Street Address
             </label>
-            <input
-              type="text"
+            <AddressAutocomplete
               id="line1"
-              required
               value={deliveryAddress.line1}
-              onChange={e => setDeliveryAddress({ ...deliveryAddress, line1: e.target.value })}
+              onChange={(value, components) => {
+                if (components) {
+                  // Address was selected from autocomplete
+                  const newAddress = {
+                    line1: components.streetAddress,
+                    city: components.city,
+                    state: components.state,
+                    postalCode: components.zipCode,
+                  }
+                  setDeliveryAddress({
+                    ...deliveryAddress,
+                    ...newAddress,
+                  })
+                  // Auto-validate the selected address
+                  if (
+                    newAddress.line1 &&
+                    newAddress.city &&
+                    newAddress.state &&
+                    newAddress.postalCode
+                  ) {
+                    validateAddress(newAddress)
+                  }
+                } else {
+                  // Manual input
+                  setDeliveryAddress({ ...deliveryAddress, line1: value })
+                  // Reset validation on manual changes
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                    distance: null,
+                  })
+                }
+              }}
+              placeholder="Start typing your address..."
+              required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
           </div>
@@ -205,7 +309,15 @@ export default function CheckoutForm() {
                 id="city"
                 required
                 value={deliveryAddress.city}
-                onChange={e => setDeliveryAddress({ ...deliveryAddress, city: e.target.value })}
+                onChange={e => {
+                  setDeliveryAddress({ ...deliveryAddress, city: e.target.value })
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                    distance: null,
+                  })
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>
@@ -219,11 +331,17 @@ export default function CheckoutForm() {
                 id="state"
                 required
                 maxLength={2}
-                placeholder="CA"
+                placeholder="FL"
                 value={deliveryAddress.state}
-                onChange={e =>
+                onChange={e => {
                   setDeliveryAddress({ ...deliveryAddress, state: e.target.value.toUpperCase() })
-                }
+                  setAddressValidation({
+                    isValidating: false,
+                    isValid: null,
+                    error: null,
+                    distance: null,
+                  })
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               />
             </div>
@@ -240,15 +358,69 @@ export default function CheckoutForm() {
               pattern="[0-9]{5}"
               maxLength={5}
               value={deliveryAddress.postalCode}
-              onChange={e => setDeliveryAddress({ ...deliveryAddress, postalCode: e.target.value })}
+              onChange={e => {
+                setDeliveryAddress({ ...deliveryAddress, postalCode: e.target.value })
+                setAddressValidation({
+                  isValidating: false,
+                  isValid: null,
+                  error: null,
+                  distance: null,
+                })
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
-            {deliveryAddress.postalCode.length === 5 && !isValidZipCode && (
-              <p className="text-red-500 text-sm mt-1">
-                Sorry, we don&apos;t deliver to this ZIP code yet.
-              </p>
-            )}
           </div>
+
+          {/* Validate Address Button */}
+          {!addressValidation.isValid &&
+            deliveryAddress.line1 &&
+            deliveryAddress.city &&
+            deliveryAddress.postalCode && (
+              <button
+                type="button"
+                onClick={validateAddress}
+                disabled={addressValidation.isValidating}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+              >
+                {addressValidation.isValidating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Validating...
+                  </>
+                ) : (
+                  'Validate Delivery Address'
+                )}
+              </button>
+            )}
+
+          {/* Validation Success */}
+          {addressValidation.isValid === true && (
+            <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-green-800">
+                <p className="font-medium">Address validated</p>
+                {addressValidation.distance && addressValidation.distance > 0 ? (
+                  <p className="text-green-700">
+                    {addressValidation.distance.toFixed(1)} miles from our delivery center. Delivery
+                    available!
+                  </p>
+                ) : (
+                  <p className="text-green-700">Your address is in our Tampa Bay delivery area.</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Validation Error */}
+          {addressValidation.isValid === false && (
+            <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-red-800">
+                <p className="font-medium">Delivery not available</p>
+                <p className="text-red-700">{addressValidation.error}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -298,10 +470,14 @@ export default function CheckoutForm() {
 
       <button
         type="submit"
-        disabled={isProcessing || items.length === 0}
+        disabled={isProcessing || items.length === 0 || addressValidation.isValid !== true}
         className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        {isProcessing ? 'Processing...' : `Pay $${total.toFixed(2)} with Square`}
+        {isProcessing
+          ? 'Processing...'
+          : addressValidation.isValid !== true
+            ? 'Validate Address to Continue'
+            : `Pay $${total.toFixed(2)} with Square`}
       </button>
     </form>
   )

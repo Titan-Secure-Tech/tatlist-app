@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Loader2, MapPin, AlertCircle, CheckCircle, Package, Truck } from 'lucide-react'
+import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
 
 export interface BusinessDetails {
   businessName: string
@@ -55,6 +56,67 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
     distance: null,
   })
 
+  const validateAddress = useCallback(
+    async (address?: { street: string; city: string; state: string; zipCode: string }) => {
+      const addressToValidate = address || formData
+
+      setValidationState({
+        isValidating: true,
+        isValid: null,
+        error: null,
+        distance: null,
+      })
+
+      const fullAddress = `${addressToValidate.street}, ${addressToValidate.city}, ${addressToValidate.state} ${addressToValidate.zipCode}`
+
+      try {
+        const response = await fetch('/api/validate-address', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: fullAddress }),
+        })
+
+        const result = await response.json()
+
+        if (result.isValid) {
+          setValidationState({
+            isValidating: false,
+            isValid: true,
+            error: null,
+            distance: result.distance,
+          })
+
+          // Update form with validated address components
+          setFormData(prev => ({
+            ...prev,
+            street: result.address.street || prev.street,
+            city: result.address.city || prev.city,
+            state: result.address.state || prev.state,
+            zipCode: result.address.zipCode || prev.zipCode,
+            validated: true,
+            coordinates: result.address.coordinates,
+            distance: result.distance,
+          }))
+        } else {
+          setValidationState({
+            isValidating: false,
+            isValid: false,
+            error: result.error,
+            distance: result.distance,
+          })
+        }
+      } catch {
+        setValidationState({
+          isValidating: false,
+          isValid: false,
+          error: 'Unable to validate address. Please try again.',
+          distance: null,
+        })
+      }
+    },
+    [formData]
+  )
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -68,62 +130,6 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
         isValidating: false,
         isValid: null,
         error: null,
-        distance: null,
-      })
-    }
-  }
-
-  const validateAddress = async () => {
-    setValidationState({
-      isValidating: true,
-      isValid: null,
-      error: null,
-      distance: null,
-    })
-
-    const fullAddress = `${formData.street}, ${formData.city}, ${formData.state} ${formData.zipCode}`
-
-    try {
-      const response = await fetch('/api/validate-address', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: fullAddress }),
-      })
-
-      const result = await response.json()
-
-      if (result.isValid) {
-        setValidationState({
-          isValidating: false,
-          isValid: true,
-          error: null,
-          distance: result.distance,
-        })
-
-        // Update form with validated address components
-        setFormData(prev => ({
-          ...prev,
-          street: result.address.street || prev.street,
-          city: result.address.city || prev.city,
-          state: result.address.state || prev.state,
-          zipCode: result.address.zipCode || prev.zipCode,
-          validated: true,
-          coordinates: result.address.coordinates,
-          distance: result.distance,
-        }))
-      } else {
-        setValidationState({
-          isValidating: false,
-          isValid: false,
-          error: result.error,
-          distance: result.distance,
-        })
-      }
-    } catch {
-      setValidationState({
-        isValidating: false,
-        isValid: false,
-        error: 'Unable to validate address. Please try again.',
         distance: null,
       })
     }
@@ -219,18 +225,57 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
         {formData.fulfillmentType === 'delivery' && (
           <div className="space-y-4 border-t pt-4">
             <h3 className="font-semibold">Delivery Address</h3>
+            <p className="text-sm text-muted-foreground">
+              Start typing your address and select from the suggestions
+            </p>
 
             <div>
               <Label htmlFor="street">
                 Street Address <span className="text-red-500">*</span>
               </Label>
-              <Input
+              <AddressAutocomplete
                 id="street"
-                name="street"
                 value={formData.street}
-                onChange={handleInputChange}
-                placeholder="123 Main St"
+                onChange={(value, components) => {
+                  if (components) {
+                    // Address was selected from autocomplete
+                    const newAddress = {
+                      street: components.streetAddress,
+                      city: components.city,
+                      state: components.state,
+                      zipCode: components.zipCode,
+                    }
+                    setFormData(prev => ({
+                      ...prev,
+                      ...newAddress,
+                    }))
+                    // Auto-validate the selected address
+                    if (
+                      newAddress.street &&
+                      newAddress.city &&
+                      newAddress.state &&
+                      newAddress.zipCode
+                    ) {
+                      validateAddress(newAddress)
+                    }
+                  } else {
+                    // Manual input
+                    setFormData(prev => ({
+                      ...prev,
+                      street: value,
+                    }))
+                    // Reset validation on manual changes
+                    setValidationState({
+                      isValidating: false,
+                      isValid: null,
+                      error: null,
+                      distance: null,
+                    })
+                  }
+                }}
+                placeholder="Start typing your address..."
                 required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               />
             </div>
 

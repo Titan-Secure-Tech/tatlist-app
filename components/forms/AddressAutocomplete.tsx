@@ -3,10 +3,65 @@
 import { useState, useRef, useEffect } from 'react'
 import { MapPin } from 'lucide-react'
 
+// US State name to abbreviation mapping
+const STATE_ABBREVIATIONS: Record<string, string> = {
+  Alabama: 'AL',
+  Alaska: 'AK',
+  Arizona: 'AZ',
+  Arkansas: 'AR',
+  California: 'CA',
+  Colorado: 'CO',
+  Connecticut: 'CT',
+  Delaware: 'DE',
+  Florida: 'FL',
+  Georgia: 'GA',
+  Hawaii: 'HI',
+  Idaho: 'ID',
+  Illinois: 'IL',
+  Indiana: 'IN',
+  Iowa: 'IA',
+  Kansas: 'KS',
+  Kentucky: 'KY',
+  Louisiana: 'LA',
+  Maine: 'ME',
+  Maryland: 'MD',
+  Massachusetts: 'MA',
+  Michigan: 'MI',
+  Minnesota: 'MN',
+  Mississippi: 'MS',
+  Missouri: 'MO',
+  Montana: 'MT',
+  Nebraska: 'NE',
+  Nevada: 'NV',
+  'New Hampshire': 'NH',
+  'New Jersey': 'NJ',
+  'New Mexico': 'NM',
+  'New York': 'NY',
+  'North Carolina': 'NC',
+  'North Dakota': 'ND',
+  Ohio: 'OH',
+  Oklahoma: 'OK',
+  Oregon: 'OR',
+  Pennsylvania: 'PA',
+  'Rhode Island': 'RI',
+  'South Carolina': 'SC',
+  'South Dakota': 'SD',
+  Tennessee: 'TN',
+  Texas: 'TX',
+  Utah: 'UT',
+  Vermont: 'VT',
+  Virginia: 'VA',
+  Washington: 'WA',
+  'West Virginia': 'WV',
+  Wisconsin: 'WI',
+  Wyoming: 'WY',
+  'District of Columbia': 'DC',
+}
+
 interface AddressSuggestion {
   place_name: string
   text: string
-  context?: Array<{ id: string; text: string }>
+  context?: Array<{ id: string; text: string; short_code?: string }>
   center: [number, number]
 }
 
@@ -59,6 +114,10 @@ export default function AddressAutocomplete({
 
     setIsLoading(true)
     try {
+      // Tampa Bay area bounding box: Southwest to Northeast
+      // Covers Tampa, St. Petersburg, Clearwater, and surrounding areas
+      const tampaBayBbox = '-82.8,27.5,-82.1,28.2'
+
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
           new URLSearchParams({
@@ -66,6 +125,8 @@ export default function AddressAutocomplete({
             country: 'US',
             types: 'address',
             limit: '5',
+            bbox: tampaBayBbox, // Bias results to Tampa Bay area
+            proximity: '-82.4572,27.9506', // Tampa downtown coordinates
           })
       )
 
@@ -112,13 +173,21 @@ export default function AddressAutocomplete({
       } else if (ctx.id.startsWith('place')) {
         components.city = ctx.text
       } else if (ctx.id.startsWith('region')) {
-        // Extract state abbreviation from text like "Florida" or from short_code
+        // First check for short_code (e.g., "US-FL")
+        if (ctx.short_code) {
+          const shortCode = ctx.short_code.replace('US-', '')
+          if (shortCode.length === 2) {
+            components.state = shortCode.toUpperCase()
+            return
+          }
+        }
+        // Check if it's already a 2-letter abbreviation
         const stateMatch = ctx.text.match(/^([A-Z]{2})$/)
         if (stateMatch) {
           components.state = stateMatch[1]
         } else {
-          // If full state name, try to get first two letters
-          components.state = ctx.text.substring(0, 2).toUpperCase()
+          // Look up the state abbreviation from full name
+          components.state = STATE_ABBREVIATIONS[ctx.text] || ctx.text.substring(0, 2).toUpperCase()
         }
       }
     })
