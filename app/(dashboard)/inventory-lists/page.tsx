@@ -209,20 +209,20 @@ export default async function InventoryListsPage() {
                 </div>
 
                 {list.inventory_list_items && list.inventory_list_items.length > 0 && (
-                  <div className="flex gap-2 overflow-x-auto pb-2">
+                  <div className="flex gap-3 overflow-x-auto pb-2">
                     {list.inventory_list_items.slice(0, 5).map((item: InventoryListItem) => (
                       <div
                         key={item.id}
-                        className="flex-shrink-0 w-24 border border-gray-200 rounded-lg p-2 hover:bg-gray-50 flex flex-col"
+                        className="flex-shrink-0 w-40 border border-gray-200 rounded-lg p-3 hover:bg-gray-50 flex flex-col"
                       >
                         <Link href={`/products/${item.product?.id}`} className="flex-1">
-                          <div className="relative w-full aspect-square mb-1 bg-gray-100 rounded overflow-hidden">
+                          <div className="relative w-full aspect-square mb-2 bg-gray-100 rounded overflow-hidden">
                             {item.product?.images && item.product.images.length > 0 ? (
                               <Image
                                 src={item.product.images[0]}
                                 alt={item.product.name}
                                 fill
-                                sizes="96px"
+                                sizes="160px"
                                 className="object-contain"
                               />
                             ) : (
@@ -245,7 +245,7 @@ export default async function InventoryListsPage() {
                       </div>
                     ))}
                     {list.inventory_list_items.length > 5 && (
-                      <div className="flex-shrink-0 w-24 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
+                      <div className="flex-shrink-0 w-40 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
                         +{list.inventory_list_items.length - 5} more
                       </div>
                     )}

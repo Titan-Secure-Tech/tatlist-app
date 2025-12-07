@@ -47,11 +47,11 @@ export function InventoryItemQuantity({
   }
 
   return (
-    <div className="flex items-center justify-between gap-0.5 mt-1 w-full">
+    <div className="flex items-center justify-between gap-1 mt-1 w-full">
       <Button
         variant="ghost"
         size="icon"
-        className="h-4 w-4 p-0 hover:bg-black hover:text-white flex-shrink-0"
+        className="h-6 w-6 p-0 hover:bg-black hover:text-white flex-shrink-0"
         onClick={e => {
           e.preventDefault()
           e.stopPropagation()
@@ -59,13 +59,13 @@ export function InventoryItemQuantity({
         }}
         disabled={quantity <= 1 || isPending}
       >
-        <Minus className="h-2.5 w-2.5" />
+        <Minus className="h-3 w-3" />
       </Button>
-      <span className="text-[10px] font-medium flex-1 text-center">×{quantity}</span>
+      <span className="text-xs font-medium flex-1 text-center">×{quantity}</span>
       <Button
         variant="ghost"
         size="icon"
-        className="h-4 w-4 p-0 hover:bg-black hover:text-white flex-shrink-0"
+        className="h-6 w-6 p-0 hover:bg-black hover:text-white flex-shrink-0"
         onClick={e => {
           e.preventDefault()
           e.stopPropagation()
@@ -73,7 +73,7 @@ export function InventoryItemQuantity({
         }}
         disabled={isPending}
       >
-        <Plus className="h-2.5 w-2.5" />
+        <Plus className="h-3 w-3" />
       </Button>
     </div>
   )
