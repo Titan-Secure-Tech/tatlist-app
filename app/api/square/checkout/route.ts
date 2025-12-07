@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     // Create or get Square customer
     let squareCustomerId: string | null = null
     try {
-      const syncService = new SquareCustomerSyncService(supabase)
+      const syncService = new SquareCustomerSyncService(supabase, squareClient)
 
       // Parse customer name into first/last
       const nameParts = customerInfo.name.trim().split(/\s+/)
