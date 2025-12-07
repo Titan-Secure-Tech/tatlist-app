@@ -17,7 +17,7 @@ export function OfficeStatusBanner() {
         animate={{ height: 'auto', opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-amber-50 border-b border-amber-200"
+        className="relative bg-amber-50 border-b border-amber-200"
       >
         <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center gap-3 text-amber-900">
