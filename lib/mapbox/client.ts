@@ -4,7 +4,7 @@ import mapboxDirections from '@mapbox/mapbox-sdk/services/directions'
 import mapboxOptimization from '@mapbox/mapbox-sdk/services/optimization'
 
 // Initialize Mapbox client with conditional check
-const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN?.trim()
 
 // Only initialize if we have a token
 const baseClient = accessToken ? mapboxSdk({ accessToken }) : null
@@ -278,12 +278,38 @@ export interface RouteWaypoint {
   delivery_id?: string
 }
 
+// GeoJSON types for Mapbox responses
+interface GeoJSONGeometry {
+  type: string
+  coordinates: number[] | number[][] | number[][][]
+}
+
+interface MapboxLegStep {
+  distance: number
+  duration: number
+  geometry: GeoJSONGeometry
+  name: string
+  mode: string
+  maneuver: {
+    instruction: string
+    type: string
+    modifier?: string
+    location: [number, number]
+  }
+}
+
+interface MapboxLeg {
+  distance: number
+  duration: number
+  steps?: MapboxLegStep[]
+}
+
 export interface OptimizedRoute {
-  waypoint_order: number[]  // Optimized indices [2, 0, 3, 1]
+  waypoint_order: number[] // Optimized indices [2, 0, 3, 1]
   total_distance_miles: number
   total_duration_minutes: number
-  route_geometry: any  // GeoJSON polyline
-  turn_by_turn_directions: any[]  // Navigation steps
+  route_geometry: GeoJSONGeometry // GeoJSON polyline
+  turn_by_turn_directions: MapboxLegStep[] // Navigation steps
   legs: Array<{
     distance_miles: number
     duration_minutes: number
@@ -295,9 +321,9 @@ export interface OptimizedRoute {
 export async function optimizeDeliveryRoute(
   waypoints: RouteWaypoint[],
   options?: {
-    startLocation?: { latitude: number; longitude: number }  // Optional start (defaults to delivery center)
-    endLocation?: { latitude: number; longitude: number }    // Optional end (return to start)
-    roundTrip?: boolean  // True = return to start location
+    startLocation?: { latitude: number; longitude: number } // Optional start (defaults to delivery center)
+    endLocation?: { latitude: number; longitude: number } // Optional end (return to start)
+    roundTrip?: boolean // True = return to start location
   }
 ): Promise<OptimizedRoute | null> {
   try {
@@ -324,7 +350,7 @@ export async function optimizeDeliveryRoute(
     coordinates.push([start.longitude, start.latitude])
 
     // Add all delivery waypoints
-    waypoints.forEach((wp) => {
+    waypoints.forEach(wp => {
       coordinates.push([wp.longitude, wp.latitude])
     })
 
@@ -338,20 +364,18 @@ export async function optimizeDeliveryRoute(
     // Call Mapbox Optimization API
     const response = await optimizationClient
       .getOptimization({
-        profile: 'driving-traffic',  // Use real-time traffic data
+        profile: 'driving-traffic', // Use real-time traffic data
         waypoints: coordinates.map((coord, index) => ({
           coordinates: coord,
           // First and last waypoints are fixed (start/end)
-          ...(index === 0 || (options?.roundTrip && index === coordinates.length - 1)
-            ? {}
-            : {}),
+          ...(index === 0 || (options?.roundTrip && index === coordinates.length - 1) ? {} : {}),
         })),
-        source: 'first',  // Start from first waypoint
-        destination: options?.roundTrip ? 'last' : 'any',  // End at last or optimize end
+        source: 'first', // Start from first waypoint
+        destination: options?.roundTrip ? 'last' : 'any', // End at last or optimize end
         roundtrip: options?.roundTrip || false,
-        overview: 'full',  // Get full route geometry
-        steps: true,  // Get turn-by-turn directions
-        geometries: 'geojson',  // Return GeoJSON format
+        overview: 'full', // Get full route geometry
+        steps: true, // Get turn-by-turn directions
+        geometries: 'geojson', // Return GeoJSON format
       })
       .send()
 
@@ -363,11 +387,11 @@ export async function optimizeDeliveryRoute(
     // Parse optimized waypoint order
     // Mapbox returns waypoint indices in optimized order
     const optimized_order = response.body.waypoints
-      .slice(1, options?.roundTrip ? -1 : undefined)  // Exclude start/end waypoints
-      .map((wp) => wp.waypoint_index - 1)  // Adjust index (subtract start waypoint)
+      .slice(1, options?.roundTrip ? -1 : undefined) // Exclude start/end waypoints
+      .map(wp => wp.waypoint_index - 1) // Adjust index (subtract start waypoint)
 
     // Extract route legs (segments between waypoints)
-    const legs = trip.legs.map((leg: any, index: number) => ({
+    const legs = trip.legs.map((leg: MapboxLeg, index: number) => ({
       distance_miles: leg.distance / MILES_TO_METERS,
       duration_minutes: Math.ceil(leg.duration / 60),
       from_waypoint: index,
@@ -375,13 +399,13 @@ export async function optimizeDeliveryRoute(
     }))
 
     // Build turn-by-turn directions from all legs
-    const directions = trip.legs.flatMap((leg: any) => leg.steps || [])
+    const directions = trip.legs.flatMap((leg: MapboxLeg) => leg.steps || [])
 
     return {
       waypoint_order: optimized_order,
       total_distance_miles: trip.distance / MILES_TO_METERS,
       total_duration_minutes: Math.ceil(trip.duration / 60),
-      route_geometry: trip.geometry,  // GeoJSON polyline
+      route_geometry: trip.geometry, // GeoJSON polyline
       turn_by_turn_directions: directions,
       legs,
     }

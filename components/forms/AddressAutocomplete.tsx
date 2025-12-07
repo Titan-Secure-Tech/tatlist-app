@@ -121,7 +121,7 @@ export default function AddressAutocomplete({
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
           new URLSearchParams({
-            access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
+            access_token: (process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '').trim(),
             country: 'US',
             types: 'address',
             limit: '5',
