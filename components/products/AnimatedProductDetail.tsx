@@ -96,6 +96,12 @@ export default function AnimatedProductDetail({ product }: AnimatedProductDetail
     }
 
     addItem(cartItem, { count: quantity })
+    toast.success(`Added ${quantity} ${quantity === 1 ? 'item' : 'items'} to cart`, {
+      action: {
+        label: 'View Cart',
+        onClick: () => router.push('/cart'),
+      },
+    })
   }
 
   const toggleInventory = async () => {
