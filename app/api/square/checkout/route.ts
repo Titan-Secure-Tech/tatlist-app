@@ -235,6 +235,11 @@ export async function POST(request: NextRequest) {
       }
 
       // Create payment link for the order using direct API
+      // Build redirect URL with order details for payment-success page
+      const redirectUrl = order
+        ? `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success?orderId=${order.id}&orderNumber=${order.order_number}&total=${order.total}`
+        : `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`
+
       const paymentLinkRequest = {
         quick_pay: {
           name: `Order ${orderResponse.order.id?.slice(-6)}`,
@@ -246,7 +251,7 @@ export async function POST(request: NextRequest) {
         },
         checkout_options: {
           allow_tipping: true,
-          redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
+          redirect_url: redirectUrl,
           merchant_support_email: 'support@tatlist.com',
         },
         pre_populated_data: {
