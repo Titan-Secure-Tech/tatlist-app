@@ -250,12 +250,14 @@ export class SquareCustomerSyncService {
     try {
       const squareClient = this.getSquareClient()
       const response = await squareClient.customers.search({
-        filter: {
-          emailAddress: {
-            exact: email.toLowerCase(),
+        query: {
+          filter: {
+            emailAddress: {
+              exact: [email.toLowerCase()],
+            },
           },
+          limit: 1,
         },
-        limit: 1,
       })
 
       if (response.result.customers && response.result.customers.length > 0) {
