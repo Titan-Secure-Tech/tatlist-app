@@ -160,6 +160,8 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
     }
 
     // Geocode the address
+    console.log('[Mapbox] Validating address:', address)
+
     const response = await geocodingClient
       .forwardGeocode({
         query: address,
@@ -171,11 +173,91 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
       .send()
 
     const features = response.body.features
+    console.log('[Mapbox] Geocoding results:', features?.length || 0, 'features found')
 
     if (!features || features.length === 0) {
+      // Try again without strict bounding box
+      console.log('[Mapbox] Retrying without bounding box...')
+      const retryResponse = await geocodingClient
+        .forwardGeocode({
+          query: address,
+          countries: ['us'],
+          types: ['address'],
+          limit: 1,
+        })
+        .send()
+
+      const retryFeatures = retryResponse.body.features
+      console.log('[Mapbox] Retry results:', retryFeatures?.length || 0, 'features found')
+
+      if (!retryFeatures || retryFeatures.length === 0) {
+        return {
+          isValid: false,
+          error: 'Address not found. Please enter a valid business address.',
+        }
+      }
+
+      // Use retry results if found
+      const retryFeature = retryFeatures[0]
+      const [retryLng, retryLat] = retryFeature.center
+
+      // Parse address components
+      const retryContext = retryFeature.context || []
+      let retryStreetAddress = ''
+      if (retryFeature.address) {
+        retryStreetAddress = `${retryFeature.address} ${retryFeature.text}`
+      } else {
+        const addressMatch = retryFeature.place_name?.match(/^([^,]+)/)
+        retryStreetAddress = addressMatch ? addressMatch[1] : retryFeature.text || ''
+      }
+
+      const retryAddressComponents = {
+        formatted: retryFeature.place_name || address,
+        street: retryStreetAddress,
+        city:
+          retryContext.find(c => (c as { id: string; text: string }).id.includes('place'))?.text ||
+          '',
+        state:
+          retryContext.find(c => (c as { id: string; text: string }).id.includes('region'))?.text ||
+          'FL',
+        zipCode:
+          retryContext.find(c => (c as { id: string; text: string }).id.includes('postcode'))
+            ?.text || '',
+        coordinates: { lat: retryLat, lng: retryLng },
+      }
+
+      // Check if in Florida
+      if (retryAddressComponents.state !== 'FL' && retryAddressComponents.state !== 'Florida') {
+        return {
+          isValid: false,
+          address: retryAddressComponents,
+          error: 'We currently only deliver to businesses in Florida.',
+        }
+      }
+
+      // Calculate distance
+      const retryDistance = calculateDistance(
+        DELIVERY_CENTER.lat,
+        DELIVERY_CENTER.lng,
+        retryLat,
+        retryLng
+      )
+
+      // Check if within delivery radius
+      if (retryDistance > MAX_DELIVERY_RADIUS_MILES) {
+        return {
+          isValid: false,
+          address: retryAddressComponents,
+          distance: retryDistance,
+          error: `Your location is ${retryDistance.toFixed(1)} miles from our delivery center. We currently deliver within ${MAX_DELIVERY_RADIUS_MILES} miles of Tampa. Please contact us to request service in your area.`,
+        }
+      }
+
+      console.log('[Mapbox] Address validated successfully (retry):', retryAddressComponents)
       return {
-        isValid: false,
-        error: 'Address not found. Please enter a valid business address.',
+        isValid: true,
+        address: retryAddressComponents,
+        distance: retryDistance,
       }
     }
 
@@ -230,6 +312,7 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
       }
     }
 
+    console.log('[Mapbox] Address validated successfully:', addressComponents)
     return {
       isValid: true,
       address: addressComponents,
