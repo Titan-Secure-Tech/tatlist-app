@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSquareConfig, isSandboxUser } from '@/lib/square/client-config'
+import { getSquareAPIClient } from '@/lib/square/api-client'
+import { isSandboxUser } from '@/lib/square/client-config'
 import { createClient } from '@/lib/supabase/server'
-import { SquareCustomerSyncService } from '@/lib/services/square-customer-sync'
 import { randomUUID } from 'crypto'
-// Square types are defined inline below
 import type { OrderItem } from '@/lib/types/orders'
 
 interface CartItem {
@@ -84,36 +83,49 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get appropriate Square configuration
-    const squareConfig = getSquareConfig(useSandbox)
-    const { client: squareClient, locationId: SQUARE_LOCATION_ID, environment } = squareConfig
+    // Get appropriate Square API client (direct HTTP, not SDK)
+    const squareConfig = getSquareAPIClient(useSandbox)
+    const { client: squareAPIClient, locationId: SQUARE_LOCATION_ID, environment } = squareConfig
 
     console.log(
       `[Square Checkout] Using ${environment} mode for ${customerInfo.email} (reason: ${sandboxReason})`
     )
 
-    // Create or get Square customer
+    // Create or get Square customer using direct API
     let squareCustomerId: string | null = null
     try {
-      const syncService = new SquareCustomerSyncService(supabase, squareClient)
-
       // Parse customer name into first/last
       const nameParts = customerInfo.name.trim().split(/\s+/)
       const givenName = nameParts[0] || ''
       const familyName = nameParts.slice(1).join(' ') || ''
 
-      squareCustomerId = await syncService.getOrCreateSquareCustomerForCheckout(
-        customerInfo.email,
-        {
-          givenName,
-          familyName,
-          phoneNumber: customerInfo.phone,
-          userId: user?.id,
-        }
-      )
+      // Search for existing customer by email
+      const searchResponse = await squareAPIClient.searchCustomers({
+        query: {
+          filter: {
+            email_address: {
+              exact: customerInfo.email.toLowerCase(),
+            },
+          },
+        },
+        limit: 1,
+      })
 
-      if (squareCustomerId) {
-        console.log(`[Square Checkout] Created/linked Square customer: ${squareCustomerId}`)
+      if (searchResponse.customers && searchResponse.customers.length > 0) {
+        squareCustomerId = searchResponse.customers[0].id
+        console.log(`[Square Checkout] Found existing Square customer: ${squareCustomerId}`)
+      } else {
+        // Create new customer
+        const createResponse = await squareAPIClient.createCustomer({
+          given_name: givenName,
+          family_name: familyName,
+          email_address: customerInfo.email.toLowerCase(),
+          phone_number: customerInfo.phone,
+          reference_id: user?.id,
+        })
+
+        squareCustomerId = createResponse.customer.id
+        console.log(`[Square Checkout] Created new Square customer: ${squareCustomerId}`)
       }
     } catch (customerError) {
       console.error('[Square Checkout] Failed to create/link Square customer:', customerError)
@@ -123,12 +135,12 @@ export async function POST(request: NextRequest) {
     // Create line items for the order
     const lineItems = items.map((item: CartItem) => ({
       quantity: String(item.quantity),
-      basePriceMoney: {
-        amount: BigInt(Math.round(item.price * 100)), // Price in cents
+      base_price_money: {
+        amount: Math.round(item.price * 100), // Price in cents
         currency: 'USD',
       },
       name: item.name,
-      variationName: item.variant,
+      variation_name: item.variant,
     }))
 
     // Calculate total
@@ -141,96 +153,91 @@ export async function POST(request: NextRequest) {
     const deliveryFee = 5.0 // $5 flat delivery fee
     const total = subtotal + deliveryFee
 
-    // Try to create real Square order first
+    // Try to create real Square order using direct API
     try {
-      // Create the order
+      // Create the order with direct API call
       const orderRequest = {
+        idempotency_key: randomUUID(),
         order: {
-          locationId: SQUARE_LOCATION_ID,
-          lineItems,
+          location_id: SQUARE_LOCATION_ID,
+          line_items: lineItems,
           fulfillments: [
             {
               type: 'DELIVERY',
               state: 'PROPOSED',
-              deliveryDetails: {
+              shipment_details: {
                 recipient: {
-                  displayName: customerInfo.name,
-                  phoneNumber: customerInfo.phone,
-                  email: customerInfo.email,
+                  display_name: customerInfo.name,
+                  phone_number: customerInfo.phone,
+                  email_address: customerInfo.email,
+                  address: {
+                    address_line_1: deliveryAddress.line1,
+                    address_line_2: deliveryAddress.line2,
+                    locality: deliveryAddress.city,
+                    administrative_district_level_1: deliveryAddress.state,
+                    postal_code: deliveryAddress.postalCode,
+                    country: 'US',
+                  },
                 },
-                deliverAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
-                scheduleType: 'ASAP',
-                recipientAddress: {
-                  addressLine1: deliveryAddress.line1,
-                  addressLine2: deliveryAddress.line2,
-                  locality: deliveryAddress.city,
-                  administrativeDistrictLevel1: deliveryAddress.state,
-                  postalCode: deliveryAddress.postalCode,
-                  country: 'US',
-                },
+                expected_shipped_at: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
               },
             },
           ],
-          serviceCharges: [
+          service_charges: [
             {
               name: 'Delivery Fee',
-              amountMoney: {
-                amount: BigInt(Math.round(deliveryFee * 100)),
+              amount_money: {
+                amount: Math.round(deliveryFee * 100),
                 currency: 'USD',
               },
-              calculationPhase: 'SUBTOTAL_PHASE',
+              calculation_phase: 'SUBTOTAL_PHASE',
             },
           ],
         },
-        idempotencyKey: randomUUID(),
       }
 
-      const orderResponse = await squareClient.orders.create(orderRequest)
+      const orderResponse = await squareAPIClient.createOrder(orderRequest)
 
-      if (orderResponse.statusCode !== 200 || !orderResponse.result?.order) {
+      if (!orderResponse.order) {
         console.error('Order creation error:', orderResponse)
         throw new Error('Failed to create order')
       }
 
-      const orderResult = orderResponse.result
-
-      // Create payment link for the order
+      // Create payment link for the order using direct API
       const paymentLinkRequest = {
-        quickPay: {
-          name: `Order ${orderResult.order.id?.slice(-6)}`,
-          priceMoney: {
-            amount: orderResult.order.totalMoney?.amount || Math.round(total * 100),
+        quick_pay: {
+          name: `Order ${orderResponse.order.id?.slice(-6)}`,
+          price_money: {
+            amount: orderResponse.order.total_money?.amount || Math.round(total * 100),
             currency: 'USD',
           },
-          locationId: SQUARE_LOCATION_ID,
+          location_id: SQUARE_LOCATION_ID,
         },
-        checkoutOptions: {
-          allowTipping: true,
-          redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
-          merchantSupportEmail: 'support@tatlist.com',
+        checkout_options: {
+          allow_tipping: true,
+          redirect_url: `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`,
+          merchant_support_email: 'support@tatlist.com',
         },
-        prePopulatedData: {
-          buyerEmail: customerInfo.email,
-          buyerPhoneNumber: customerInfo.phone,
-          buyerAddress: {
-            addressLine1: deliveryAddress.line1,
-            addressLine2: deliveryAddress.line2,
+        pre_populated_data: {
+          buyer_email: customerInfo.email,
+          buyer_phone_number: customerInfo.phone,
+          buyer_address: {
+            address_line_1: deliveryAddress.line1,
+            address_line_2: deliveryAddress.line2,
             locality: deliveryAddress.city,
-            administrativeDistrictLevel1: deliveryAddress.state,
-            postalCode: deliveryAddress.postalCode,
+            administrative_district_level_1: deliveryAddress.state,
+            postal_code: deliveryAddress.postalCode,
             country: 'US',
           },
         },
       }
 
-      const paymentResponse = await squareClient.checkout.paymentLinks.create(paymentLinkRequest)
+      const paymentResponse = await squareAPIClient.createPaymentLink(paymentLinkRequest)
 
-      if (paymentResponse.statusCode !== 200 || !paymentResponse.result?.paymentLink) {
+      if (!paymentResponse.payment_link) {
         console.error('Payment link error:', paymentResponse)
         throw new Error('Failed to create payment link')
       }
-
-      const paymentLinkResult = paymentResponse.result
 
       // Create order in Supabase
       const orderItems: OrderItem[] = items.map(item => ({
@@ -245,7 +252,7 @@ export async function POST(request: NextRequest) {
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-          square_order_id: orderResult.order.id,
+          square_order_id: orderResponse.order.id,
           square_customer_id: squareCustomerId,
           user_id: user?.id,
           customer_email: customerInfo.email,
@@ -285,11 +292,11 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json({
-        orderId: order?.id || orderResult.order.id,
+        orderId: order?.id || orderResponse.order.id,
         orderNumber: order?.order_number,
-        squareOrderId: orderResult.order.id,
-        paymentLink: paymentLinkResult.paymentLink.url,
-        order: orderResult.order,
+        squareOrderId: orderResponse.order.id,
+        paymentLink: paymentResponse.payment_link.url,
+        order: orderResponse.order,
         total: total,
         source: 'square_api',
         environment: environment,
