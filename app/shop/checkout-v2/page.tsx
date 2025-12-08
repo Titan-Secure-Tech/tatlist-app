@@ -172,7 +172,8 @@ function CheckoutContent() {
       }
 
       if (data.paymentLink) {
-        clearCart()
+        // Don't clear cart yet - only clear after successful payment
+        // Cart will be cleared on the payment-success page after Square confirms payment
         toast.success('Redirecting to payment...')
         window.location.href = data.paymentLink
       } else {
@@ -279,7 +280,9 @@ function CheckoutContent() {
               <CardContent>
                 <Alert className="mb-6">
                   <AlertDescription>
-                    We deliver within a 25-mile radius of Tampa. Your delivery address will be validated to ensure availability. Licensed tattoo shops receive priority processing.
+                    We deliver within a 25-mile radius of Tampa. Your delivery address will be
+                    validated to ensure availability. Licensed tattoo shops receive priority
+                    processing.
                   </AlertDescription>
                 </Alert>
                 <BusinessDetailsForm

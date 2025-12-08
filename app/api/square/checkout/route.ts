@@ -283,6 +283,7 @@ export async function POST(request: NextRequest) {
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
+          order_number: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           square_order_id: orderResponse.order.id,
           square_customer_id: squareCustomerId,
           user_id: user?.id,
