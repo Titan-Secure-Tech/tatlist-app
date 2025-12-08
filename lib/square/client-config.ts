@@ -50,6 +50,7 @@ export function getSquareConfig(useSandbox: boolean = false): SquareConfig {
   const client = new SquareClient({
     accessToken,
     environment: isProduction ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
+    squareVersion: '2025-10-16', // Use latest API version
   })
 
   return {
