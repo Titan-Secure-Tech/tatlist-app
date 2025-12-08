@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+
+// Force dynamic rendering to avoid prerendering issues
+export const dynamic = 'force-dynamic'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import { ArrowLeft, CreditCard, ShoppingCart, Loader2, CheckCircle } from 'lucide-react'
@@ -8,7 +11,6 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { CartProvider } from '@/components/providers/CartProvider'
 import { BusinessDetailsForm, BusinessDetails } from '@/components/checkout/business-details-form'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { createClient } from '@/lib/supabase/client'
@@ -29,8 +31,7 @@ interface UserProfile {
 }
 
 function CheckoutContent() {
-  const { cartDetails, cartCount, totalPrice, clearCart } = useShoppingCart()
-  const [mounted, setMounted] = useState(false)
+  const { cartDetails, cartCount, totalPrice } = useShoppingCart()
   const [isProcessing, setIsProcessing] = useState(false)
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('business')
   const [businessDetails, setBusinessDetails] = useState<BusinessDetails | null>(null)
@@ -38,7 +39,6 @@ function CheckoutContent() {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true)
 
   useEffect(() => {
-    setMounted(true)
     loadUserProfile()
   }, [])
 
@@ -187,7 +187,7 @@ function CheckoutContent() {
     }
   }
 
-  if (!mounted || isLoadingProfile) {
+  if (isLoadingProfile) {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">
@@ -443,29 +443,10 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <CartProvider>
-      <main className="min-h-screen bg-white">
-        <nav className="border-b bg-white/95 backdrop-blur sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link href="/" className="text-xl font-bold">
-                Tatlist
-              </Link>
-              <div className="flex items-center space-x-4">
-                <Link href="/shop" className="text-sm font-medium">
-                  Shop
-                </Link>
-                <Link href="/shop/checkout" className="text-sm font-medium">
-                  Checkout
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <CheckoutContent />
-        </div>
-      </main>
-    </CartProvider>
+    <main className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <CheckoutContent />
+      </div>
+    </main>
   )
 }

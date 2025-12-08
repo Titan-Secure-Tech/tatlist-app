@@ -76,7 +76,10 @@ export function SiteHeader() {
     pathname?.startsWith('/profile') ||
     pathname?.startsWith('/admin')
 
-  if (isDashboardRoute) {
+  // Hide on shop/checkout pages for authenticated users
+  const isShopOrCheckout = pathname?.startsWith('/shop') || pathname?.startsWith('/checkout')
+
+  if (isDashboardRoute || (isShopOrCheckout && user && !loading)) {
     return null
   }
 
@@ -90,8 +93,8 @@ export function SiteHeader() {
             {/* Search can be added here later */}
           </div>
           <nav className="flex items-center gap-2">
-            {/* Cart Icon - Always visible */}
-            <CartIcon variant="ghost" size="icon" />
+            {/* Cart Icon - Only visible for authenticated users */}
+            {!loading && user && <CartIcon variant="ghost" size="icon" />}
 
             {!loading &&
               (user ? (

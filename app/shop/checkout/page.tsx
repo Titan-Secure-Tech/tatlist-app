@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+
+// Force dynamic rendering to avoid prerendering issues
+export const dynamic = 'force-dynamic'
 import { useShoppingCart } from '@/lib/store/cart-store'
 import Link from 'next/link'
 import {
@@ -17,7 +20,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { CartProvider } from '@/components/providers/CartProvider'
 import { useSandbox } from '@/lib/contexts/sandbox-context'
 import { CartSuggestions } from '@/components/shop/cart-suggestions'
 import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
@@ -576,32 +578,13 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <CartProvider>
-      <main className="min-h-screen bg-white">
-        <nav className="border-b bg-white/95 backdrop-blur sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <Link href="/" className="text-xl font-bold">
-                Tatlist
-              </Link>
-              <div className="flex items-center space-x-4">
-                <Link href="/shop" className="text-sm font-medium">
-                  Shop
-                </Link>
-                <Link href="/shop/checkout" className="text-sm font-medium">
-                  Checkout
-                </Link>
-              </div>
-            </div>
-          </div>
-        </nav>
-        <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-          <CheckoutContent />
+    <main className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        <CheckoutContent />
 
-          {/* Cart Suggestions */}
-          <CartSuggestions />
-        </div>
-      </main>
-    </CartProvider>
+        {/* Cart Suggestions */}
+        <CartSuggestions />
+      </div>
+    </main>
   )
 }

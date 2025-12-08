@@ -1,31 +1,13 @@
 import Link from 'next/link'
-import { ShopNavigation } from '@/components/navigation/shop-nav'
 import { CartProvider } from '@/components/providers/CartProvider'
-import { CartIcon } from '@/components/cart/cart-icon'
+import { AuthShopHeader } from '@/components/navigation/auth-shop-header'
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
       <div className="min-h-screen bg-white">
-        {/* Header */}
-        <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-          <div className="container flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link href="/" className="text-xl font-bold">
-              Tatlist
-            </Link>
-
-            {/* Navigation - Hidden on mobile */}
-            <div className="hidden md:block">
-              <ShopNavigation />
-            </div>
-
-            {/* Cart Icon - Always visible on mobile and desktop */}
-            <div className="md:hidden">
-              <CartIcon variant="outline" size="icon" />
-            </div>
-          </div>
-        </header>
+        {/* Unified Authenticated Header */}
+        <AuthShopHeader />
 
         {/* Main Content */}
         <main>{children}</main>
