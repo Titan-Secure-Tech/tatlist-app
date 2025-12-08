@@ -193,7 +193,7 @@ export class SquareCustomerSyncService {
     try {
       // List all Square customers
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customersApi.listCustomers()
+      const response = await squareClient.customers.list()
 
       if (response.result.customers) {
         for (const squareCustomer of response.result.customers) {
@@ -249,7 +249,7 @@ export class SquareCustomerSyncService {
   private async findSquareCustomerByEmail(email: string): Promise<SquareCustomer | null> {
     try {
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customersApi.searchCustomers({
+      const response = await squareClient.customers.search({
         filter: {
           emailAddress: {
             exact: email.toLowerCase(),
@@ -276,7 +276,7 @@ export class SquareCustomerSyncService {
   ): Promise<SquareCustomer | null> {
     try {
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customersApi.createCustomer({
+      const response = await squareClient.customers.create({
         givenName: user.first_name || user.full_name?.split(' ')[0],
         familyName: user.last_name || user.full_name?.split(' ').slice(1).join(' '),
         emailAddress: user.email,
@@ -308,7 +308,7 @@ export class SquareCustomerSyncService {
       if (!user) return
 
       const squareClient = this.getSquareClient()
-      await squareClient.customersApi.updateCustomer(linkedCustomer.square_customer_id as string, {
+      await squareClient.customers.update(linkedCustomer.square_customer_id as string, {
         givenName: user.first_name,
         familyName: user.last_name,
         phoneNumber: user.phone,
@@ -409,7 +409,7 @@ export class SquareCustomerSyncService {
       if (!squareCustomer) {
         // Create new Square customer
         const squareClient = this.getSquareClient()
-        const response = await squareClient.customersApi.createCustomer({
+        const response = await squareClient.customers.create({
           emailAddress: email.toLowerCase(),
           givenName: customerData.givenName,
           familyName: customerData.familyName,
