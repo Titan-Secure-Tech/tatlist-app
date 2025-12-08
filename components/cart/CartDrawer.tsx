@@ -68,7 +68,7 @@ function CartContent({ onClose }: { onClose: () => void }) {
   return (
     <>
       {/* Cart Items */}
-      <ScrollArea className="flex-1 px-6">
+      <ScrollArea className="relative flex-1 px-6">
         <div className="py-4 space-y-4">
           {cartItems.map(item => (
             <Card key={item.id} className="overflow-hidden">

@@ -9,6 +9,8 @@ import { CartProvider } from '@/components/providers/CartProvider'
 import { SandboxProvider } from '@/lib/contexts/sandbox-context'
 import { PWAInstaller } from '@/components/PWAInstaller'
 import { OfficeStatusBanner } from '@/components/office-status-banner'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -123,6 +125,8 @@ export default function RootLayout({
               <SiteFooter />
             </div>
             <Toaster />
+            <Analytics />
+            <SpeedInsights />
           </CartProvider>
         </SandboxProvider>
       </body>

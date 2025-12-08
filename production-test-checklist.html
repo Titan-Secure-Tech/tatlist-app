@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tatlist Production Test Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f9fafb;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .test-header {
+            background: #f3f4f6;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .test-header .icon {
+            font-size: 24px;
+        }
+
+        .test-body {
+            padding: 20px;
+        }
+
+        .test-url {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+
+        .test-url strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #1e40af;
+            font-size: 12px;
+        }
+
+        .test-url a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 12px 12px 12px 40px;
+            position: relative;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 12px;
+            font-size: 20px;
+            color: #9ca3af;
+        }
+
+        .checklist li.checked::before {
+            content: '✓';
+            color: #10b981;
+        }
+
+        .expected-result {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+
+        .expected-result strong {
+            color: #065f46;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+
+        .prerequisites {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .prerequisites strong {
+            color: #92400e;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .quick-link {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: #111827;
+            transition: all 0.2s;
+        }
+
+        .quick-link:active {
+            background: #f3f4f6;
+            transform: scale(0.98);
+        }
+
+        .quick-link .emoji {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .quick-link .label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .footer {
+            background: #f9fafb;
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .deployment-info {
+            background: #dbeafe;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .deployment-info h3 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .deployment-info p {
+            color: #1e3a8a;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .test-header {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Tatlist Production Tests</h1>
+            <p>Deployment: master@7ee3e77</p>
+            <span class="status-badge">✓ Deployed to Production</span>
+        </div>
+
+        <div class="content">
+            <div class="deployment-info">
+                <h3>📦 Deployment Status</h3>
+                <p><strong>Commit:</strong> 7ee3e77</p>
+                <p><strong>Production URL:</strong> https://tatlist.com</p>
+                <p><strong>Vercel Dashboard:</strong> <a href="https://vercel.com/dashboard" style="color: #2563eb;">Monitor Deployment</a></p>
+            </div>
+
+            <div class="quick-links">
+                <a href="https://tatlist.com" class="quick-link">
+                    <span class="emoji">🏠</span>
+                    <span class="label">Landing Page</span>
+                </a>
+                <a href="https://tatlist.com/register" class="quick-link">
+                    <span class="emoji">📝</span>
+                    <span class="label">Register</span>
+                </a>
+                <a href="https://tatlist.com/login" class="quick-link">
+                    <span class="emoji">🔐</span>
+                    <span class="label">Login</span>
+                </a>
+                <a href="https://tatlist.com/shop" class="quick-link">
+                    <span class="emoji">🛒</span>
+                    <span class="label">Shop</span>
+                </a>
+                <a href="https://tatlist.com/shop/checkout-v2" class="quick-link">
+                    <span class="emoji">💳</span>
+                    <span class="label">Checkout</span>
+                </a>
+            </div>
+
+            <!-- Test 1 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">⭐</span>
+                    <span>1. Customer Testimonials</span>
+                </div>
+                <div class="test-body">
+                    <div class="test-url">
+                        <strong>URL:</strong>
+                        <a href="https://tatlist.com">https://tatlist.com</a>
+                    </div>
+
+                    <ul class="checklist">
+                        <li>Scroll down below value proposition section</li>
+                        <li>Verify testimonials section appears with 3 testimonials</li>
+                        <li>Check star ratings display correctly (5 stars each)</li>
+                        <li>Verify customer names and shop names appear</li>
+                        <li>Click "Get Started Today" button → redirects to /register</li>
+                    </ul>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        Testimonials visible with Marcus Rodriguez (Ink & Honor), Sarah Chen (Black Eye), and James Wilson (Stigma Ink).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test 2 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">📋</span>
+                    <span>2. Checkout Form Pre-fill</span>
+                </div>
+                <div class="test-body">
+                    <div class="test-url">
+                        <strong>URL:</strong>
+                        <a href="https://tatlist.com/shop/checkout-v2">https://tatlist.com/shop/checkout-v2</a>
+                    </div>
+
+                    <div class="prerequisites">
+                        <strong>⚠️ Prerequisites:</strong>
+                        Be logged in with an account that has profile data saved
+                    </div>
+
+                    <ul class="checklist">
+                        <li>Add items to cart</li>
+                        <li>Navigate to checkout</li>
+                        <li>Verify Business Name is pre-filled</li>
+                        <li>Verify Email is pre-filled</li>
+                        <li>Verify Phone is pre-filled</li>
+                        <li>Verify Street Address is pre-filled</li>
+                        <li>Verify City, State, ZIP are pre-filled</li>
+                    </ul>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        All saved profile information automatically populates in the form fields.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test 3 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">🚚</span>
+                    <span>3. Pickup/Delivery Toggle</span>
+                </div>
+                <div class="test-body">
+                    <div class="test-url">
+                        <strong>URL:</strong>
+                        <a href="https://tatlist.com/shop/checkout-v2">https://tatlist.com/shop/checkout-v2</a>
+                    </div>
+
+                    <strong style="display: block; margin-bottom: 10px;">Test - Delivery Mode:</strong>
+                    <ul class="checklist">
+                        <li>Verify "Delivery" button is selected by default (black)</li>
+                        <li>Check delivery address fields are visible</li>
+                        <li>Try to submit without validating → prompts validation</li>
+                        <li>Validate address → proceeds to payment</li>
+                    </ul>
+
+                    <strong style="display: block; margin: 15px 0 10px;">Test - Pickup Mode:</strong>
+                    <ul class="checklist">
+                        <li>Click "Pickup" button (becomes black)</li>
+                        <li>Verify delivery address fields disappear</li>
+                        <li>See blue alert with Black Eye Tattoo location</li>
+                        <li>Verify address: 1234 Main St, Tampa, FL 33601</li>
+                        <li>See "Orders ready within 2-4 hours" message</li>
+                        <li>Can submit without address validation</li>
+                    </ul>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        Toggle switches smoothly, UI updates conditionally based on selection.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test 4 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">📧</span>
+                    <span>4. Fulfillment Email</span>
+                </div>
+                <div class="test-body">
+                    <div class="test-url">
+                        <strong>TEST:</strong>
+                        Complete a test order
+                    </div>
+
+                    <ul class="checklist">
+                        <li>Place a test order (use Square sandbox)</li>
+                        <li>Complete payment</li>
+                        <li>Check blackeyemobile@gmail.com inbox</li>
+                        <li>Verify customer also receives email</li>
+                    </ul>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        Both customer AND blackeyemobile@gmail.com receive order confirmation with order number, items, and delivery address.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test 5 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">📦</span>
+                    <span>5. Pickup Ready Notification</span>
+                </div>
+                <div class="test-body">
+                    <div class="prerequisites">
+                        <strong>⚠️ Note:</strong>
+                        Requires manually updating order status via Supabase or API
+                    </div>
+
+                    <p style="margin-bottom: 15px;"><strong>Option 1: Via Supabase Dashboard</strong></p>
+                    <ul class="checklist">
+                        <li>Go to Supabase Dashboard → Orders table</li>
+                        <li>Find a pickup order</li>
+                        <li>Update status to "ready_for_pickup"</li>
+                        <li>Check customer email</li>
+                    </ul>
+
+                    <p style="margin: 15px 0;"><strong>Option 2: Via API</strong></p>
+                    <div class="code-block">curl -X POST https://tatlist.com/api/orders/status \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "ORDER_ID",
+    "status": "ready_for_pickup",
+    "sendEmail": true
+  }'</div>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        Customer receives email with large order number, items list, Black Eye Tattoo pickup location, instructions, and hours.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test 6 -->
+            <div class="test-section">
+                <div class="test-header">
+                    <span class="icon">⚡</span>
+                    <span>6. No Middleware Warnings</span>
+                </div>
+                <div class="test-body">
+                    <div class="test-url">
+                        <strong>TEST:</strong>
+                        Check any page on the site
+                    </div>
+
+                    <ul class="checklist">
+                        <li>Open browser console (F12 → Console tab)</li>
+                        <li>Navigate to any page</li>
+                        <li>Verify NO deprecation warnings about "middleware"</li>
+                        <li>Check Vercel deployment logs</li>
+                        <li>Confirm clean build without warnings</li>
+                    </ul>
+
+                    <div class="expected-result">
+                        <strong>✓ Expected Result:</strong>
+                        Clean console with no warnings about "middleware" file convention.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Smoke Test -->
+            <div class="test-section" style="border: 2px solid #10b981;">
+                <div class="test-header" style="background: #10b981; color: white;">
+                    <span class="icon">🔥</span>
+                    <span>Quick 5-Minute Smoke Test</span>
+                </div>
+                <div class="test-body">
+                    <ul class="checklist">
+                        <li>Landing page → Scroll to testimonials ✓</li>
+                        <li>Register/Login → Create or sign in ✓</li>
+                        <li>Add to cart → Add 1-2 products ✓</li>
+                        <li>Checkout → Verify pre-fill works ✓</li>
+                        <li>Toggle pickup → See location info ✓</li>
+                        <li>Toggle delivery → See address fields ✓</li>
+                        <li>Check email → Look for test emails ✓</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Generated by Claude Code</strong></p>
+            <p>Deployment: 7ee3e77 | Date: November 28, 2024</p>
+            <p style="margin-top: 10px;">💡 Tip: Tap checkboxes above to track progress</p>
+        </div>
+    </div>
+
+    <script>
+        // Add tap functionality to checklist items
+        document.querySelectorAll('.checklist li').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('checked');
+            });
+        });
+    </script>
+</body>
+</html>

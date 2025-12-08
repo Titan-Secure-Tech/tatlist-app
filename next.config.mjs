@@ -6,6 +6,12 @@ const nextConfig = {
   // Empty turbopack config to silence migration warning
   turbopack: {},
 
+  // Allow dev server access from Tailscale network
+  allowedDevOrigins: [
+    'jamess-mac-mini.tail5b1923.ts.net',
+    '*.tail5b1923.ts.net',
+  ],
+
   // Experimental features
   experimental: {
     // cacheComponents disabled temporarily due to conflicts with route segment configs
@@ -55,6 +61,9 @@ const nextConfig = {
 
     // Image formats (prefer modern formats like WebP and AVIF)
     formats: ['image/webp'],
+
+    // Allowed quality values for next/image
+    qualities: [75, 95],
 
     // Remote image patterns
     remotePatterns: [

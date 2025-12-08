@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twilio SMS Setup Guide - Tatlist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: #000;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .status {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .status-item .icon {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .step-meta {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .meta-item strong {
+            margin-right: 5px;
+        }
+
+        .link-button {
+            display: inline-block;
+            background: #000;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 10px 10px 0;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .link-button:hover {
+            background: #333;
+        }
+
+        .link-button:active {
+            background: #555;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .address-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .address-box div {
+            margin: 5px 0;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .checklist li:before {
+            content: "☐";
+            font-size: 20px;
+            margin-right: 12px;
+            color: #666;
+        }
+
+        .substeps {
+            margin: 15px 0 15px 20px;
+            padding-left: 20px;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .substeps li {
+            margin: 10px 0;
+            list-style: decimal;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+            color: #000;
+        }
+
+        h4 {
+            font-size: 16px;
+            margin: 15px 0 10px 0;
+            color: #333;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #fff3cd;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .timeline strong {
+            color: #856404;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        footer p {
+            font-size: 13px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 8px;
+            }
+
+            header, .content {
+                padding: 20px;
+            }
+
+            .step-title {
+                font-size: 18px;
+            }
+
+            .step-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .link-button {
+                display: block;
+                text-align: center;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Twilio SMS Setup Guide</h1>
+            <p>Complete setup for Tatlist SMS notifications and phone verification</p>
+        </header>
+
+        <div class="status">
+            <h3 style="margin-bottom: 15px;">Current Status</h3>
+            <div class="status-item">
+                <span class="icon">✅</span>
+                <span><strong>Environment Variables:</strong> All Twilio credentials configured in Vercel</span>
+            </div>
+            <div class="status-item">
+                <span class="icon">✅</span>
+                <span><strong>Twilio Account:</strong> Active with phone number +18449954755</span>
+            </div>
+            <div class="status-item">
+                <span class="icon">⚠️</span>
+                <span><strong>Business Verification:</strong> Required for SMS to work</span>
+            </div>
+            <div class="status-item">
+                <span class="icon">⚠️</span>
+                <span><strong>A2P 10DLC:</strong> Registration pending for production SMS</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- STEP 1 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2 class="step-title">Complete Business Profile Verification</h2>
+                </div>
+
+                <div class="timeline">
+                    <strong>⏱️ Timeline:</strong> 1-3 business days for approval
+                </div>
+
+                <a href="https://console.twilio.com/us1/account/compliance/business-profile" class="link-button" target="_blank">
+                    Open Business Profile Settings →
+                </a>
+
+                <h3>Business Information to Submit:</h3>
+
+                <div class="address-box">
+                    <div><strong>Business Name:</strong> Tatlist (or your legal business name)</div>
+                    <div><strong>Business Type:</strong> Select appropriate (e.g., Private Company, Sole Proprietorship)</div>
+                    <div><strong>Business Registration Number:</strong> Your EIN or Tax ID</div>
+                    <div><strong>Business Industry:</strong> Select appropriate industry category</div>
+                    <div><strong>Website:</strong> https://tatlist.com</div>
+                </div>
+
+                <h3>Business Address:</h3>
+                <div class="address-box">
+                    <div><strong>Street Address:</strong> 2780 East Fowler Avenue</div>
+                    <div><strong>City:</strong> Tampa</div>
+                    <div><strong>State:</strong> Florida</div>
+                    <div><strong>Postal Code:</strong> 33612</div>
+                    <div><strong>Country:</strong> United States</div>
+                </div>
+
+                <h3>Required Documents:</h3>
+                <ul class="checklist">
+                    <li>Business license or registration documents</li>
+                    <li>Tax documents (EIN confirmation, if applicable)</li>
+                    <li>Proof of business address (utility bill, lease agreement)</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>💡 Note:</strong> Upload clear, readable copies of all documents. Blurry or incomplete documents will delay approval.
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2 class="step-title">Add Emergency Address</h2>
+                </div>
+
+                <div class="timeline">
+                    <strong>⏱️ Timeline:</strong> Instant verification (usually)
+                </div>
+
+                <a href="https://console.twilio.com/us1/develop/phone-numbers/manage/addresses" class="link-button" target="_blank">
+                    Open Address Management →
+                </a>
+
+                <h3>Steps to Create Address:</h3>
+                <ol class="substeps">
+                    <li>Click <strong>"+ Create New Address"</strong> button</li>
+                    <li>Fill in the address form with the information below</li>
+                    <li>Enable <strong>"Auto Verify Address"</strong> option</li>
+                    <li>Click <strong>"Submit"</strong> to save</li>
+                </ol>
+
+                <h3>Address Details:</h3>
+                <div class="address-box">
+                    <div><strong>Friendly Name:</strong> Tatlist Business Address</div>
+                    <div><strong>Customer Name:</strong> Your business name or contact person</div>
+                    <div><strong>Street Address:</strong> 2780 East Fowler Avenue</div>
+                    <div><strong>City:</strong> Tampa</div>
+                    <div><strong>Region/State:</strong> Florida</div>
+                    <div><strong>Postal Code:</strong> 33612</div>
+                    <div><strong>Country:</strong> United States</div>
+                </div>
+
+                <div class="success-box">
+                    <strong>✅ Verification:</strong> US addresses are typically verified instantly. You'll see a green checkmark once verified.
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Associate Address with Phone Number</h2>
+                </div>
+
+                <div class="timeline">
+                    <strong>⏱️ Timeline:</strong> Immediate (2-3 minutes)
+                </div>
+
+                <a href="https://console.twilio.com/us1/develop/phone-numbers/manage/active-numbers" class="link-button" target="_blank">
+                    Open Active Numbers →
+                </a>
+
+                <h3>Steps to Associate:</h3>
+                <ol class="substeps">
+                    <li>Click on your phone number: <strong>+18449954755</strong></li>
+                    <li>Scroll down to find the <strong>"Emergency Calling"</strong> or <strong>"Regulatory Information"</strong> section</li>
+                    <li>Click the dropdown menu to select an address</li>
+                    <li>Choose <strong>"Tatlist Business Address"</strong> (the address you created in Step 2)</li>
+                    <li>Click <strong>"Save"</strong> at the bottom of the page</li>
+                </ol>
+
+                <div class="info-box">
+                    <strong>💡 Important:</strong> This step must be completed after Step 2. The address must be verified before you can associate it with your phone number.
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2 class="step-title">A2P 10DLC Registration</h2>
+                </div>
+
+                <div class="timeline">
+                    <strong>⏱️ Timeline:</strong> 1-2 weeks for full approval
+                </div>
+
+                <a href="https://console.twilio.com/us1/develop/sms/regulatory-compliance/a2p-10dlc-registration" class="link-button" target="_blank">
+                    Open A2P 10DLC Registration →
+                </a>
+
+                <div class="warning-box">
+                    <strong>⚠️ Critical:</strong> This step is REQUIRED for sending SMS to non-verified phone numbers in the US. Without this, you can only send to numbers you've manually verified in Twilio.
+                </div>
+
+                <h3>Part A: Register Your Brand</h3>
+                <ol class="substeps">
+                    <li>Click <strong>"Register a brand"</strong></li>
+                    <li>Use the same business information from Step 1 (Business Profile)</li>
+                    <li>Ensure all information matches exactly (name, address, EIN, etc.)</li>
+                    <li>Submit for approval</li>
+                    <li>Wait for brand approval (typically 1-3 days)</li>
+                </ol>
+
+                <h3>Part B: Register Your Campaign</h3>
+                <p><em>Complete this AFTER your brand is approved</em></p>
+                <ol class="substeps">
+                    <li>Click <strong>"Register a campaign"</strong></li>
+                    <li>Select your approved brand</li>
+                    <li><strong>Use Case:</strong> Choose "Account Notifications" or "Delivery Notifications"</li>
+                    <li><strong>Campaign Description:</strong> Copy the text below</li>
+                </ol>
+
+                <div class="code-block">Delivery status notifications and phone verification for tattoo supply orders. Customers receive SMS alerts when their delivery is approaching (10 min, 5 min, arriving now) and verification codes for phone number confirmation.</div>
+
+                <h3>Sample Messages to Provide:</h3>
+                <div class="code-block">Your verification code is 123456
+
+Your order is out for delivery and arriving in 10 minutes
+
+Your delivery driver is arriving now
+
+Your order has been delivered. Thank you for choosing Tatlist!</div>
+
+                <h3>Part C: Add Phone Number to Campaign</h3>
+                <ol class="substeps">
+                    <li>After campaign approval, go to your campaign details</li>
+                    <li>Click <strong>"Add phone numbers"</strong></li>
+                    <li>Select <strong>+18449954755</strong></li>
+                    <li>Save the association</li>
+                </ol>
+
+                <div class="info-box">
+                    <strong>💡 Cost:</strong> A2P 10DLC registration typically costs around $4-$8 one-time fee plus $2-$15/month depending on campaign type. Exact pricing shown during registration.
+                </div>
+            </div>
+
+            <!-- STEP 5 -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2 class="step-title">Testing & Verification</h2>
+                </div>
+
+                <h3>Testing During Trial/Setup:</h3>
+                <div class="warning-box">
+                    <strong>⚠️ Trial Limitations:</strong> Until A2P 10DLC is approved, you can only send SMS to verified phone numbers.
+                </div>
+
+                <h4>To Add Verified Test Numbers:</h4>
+                <ol class="substeps">
+                    <li>Go to <strong>Phone Numbers → Manage → Verified Caller IDs</strong></li>
+                    <li>Click <strong>"Add a new Caller ID"</strong></li>
+                    <li>Enter your test phone number</li>
+                    <li>Verify via SMS or voice call</li>
+                </ol>
+
+                <h3>Test Commands (After All Steps Complete):</h3>
+
+                <h4>Test SMS Sending:</h4>
+                <div class="code-block">bun run scripts/test-twilio-sms.ts +1YOURNUMBER</div>
+
+                <h4>Test Phone Verification:</h4>
+                <div class="code-block">curl -X POST http://localhost:7500/api/verification/send-code \
+  -H "Content-Type: application/json" \
+  -d '{"phoneNumber": "+1YOURNUMBER"}'</div>
+
+                <h4>Test Geolocation Alerts:</h4>
+                <div class="code-block">curl http://localhost:7500/api/alerts/monitor</div>
+
+                <div class="success-box">
+                    <strong>✅ Success Criteria:</strong> You should receive an SMS within 1-2 seconds when running these commands. If you don't receive anything, check Twilio logs in the console for errors.
+                </div>
+            </div>
+
+            <!-- COMPLETION CHECKLIST -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">✓</div>
+                    <h2 class="step-title">Final Completion Checklist</h2>
+                </div>
+
+                <ul class="checklist">
+                    <li>Business profile submitted and approved by Twilio</li>
+                    <li>Emergency address created and verified</li>
+                    <li>Emergency address associated with phone number +18449954755</li>
+                    <li>A2P 10DLC brand registered and approved</li>
+                    <li>A2P 10DLC campaign created and approved</li>
+                    <li>Phone number +18449954755 added to approved campaign</li>
+                    <li>Test SMS sent successfully to non-verified number</li>
+                    <li>Phone verification API tested and working</li>
+                    <li>Geolocation alerts tested and sending SMS</li>
+                </ul>
+
+                <div class="success-box">
+                    <strong>🎉 Ready for Production!</strong> Once all items are checked, your Tatlist SMS system is fully operational and ready to send notifications to any customer phone number.
+                </div>
+            </div>
+
+            <!-- TROUBLESHOOTING -->
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">?</div>
+                    <h2 class="step-title">Troubleshooting & Support</h2>
+                </div>
+
+                <h3>Common Issues:</h3>
+
+                <h4>❌ "SMS not delivered" Error:</h4>
+                <ul class="substeps">
+                    <li>Check if phone number is verified (required during trial)</li>
+                    <li>Verify A2P 10DLC registration is complete</li>
+                    <li>Check Twilio logs for specific error messages</li>
+                </ul>
+
+                <h4>❌ "Invalid Phone Number" Error:</h4>
+                <ul class="substeps">
+                    <li>Ensure phone number is in E.164 format: +1XXXXXXXXXX</li>
+                    <li>Include country code (+1 for US)</li>
+                    <li>No spaces or special characters except +</li>
+                </ul>
+
+                <h4>❌ Business Verification Rejected:</h4>
+                <ul class="substeps">
+                    <li>Ensure all documents are clear and readable</li>
+                    <li>Match business name exactly across all documents</li>
+                    <li>Contact Twilio support for specific rejection reasons</li>
+                </ul>
+
+                <h3>Resources:</h3>
+                <a href="https://www.twilio.com/docs/messaging/guides/a2p-10dlc" class="link-button" target="_blank">
+                    A2P 10DLC Documentation →
+                </a>
+                <a href="https://support.twilio.com/" class="link-button" target="_blank">
+                    Twilio Support →
+                </a>
+
+                <div class="info-box">
+                    <strong>💡 Need Help?</strong> Twilio support is very responsive. Use the chat icon in the Twilio console for quick assistance.
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Tatlist - Twilio SMS Setup Guide</strong></p>
+            <p>Account: AC2e66ee555f547acaa4bc8b261add5bac | Phone: +18449954755</p>
+            <p>Generated: December 2025 | GitHub Issue: #68</p>
+        </footer>
+    </div>
+</body>
+</html>
