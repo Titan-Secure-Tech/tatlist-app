@@ -56,6 +56,26 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
     distance: null,
   })
 
+  // Email validation function
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  // Form validation function
+  const isFormValid = () => {
+    const hasRequiredFields =
+      formData.businessName.trim() !== '' &&
+      formData.phone.trim() !== '' &&
+      isValidEmail(formData.email)
+
+    if (formData.fulfillmentType === 'delivery') {
+      return hasRequiredFields && validationState.isValid && !validationState.isValidating
+    }
+
+    return hasRequiredFields
+  }
+
   const validateAddress = useCallback(
     async (address?: { street: string; city: string; state: string; zipCode: string }) => {
       const addressToValidate = address || formData
@@ -116,6 +136,8 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
     },
     [formData]
   )
+
+  const [emailTouched, setEmailTouched] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -425,22 +447,23 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
               type="email"
               value={formData.email}
               onChange={handleInputChange}
+              onBlur={() => setEmailTouched(true)}
               placeholder="shop@example.com"
               required
+              className={
+                emailTouched && formData.email && !isValidEmail(formData.email)
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : ''
+              }
             />
+            {emailTouched && formData.email && !isValidEmail(formData.email) && (
+              <p className="text-sm text-red-600 mt-1">Please enter a valid email address</p>
+            )}
           </div>
         </div>
       </div>
 
-      <Button
-        type="submit"
-        disabled={
-          formData.fulfillmentType === 'delivery'
-            ? !validationState.isValid || validationState.isValidating
-            : false
-        }
-        className="w-full"
-      >
+      <Button type="submit" disabled={!isFormValid()} className="w-full">
         Continue to Payment
       </Button>
     </form>

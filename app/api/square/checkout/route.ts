@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
             {
               type: 'DELIVERY',
               state: 'PROPOSED',
-              shipment_details: {
+              delivery_details: {
                 recipient: {
                   display_name: customerInfo.name,
                   phone_number: customerInfo.phone,
@@ -179,7 +179,8 @@ export async function POST(request: NextRequest) {
                     country: 'US',
                   },
                 },
-                expected_shipped_at: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+                schedule_type: 'SCHEDULED',
+                deliver_at: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
               },
             },
           ],

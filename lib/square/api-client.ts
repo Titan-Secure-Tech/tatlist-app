@@ -88,7 +88,7 @@ class SquareAPIClient {
           schedule_type: string
           pickup_at?: string
         }
-        shipment_details?: {
+        delivery_details?: {
           recipient: {
             display_name: string
             email_address?: string
@@ -102,7 +102,8 @@ class SquareAPIClient {
               country: string
             }
           }
-          expected_shipped_at?: string
+          schedule_type: string
+          deliver_at?: string
         }
       }>
     }
