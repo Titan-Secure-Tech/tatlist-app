@@ -62,6 +62,15 @@ function toRad(value: number): number {
 }
 
 /**
+ * Normalize state name to check if it's Florida
+ */
+function isFloridaState(state: string | undefined): boolean {
+  if (!state) return false
+  const normalized = state.trim().toLowerCase()
+  return normalized === 'fl' || normalized === 'florida'
+}
+
+/**
  * Validate address and check if it's within delivery zone
  */
 export async function validateDeliveryAddress(address: string): Promise<ValidationResult> {
@@ -211,23 +220,32 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
         retryStreetAddress = addressMatch ? addressMatch[1] : retryFeature.text || ''
       }
 
+      const retryStateRaw =
+        retryContext.find(c => (c as { id: string; text: string }).id.includes('region'))?.text ||
+        ''
       const retryAddressComponents = {
         formatted: retryFeature.place_name || address,
         street: retryStreetAddress,
         city:
           retryContext.find(c => (c as { id: string; text: string }).id.includes('place'))?.text ||
           '',
-        state:
-          retryContext.find(c => (c as { id: string; text: string }).id.includes('region'))?.text ||
-          'FL',
+        state: retryStateRaw || 'FL',
         zipCode:
           retryContext.find(c => (c as { id: string; text: string }).id.includes('postcode'))
             ?.text || '',
         coordinates: { lat: retryLat, lng: retryLng },
       }
 
+      console.log(
+        '[Mapbox] Retry address state:',
+        retryStateRaw,
+        '| Components:',
+        retryAddressComponents
+      )
+
       // Check if in Florida
-      if (retryAddressComponents.state !== 'FL' && retryAddressComponents.state !== 'Florida') {
+      if (!isFloridaState(retryStateRaw)) {
+        console.log('[Mapbox] State check failed:', retryStateRaw, 'is not Florida')
         return {
           isValid: false,
           address: retryAddressComponents,
@@ -279,19 +297,23 @@ export async function validateDeliveryAddress(address: string): Promise<Validati
       streetAddress = addressMatch ? addressMatch[1] : feature.text || ''
     }
 
+    const stateRaw =
+      context.find(c => (c as { id: string; text: string }).id.includes('region'))?.text || ''
     const addressComponents = {
       formatted: feature.place_name || address,
       street: streetAddress,
       city: context.find(c => (c as { id: string; text: string }).id.includes('place'))?.text || '',
-      state:
-        context.find(c => (c as { id: string; text: string }).id.includes('region'))?.text || 'FL',
+      state: stateRaw || 'FL',
       zipCode:
         context.find(c => (c as { id: string; text: string }).id.includes('postcode'))?.text || '',
       coordinates: { lat, lng },
     }
 
+    console.log('[Mapbox] Address state:', stateRaw, '| Components:', addressComponents)
+
     // Ensure address is in Florida
-    if (addressComponents.state !== 'FL' && addressComponents.state !== 'Florida') {
+    if (!isFloridaState(stateRaw)) {
+      console.log('[Mapbox] State check failed:', stateRaw, 'is not Florida')
       return {
         isValid: false,
         address: addressComponents,
