@@ -57,11 +57,6 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
                       Contact Us
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/faq" className="hover:text-foreground">
-                      FAQ
-                    </Link>
-                  </li>
                 </ul>
               </div>
               <div>
