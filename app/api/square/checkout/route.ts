@@ -118,6 +118,9 @@ export async function POST(request: NextRequest) {
       `[Square Checkout] Using ${environment} mode for ${customerInfo.email} (reason: ${sandboxReason})`
     )
 
+    // Format phone number to E.164 format (do this outside try-catch so it's available throughout)
+    const formattedPhone = formatPhoneE164(customerInfo.phone)
+
     // Create or get Square customer using direct API
     let squareCustomerId: string | null = null
     try {
@@ -125,9 +128,6 @@ export async function POST(request: NextRequest) {
       const nameParts = customerInfo.name.trim().split(/\s+/)
       const givenName = nameParts[0] || ''
       const familyName = nameParts.slice(1).join(' ') || ''
-
-      // Format phone number to E.164 format
-      const formattedPhone = formatPhoneE164(customerInfo.phone)
 
       // Search for existing customer by email
       const searchResponse = await squareAPIClient.searchCustomers({
