@@ -47,8 +47,19 @@ export function getSquareConfig(useSandbox: boolean = false): SquareConfig {
     )
   }
 
+  // Clean the access token - trim any whitespace that might have snuck in
+  const cleanToken = accessToken.trim()
+
+  // Debug logging (production only)
+  if (isProduction) {
+    console.log('[Square Config] Token length:', cleanToken.length)
+    console.log('[Square Config] Token starts with:', cleanToken.substring(0, 20))
+    console.log('[Square Config] Token ends with:', cleanToken.substring(cleanToken.length - 10))
+    console.log('[Square Config] Has whitespace:', /\s/.test(cleanToken) ? 'YES ❌' : 'NO ✅')
+  }
+
   const client = new SquareClient({
-    accessToken,
+    accessToken: cleanToken,
     environment: isProduction ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
     squareVersion: '2025-10-16', // Use latest API version
   })

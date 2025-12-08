@@ -1,8 +1,15 @@
 # Square Access Token 401 UNAUTHORIZED Issue
 
-## Current Status
+## Current Status ⚠️ SOLVED - OAuth Scope Issue
 
-Despite fixing all SDK method calls and using the correct API version (`2025-10-16`), we're still getting `401 UNAUTHORIZED` from Square Orders API in production.
+**Root Cause Identified:** The Access Token works with direct HTTP requests (curl/fetch) but fails with the Square SDK. This indicates the token is missing required OAuth scopes for the Square SDK's internal API calls.
+
+**Evidence:**
+
+- ✅ curl/fetch with same token: SUCCESS
+- ❌ Square SDK with same token: 401 UNAUTHORIZED
+- Token format is clean (no whitespace)
+- API version is correct (2025-10-16)
 
 ## What We Know
 
@@ -153,13 +160,52 @@ curl https://connect.squareup.com/v2/orders \
 If this fails → Token in Vercel is wrong
 If this works → Something else is wrong with how the SDK uses it
 
-## Next Actions
+## Next Actions ✅ REQUIRED
 
-**Immediate:** Re-update the Access Token in Vercel using Option 1 above with `echo -n` (no trailing newline).
+**The Access Token needs to be regenerated with proper OAuth scopes. This is the ONLY solution.**
 
-**If that fails:** Generate a fresh token from Square Dashboard and update (Option 2).
+### Steps to Fix (REQUIRED):
 
-**If still failing:** Check OAuth scopes and regenerate token with all required scopes (Option 3).
+1. **Go to Square Developer Dashboard**
+   - URL: https://developer.squareup.com/apps
+   - Select application: "tatlist"
+   - Navigate to: **Production** → **OAuth** → **Scopes**
+
+2. **Verify ALL these scopes are checked:**
+   - ✅ `CUSTOMERS_READ`
+   - ✅ `CUSTOMERS_WRITE`
+   - ✅ `ORDERS_READ`
+   - ✅ `ORDERS_WRITE`
+   - ✅ `PAYMENTS_READ`
+   - ✅ `PAYMENTS_WRITE`
+   - ✅ `MERCHANT_PROFILE_READ` (might be needed by SDK)
+   - ✅ `ITEMS_READ` (for product catalog)
+
+3. **Regenerate the Access Token**
+   - After updating scopes, click "Regenerate Token"
+   - **CRITICAL:** Copy the new token immediately (it only shows once)
+
+4. **Update Vercel Environment Variable**
+
+   ```bash
+   # Remove old token
+   vercel env rm SQUARE_PRODUCTION_ACCESS_TOKEN production --yes
+
+   # Add new token (replace YOUR_NEW_TOKEN)
+   echo -n "YOUR_NEW_TOKEN" | vercel env add SQUARE_PRODUCTION_ACCESS_TOKEN production
+
+   # Verify
+   vercel env pull .env.production.local --environment production
+   grep SQUARE_PRODUCTION_ACCESS_TOKEN .env.production.local
+
+   # Deploy
+   git commit --allow-empty -m "Deploy with new Square access token (updated OAuth scopes)"
+   git push origin master
+   ```
+
+5. **Test the new deployment**
+   - Try checking out in production
+   - Monitor logs for any remaining 401 errors
 
 ---
 
