@@ -41,7 +41,7 @@ export function HierarchicalFilter({
   const searchParams = useSearchParams()
 
   // State for collapsing the entire filter section
-  const [isFilterOpen, setIsFilterOpen] = useState(true)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   // Auto-expand the selected collection by initializing with it
   const [expandedCollections, setExpandedCollections] = useState<Set<string>>(() => {
@@ -118,72 +118,72 @@ export function HierarchicalFilter({
       {/* Collections List - Only show when expanded */}
       {isFilterOpen && (
         <div className="space-y-2">
-        {collections.map(collection => {
-          const isExpanded = expandedCollections.has(collection.id)
-          const isSelected = selectedCollectionId === collection.id
+          {collections.map(collection => {
+            const isExpanded = expandedCollections.has(collection.id)
+            const isSelected = selectedCollectionId === collection.id
 
-          return (
-            <div key={collection.id} className="space-y-1">
-              {/* Collection Header */}
-              <div
-                className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                  isSelected
-                    ? 'bg-primary/10 text-primary font-medium'
-                    : 'hover:bg-accent text-foreground'
-                }`}
-              >
+            return (
+              <div key={collection.id} className="space-y-1">
+                {/* Collection Header */}
                 <div
-                  className="flex items-center gap-2 flex-1"
-                  onClick={() => handleCollectionClick(collection.id)}
+                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                    isSelected
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'hover:bg-accent text-foreground'
+                  }`}
                 >
-                  <span className="font-medium">{collection.name}</span>
-                  <Badge variant="secondary" className="text-xs">
-                    {collection.product_count}
-                  </Badge>
+                  <div
+                    className="flex items-center gap-2 flex-1"
+                    onClick={() => handleCollectionClick(collection.id)}
+                  >
+                    <span className="font-medium">{collection.name}</span>
+                    <Badge variant="secondary" className="text-xs">
+                      {collection.product_count}
+                    </Badge>
+                  </div>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation()
+                      toggleCollection(collection.id)
+                    }}
+                    className="p-1 hover:bg-accent/50 rounded"
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
-                <button
-                  onClick={e => {
-                    e.stopPropagation()
-                    toggleCollection(collection.id)
-                  }}
-                  className="p-1 hover:bg-accent/50 rounded"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
+
+                {/* Categories (shown when expanded) */}
+                {isExpanded && collection.categories.length > 0 && (
+                  <div className="ml-6 space-y-1">
+                    {collection.categories.map(category => {
+                      const isCategorySelected = selectedCategoryId === category.id
+
+                      return (
+                        <div
+                          key={category.id}
+                          onClick={() => handleCategoryClick(collection.id, category.id)}
+                          className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                            isCategorySelected
+                              ? 'bg-primary/10 text-primary font-medium'
+                              : 'hover:bg-accent text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          <span className="text-sm">{category.name}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {category.product_count}
+                          </Badge>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
-
-              {/* Categories (shown when expanded) */}
-              {isExpanded && collection.categories.length > 0 && (
-                <div className="ml-6 space-y-1">
-                  {collection.categories.map(category => {
-                    const isCategorySelected = selectedCategoryId === category.id
-
-                    return (
-                      <div
-                        key={category.id}
-                        onClick={() => handleCategoryClick(collection.id, category.id)}
-                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                          isCategorySelected
-                            ? 'bg-primary/10 text-primary font-medium'
-                            : 'hover:bg-accent text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        <span className="text-sm">{category.name}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          {category.product_count}
-                        </Badge>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          )
-        })}
+            )
+          })}
         </div>
       )}
 
