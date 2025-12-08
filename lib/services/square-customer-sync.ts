@@ -253,11 +253,11 @@ export class SquareCustomerSyncService {
         query: {
           filter: {
             emailAddress: {
-              exact: [email.toLowerCase()],
+              exact: email.toLowerCase(),
             },
           },
-          limit: 1,
         },
+        limit: BigInt(1),
       })
 
       if (response.result.customers && response.result.customers.length > 0) {
