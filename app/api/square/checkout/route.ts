@@ -5,6 +5,33 @@ import { createClient } from '@/lib/supabase/server'
 import { randomUUID } from 'crypto'
 import type { OrderItem } from '@/lib/types/orders'
 
+/**
+ * Format phone number to E.164 format for Square API
+ * Assumes US phone numbers if no country code provided
+ */
+function formatPhoneE164(phone: string): string {
+  // Remove all non-digit characters
+  const digitsOnly = phone.replace(/\D/g, '')
+
+  // If starts with 1 and has 11 digits, add +
+  if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
+    return `+${digitsOnly}`
+  }
+
+  // If 10 digits, assume US and add +1
+  if (digitsOnly.length === 10) {
+    return `+1${digitsOnly}`
+  }
+
+  // If already starts with + return as-is
+  if (phone.startsWith('+')) {
+    return phone
+  }
+
+  // Default: assume US and add +1
+  return `+1${digitsOnly}`
+}
+
 interface CartItem {
   id: string
   name: string
@@ -99,6 +126,9 @@ export async function POST(request: NextRequest) {
       const givenName = nameParts[0] || ''
       const familyName = nameParts.slice(1).join(' ') || ''
 
+      // Format phone number to E.164 format
+      const formattedPhone = formatPhoneE164(customerInfo.phone)
+
       // Search for existing customer by email
       const searchResponse = await squareAPIClient.searchCustomers({
         query: {
@@ -120,7 +150,7 @@ export async function POST(request: NextRequest) {
           given_name: givenName,
           family_name: familyName,
           email_address: customerInfo.email.toLowerCase(),
-          phone_number: customerInfo.phone,
+          phone_number: formattedPhone,
           reference_id: user?.id,
         })
 
@@ -168,7 +198,7 @@ export async function POST(request: NextRequest) {
               delivery_details: {
                 recipient: {
                   display_name: customerInfo.name,
-                  phone_number: customerInfo.phone,
+                  phone_number: formattedPhone,
                   email_address: customerInfo.email,
                   address: {
                     address_line_1: deliveryAddress.line1,
@@ -221,7 +251,7 @@ export async function POST(request: NextRequest) {
         },
         pre_populated_data: {
           buyer_email: customerInfo.email,
-          buyer_phone_number: customerInfo.phone,
+          buyer_phone_number: formattedPhone,
           buyer_address: {
             address_line_1: deliveryAddress.line1,
             address_line_2: deliveryAddress.line2,
