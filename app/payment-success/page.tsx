@@ -11,25 +11,28 @@ import type { Order } from '@/lib/types/orders'
 interface PaymentSuccessPageProps {
   searchParams: {
     orderId?: string
+    squareOrderId?: string
     orderNumber?: string
     total?: string
   }
 }
 
 export default async function PaymentSuccessPage({ searchParams }: PaymentSuccessPageProps) {
-  const { orderId, orderNumber, total } = searchParams
+  const { orderId, squareOrderId, orderNumber, total } = searchParams
 
   let order: Order | null = null
   let error: string | null = null
 
   // Try to fetch the order from database
-  if (orderId) {
+  if (orderId || squareOrderId) {
     const supabase = await createClient()
-    const { data, error: fetchError } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('id', orderId)
-      .single()
+
+    // Try by Supabase order ID first, then by Square order ID
+    const query = orderId
+      ? supabase.from('orders').select('*').eq('id', orderId).single()
+      : supabase.from('orders').select('*').eq('square_order_id', squareOrderId).single()
+
+    const { data, error: fetchError } = await query
 
     if (fetchError) {
       console.error('Error fetching order:', fetchError)

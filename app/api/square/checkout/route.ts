@@ -235,10 +235,8 @@ export async function POST(request: NextRequest) {
       }
 
       // Create payment link for the order using direct API
-      // Build redirect URL with order details for payment-success page
-      const redirectUrl = order
-        ? `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success?orderId=${order.id}&orderNumber=${order.order_number}&total=${order.total}`
-        : `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success`
+      // Build redirect URL with Square order ID (Supabase order created later)
+      const redirectUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/payment-success?squareOrderId=${orderResponse.order.id}&total=${total}`
 
       const paymentLinkRequest = {
         quick_pay: {
