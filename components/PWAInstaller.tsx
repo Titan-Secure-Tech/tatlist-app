@@ -12,9 +12,39 @@ interface BeforeInstallPromptEvent extends Event {
 export function PWAInstaller() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstallable, setIsInstallable] = useState(false)
-  const [isInstalled, setIsInstalled] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(() => {
+    // Check if already installed during initialization
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(display-mode: standalone)').matches
+    }
+    return false
+  })
   const [showPrompt, setShowPrompt] = useState(false)
-  const [isIOS, setIsIOS] = useState(false)
+  const [isIOS, setIsIOS] = useState(() => {
+    // Detect iOS during initialization
+    if (typeof window !== 'undefined') {
+      return (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        !(window as any).MSStream
+      )
+    }
+    return false
+  })
+  const [isDismissed, setIsDismissed] = useState(() => {
+    // Check if user dismissed the prompt recently (within 7 days) during initialization
+    if (typeof window !== 'undefined') {
+      const dismissedTime = localStorage.getItem('pwa-install-dismissed')
+      if (dismissedTime) {
+        const daysSinceDismissal = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24)
+        if (daysSinceDismissal < 7) {
+          console.log('PWA install prompt was dismissed recently, not showing')
+          return true
+        }
+      }
+    }
+    return false
+  })
 
   useEffect(() => {
     // Register service worker
@@ -29,18 +59,10 @@ export function PWAInstaller() {
         })
     }
 
-    // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true)
+    // Don't set up listeners if already installed or dismissed
+    if (isInstalled || isDismissed) {
       return
     }
-
-    // Detect iOS
-    const isIOSDevice =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      !(window as any).MSStream
-    setIsIOS(isIOSDevice)
 
     // Listen for beforeinstallprompt event (Android/Desktop)
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -70,7 +92,7 @@ export function PWAInstaller() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
     }
-  }, [])
+  }, [isInstalled, isDismissed])
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return
@@ -93,12 +115,13 @@ export function PWAInstaller() {
 
   const handleDismiss = () => {
     setShowPrompt(false)
+    setIsDismissed(true)
     // Show again in 7 days
     localStorage.setItem('pwa-install-dismissed', Date.now().toString())
   }
 
-  // Don't show if already installed or not installable
-  if (isInstalled || (!isInstallable && !isIOS) || !showPrompt) {
+  // Don't show if already installed, dismissed, or not installable
+  if (isInstalled || isDismissed || (!isInstallable && !isIOS) || !showPrompt) {
     return null
   }
 
