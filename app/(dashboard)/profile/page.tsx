@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { User } from 'lucide-react'
+import { User, Package } from 'lucide-react'
 import { PushNotificationToggle } from '@/components/push-notifications/PushNotificationToggle'
 import { ContactPreferenceEditor } from '@/components/user/ContactPreferenceEditor'
 import { BusinessHoursEditor } from '@/components/user/BusinessHoursEditor'
+import { CustomerInformationForm } from '@/components/profile/customer-information-form'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -20,6 +21,13 @@ export default async function ProfilePage() {
     .from('users')
     .select('contact_preference, phone, user_type, business_hours')
     .eq('id', user.id)
+    .single()
+
+  // Fetch customer information
+  const { data: customerInfo } = await supabase
+    .from('customer_information')
+    .select('*')
+    .eq('user_id', user.id)
     .single()
 
   const isShopOwner = profile?.user_type === 'shop_owner'
@@ -68,6 +76,19 @@ export default async function ProfilePage() {
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Customer Information (Business & Shipping) */}
+      <div className="bg-white border border-gray-200 rounded-lg p-8">
+        <div className="flex items-center mb-6">
+          <Package className="h-6 w-6 text-gray-600 mr-3" />
+          <h2 className="text-xl font-bold text-black">Customer Information</h2>
+        </div>
+        <p className="text-sm text-gray-600 mb-6">
+          Save your business and shipping information for faster checkout. Your address will be validated
+          and checked for delivery eligibility.
+        </p>
+        <CustomerInformationForm userId={user.id} initialData={customerInfo} />
       </div>
 
       {/* Contact Preferences */}

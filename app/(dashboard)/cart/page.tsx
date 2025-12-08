@@ -30,8 +30,8 @@ export default function CartPage() {
   }, [])
 
   const handleCheckout = async () => {
-    // Navigate to the checkout page
-    window.location.href = '/shop/checkout'
+    // Navigate to the enhanced checkout page with business details and saved customer info
+    window.location.href = '/shop/checkout-v2'
   }
 
   // Debug logging

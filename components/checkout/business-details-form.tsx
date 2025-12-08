@@ -10,7 +10,7 @@ import AddressAutocomplete from '@/components/forms/AddressAutocomplete'
 
 export interface BusinessDetails {
   businessName: string
-  licenseNumber: string
+  licenseNumber?: string // Made optional - not all customers are licensed tattoo shops
   street: string
   city: string
   state: string
@@ -207,7 +207,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
         <div>
           <Label htmlFor="licenseNumber">
-            Tattoo Shop License Number <span className="text-red-500">*</span>
+            Tattoo Shop License Number <span className="text-muted-foreground">(Optional)</span>
           </Label>
           <Input
             id="licenseNumber"
@@ -215,10 +215,9 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
             value={formData.licenseNumber}
             onChange={handleInputChange}
             placeholder="FL-XXXX-XXXX"
-            required
           />
           <p className="text-sm text-muted-foreground mt-1">
-            Required for verification as a licensed tattoo shop
+            If you&apos;re a licensed tattoo shop, enter your license number for priority processing
           </p>
         </div>
 

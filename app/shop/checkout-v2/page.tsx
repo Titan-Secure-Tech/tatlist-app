@@ -50,25 +50,50 @@ function CheckoutContent() {
       } = await supabase.auth.getUser()
 
       if (user) {
-        const { data: profile, error } = await supabase
-          .from('users')
-          .select(
-            'email, first_name, last_name, phone, street_address, city, state, zip_code, business_name, shop_name'
-          )
-          .eq('id', user.id)
+        // First, try to load from customer_information table
+        const { data: customerInfo, error: customerError } = await supabase
+          .from('customer_information')
+          .select('*')
+          .eq('user_id', user.id)
           .single()
 
-        if (!error && profile) {
-          const userProfile = profile as UserProfile
+        if (!customerError && customerInfo) {
+          // Use saved customer information
           setInitialValues({
-            businessName: userProfile.business_name || userProfile.shop_name || '',
-            street: userProfile.street_address || '',
-            city: userProfile.city || '',
-            state: userProfile.state || '',
-            zipCode: userProfile.zip_code || '',
-            phone: userProfile.phone || '',
-            email: userProfile.email || user.email || '',
+            businessName: customerInfo.business_name || '',
+            licenseNumber: customerInfo.license_number || '',
+            street: customerInfo.street_address || '',
+            city: customerInfo.city || '',
+            state: customerInfo.state || '',
+            zipCode: customerInfo.zip_code || '',
+            phone: customerInfo.phone || '',
+            email: customerInfo.email || user.email || '',
           })
+
+          // Show toast to let user know their info was loaded
+          toast.success('Your saved customer information has been loaded')
+        } else {
+          // Fallback to users table if no customer_information exists
+          const { data: profile, error } = await supabase
+            .from('users')
+            .select(
+              'email, first_name, last_name, phone, street_address, city, state, zip_code, business_name, shop_name'
+            )
+            .eq('id', user.id)
+            .single()
+
+          if (!error && profile) {
+            const userProfile = profile as UserProfile
+            setInitialValues({
+              businessName: userProfile.business_name || userProfile.shop_name || '',
+              street: userProfile.street_address || '',
+              city: userProfile.city || '',
+              state: userProfile.state || '',
+              zipCode: userProfile.zip_code || '',
+              phone: userProfile.phone || '',
+              email: userProfile.email || user.email || '',
+            })
+          }
         }
       }
     } catch (error) {
@@ -208,7 +233,7 @@ function CheckoutContent() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Secure Checkout</h1>
-          <p className="text-sm text-muted-foreground">Licensed tattoo shops only</p>
+          <p className="text-sm text-muted-foreground">Complete your order</p>
         </div>
       </div>
 
@@ -254,8 +279,7 @@ function CheckoutContent() {
               <CardContent>
                 <Alert className="mb-6">
                   <AlertDescription>
-                    We only deliver to licensed tattoo shops within a 25-mile radius of Tampa. Your
-                    business address will be validated to ensure delivery availability.
+                    We deliver within a 25-mile radius of Tampa. Your delivery address will be validated to ensure availability. Licensed tattoo shops receive priority processing.
                   </AlertDescription>
                 </Alert>
                 <BusinessDetailsForm
