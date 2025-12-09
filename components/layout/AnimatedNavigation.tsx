@@ -1,13 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Home, ShoppingBag, Package, List, User, Settings, LogOut } from 'lucide-react'
 import { AnimatedCartIcon } from '@/components/cart/AnimatedCartIcon'
+import { Logo } from '@/components/ui/logo'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 interface NavItem {
   href: string
@@ -107,18 +111,9 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/dashboard">
-            <motion.div
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">T</span>
-              </div>
-              <span className="text-xl font-light text-gray-900">Tatlist</span>
-            </motion.div>
-          </Link>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Logo />
+          </motion.div>
 
           {/* Navigation Items */}
           <div className="hidden md:flex items-center gap-1">
@@ -176,32 +171,85 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
           </div>
         </div>
 
-        {/* Mobile Navigation - Improved visibility and touch targets */}
-        <motion.div
-          className="md:hidden flex items-center gap-2 pb-4 pt-2 overflow-x-auto scrollbar-hide -mx-4 px-4"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {navItems.map(item => {
-            const Icon = item.icon
-            const isActive = pathname === item.href
-
-            return (
-              <Link key={item.href} href={item.href}>
-                <motion.div
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-medium ${
-                    isActive ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </motion.div>
-              </Link>
-            )
-          })}
-        </motion.div>
+        {/* Mobile Navigation - shadcn v4 style */}
+        <div className="md:hidden pb-4 pt-2">
+          <MobileNavMenu navItems={navItems} pathname={pathname} />
+        </div>
       </nav>
     </header>
+  )
+}
+
+// Mobile Navigation Menu with shadcn v4 pattern
+function MobileNavMenu({ navItems, pathname }: { navItems: NavItem[]; pathname: string }) {
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          className={cn(
+            'extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 !p-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent'
+          )}
+        >
+          <div className="relative flex h-8 w-4 items-center justify-center">
+            <div className="relative size-4">
+              <span
+                className={cn(
+                  'bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100',
+                  open ? 'top-[0.4rem] -rotate-45' : 'top-1'
+                )}
+              />
+              <span
+                className={cn(
+                  'bg-foreground absolute left-0 block h-0.5 w-4 transition-all duration-100',
+                  open ? 'top-[0.4rem] rotate-45' : 'top-2.5'
+                )}
+              />
+            </div>
+            <span className="sr-only">Toggle Menu</span>
+          </div>
+          <span className="flex h-8 items-center text-lg leading-none font-medium">Menu</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="bg-background/90 no-scrollbar h-(--radix-popper-available-height) w-(--radix-popper-available-width) overflow-y-auto rounded-none border-none p-0 shadow-none backdrop-blur duration-100"
+        align="start"
+        side="bottom"
+        alignOffset={-16}
+        sideOffset={14}
+      >
+        <div className="flex flex-col gap-12 overflow-auto px-6 py-6">
+          <div className="flex flex-col gap-4">
+            <div className="text-muted-foreground text-sm font-medium">Navigation</div>
+            <div className="flex flex-col gap-3">
+              {navItems.map((item, index) => {
+                const Icon = item.icon
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    onClick={() => {
+                      router.push(item.href)
+                      setOpen(false)
+                    }}
+                    className={cn(
+                      'text-2xl font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-3',
+                      isActive && 'text-foreground'
+                    )}
+                  >
+                    <Icon className="w-6 h-6" />
+                    <span>{item.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
