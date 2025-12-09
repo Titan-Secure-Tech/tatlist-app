@@ -3,6 +3,7 @@ import { OrderConfirmation } from './templates/OrderConfirmation'
 import { OrderStatusUpdate } from './templates/OrderStatusUpdate'
 import { ContactForm } from './templates/ContactForm'
 import { PickupReady } from './templates/PickupReady'
+import { InternalOrderNotification } from './templates/InternalOrderNotification'
 
 interface EmailConfig {
   to: string | string[]
@@ -118,16 +119,67 @@ export class MailgunService {
       })
     )
 
-    // Send to both customer and fulfillment team
-    const recipients = [to, 'blackeyemobile@gmail.com']
-
+    // Send to customer only
     return this.sendEmail({
-      to: recipients,
+      to,
       subject: `Order Confirmation - #${orderData.orderId.slice(0, 8).toUpperCase()}`,
       html,
       text: `Order confirmation for order #${orderData.orderId.slice(0, 8).toUpperCase()}. Total: $${orderData.total.toFixed(2)}`,
       from: `Tatlist Orders <orders@${this.domain}>`,
       replyTo: 'support@tatlist.com',
+    })
+  }
+
+  async sendInternalOrderNotification(orderData: {
+    orderId: string
+    orderNumber?: string
+    customerName: string
+    customerEmail: string
+    customerPhone: string
+    items: Array<{ name: string; quantity: number; price: number; variant?: string }>
+    subtotal: number
+    deliveryFee: number
+    tax: number
+    total: number
+    deliveryAddress: {
+      line1: string
+      line2?: string
+      city: string
+      state: string
+      postalCode: string
+    }
+    paymentMethod?: string
+    businessName?: string
+    licenseName?: string
+  }): Promise<boolean> {
+    const displayOrderNumber = orderData.orderNumber || orderData.orderId.slice(0, 8).toUpperCase()
+
+    const html = await render(
+      InternalOrderNotification({
+        orderId: orderData.orderId,
+        orderNumber: orderData.orderNumber,
+        customerName: orderData.customerName,
+        customerEmail: orderData.customerEmail,
+        customerPhone: orderData.customerPhone,
+        items: orderData.items,
+        subtotal: orderData.subtotal,
+        deliveryFee: orderData.deliveryFee,
+        tax: orderData.tax,
+        total: orderData.total,
+        deliveryAddress: orderData.deliveryAddress,
+        paymentMethod: orderData.paymentMethod,
+        businessName: orderData.businessName,
+        licenseName: orderData.licenseName,
+      })
+    )
+
+    return this.sendEmail({
+      to: 'orders@tatlist.com',
+      subject: `🔔 NEW ORDER - #${displayOrderNumber} - ${orderData.customerName}`,
+      html,
+      text: `New order #${displayOrderNumber} from ${orderData.customerName} (${orderData.customerEmail}). Total: $${orderData.total.toFixed(2)}`,
+      from: `Tatlist Orders <orders@${this.domain}>`,
+      replyTo: orderData.customerEmail,
     })
   }
 

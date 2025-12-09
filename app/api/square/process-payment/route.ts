@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Send order confirmation email
+    // Send order confirmation email to customer
     try {
       await mailgunService.sendOrderConfirmation(customerInfo.email, {
         orderId: order?.id || paymentResult.payment.id,
@@ -167,6 +167,27 @@ export async function POST(request: NextRequest) {
       })
     } catch (emailError) {
       console.error('Failed to send confirmation email:', emailError)
+      // Don't fail the request if email fails
+    }
+
+    // Send internal order notification to warehouse team
+    try {
+      await mailgunService.sendInternalOrderNotification({
+        orderId: order?.id || paymentResult.payment.id,
+        orderNumber: order?.order_number,
+        customerName: customerInfo.name,
+        customerEmail: customerInfo.email,
+        customerPhone: customerInfo.phone,
+        items: items,
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        tax: taxAmount,
+        total: amount,
+        deliveryAddress: deliveryAddress,
+        paymentMethod: paymentResult.payment.sourceType,
+      })
+    } catch (emailError) {
+      console.error('Failed to send internal order notification:', emailError)
       // Don't fail the request if email fails
     }
 
