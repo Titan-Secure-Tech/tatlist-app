@@ -10,15 +10,15 @@ import { ProductSearch } from '@/components/products/ProductSearch'
 
 describe('GitHub Issues - Simple Integration Tests', () => {
   describe('Issue #33 - Contact Page Phone Number', () => {
-    it('displays the correct phone number 813-310-3877', () => {
+    it('displays the correct phone number 813-897-3979', () => {
       render(<ContactPage />)
-      expect(screen.getByText('813-310-3877')).toBeInTheDocument()
+      expect(screen.getByText('813-897-3979')).toBeInTheDocument()
     })
 
     it('phone number is clickable with tel: link', () => {
       render(<ContactPage />)
-      const phoneLink = screen.getByText('813-310-3877').closest('a')
-      expect(phoneLink).toHaveAttribute('href', 'tel:813-310-3877')
+      const phoneLink = screen.getByText('813-897-3979').closest('a')
+      expect(phoneLink).toHaveAttribute('href', 'tel:813-897-3979')
     })
 
     it('does not show the old placeholder phone number', () => {

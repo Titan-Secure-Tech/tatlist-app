@@ -76,8 +76,7 @@ export default function ValueProposition() {
             Why Tampa Artists Choose Tatlist
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            The official delivery and logistics service for Black Eye Products Tattoo Supply in
-            Tampa Bay
+            The official delivery service for Tattoo Supplies in Tampa Bay and surrounding area
           </p>
         </motion.div>
 
