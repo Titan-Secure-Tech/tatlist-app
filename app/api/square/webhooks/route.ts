@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { mailgunService } from '@/lib/email/mailgun'
 
 // Square webhook event types we care about
 const RELEVANT_EVENT_TYPES = [
@@ -193,12 +194,78 @@ async function handlePaymentEvent(
     if (payment.receipt_url) {
       updates.square_receipt_url = payment.receipt_url
     }
+
+    // Update order first
+    await supabase.from('orders').update(updates).eq('id', order.id)
+
+    // Send confirmation emails after payment is confirmed
+    try {
+      // Fetch order items for email
+      const { data: orderItems } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id)
+
+      const items =
+        orderItems?.map(item => ({
+          name: item.product_name,
+          variant: item.variant_name,
+          quantity: item.quantity,
+          price: item.unit_price,
+        })) || []
+
+      // Send customer confirmation email
+      await mailgunService.sendOrderConfirmation(order.customer_email, {
+        orderId: order.id,
+        customerName: order.customer_name,
+        items: items,
+        subtotal: order.subtotal,
+        deliveryFee: order.delivery_fee || 0,
+        tax: order.tax || 0,
+        total: order.total,
+        deliveryAddress: order.delivery_address || {
+          line1: '',
+          city: '',
+          state: '',
+          postalCode: '',
+        },
+      })
+
+      console.log(`Sent order confirmation email to ${order.customer_email}`)
+
+      // Send internal order notification to orders@tatlist.com
+      await mailgunService.sendInternalOrderNotification({
+        orderId: order.id,
+        orderNumber: order.order_number,
+        customerName: order.customer_name,
+        customerEmail: order.customer_email,
+        customerPhone: order.customer_phone,
+        items: items,
+        subtotal: order.subtotal,
+        deliveryFee: order.delivery_fee || 0,
+        tax: order.tax || 0,
+        total: order.total,
+        deliveryAddress: order.delivery_address || {
+          line1: '',
+          city: '',
+          state: '',
+          postalCode: '',
+        },
+        paymentMethod: 'Square',
+      })
+
+      console.log('Sent internal order notification to orders@tatlist.com')
+    } catch (emailError) {
+      console.error('Failed to send confirmation emails:', emailError)
+      // Don't fail the webhook if email fails
+    }
   } else if (payment.status === 'FAILED' || payment.status === 'CANCELED') {
     updates.status = 'cancelled'
     updates.cancelled_at = new Date().toISOString()
+    await supabase.from('orders').update(updates).eq('id', order.id)
+  } else {
+    await supabase.from('orders').update(updates).eq('id', order.id)
   }
-
-  await supabase.from('orders').update(updates).eq('id', order.id)
 
   console.log(`Updated order ${order.order_number} with payment status: ${payment.status}`)
 }

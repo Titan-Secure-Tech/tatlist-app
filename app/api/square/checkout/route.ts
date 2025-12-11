@@ -4,7 +4,6 @@ import { isSandboxUser } from '@/lib/square/client-config'
 import { createClient } from '@/lib/supabase/server'
 import { randomUUID } from 'crypto'
 import type { OrderItem } from '@/lib/types/orders'
-import { mailgunService } from '@/lib/email/mailgun'
 
 /**
  * Format phone number to E.164 format for Square API
@@ -299,7 +298,7 @@ export async function POST(request: NextRequest) {
           total: total,
           subtotal: subtotal,
           delivery_fee: fulfillmentType === 'delivery' ? deliveryFee : 0,
-          tax_amount: 0,
+          tax: 0,
           currency: 'USD',
           fulfillment_type: fulfillmentType,
           delivery_address: fulfillmentType === 'delivery' ? deliveryAddress : null,
@@ -327,43 +326,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Send order confirmation email to customer
-      try {
-        await mailgunService.sendOrderConfirmation(customerInfo.email, {
-          orderId: order?.id || orderResponse.order.id,
-          customerName: customerInfo.name,
-          items: items,
-          subtotal: subtotal,
-          deliveryFee: fulfillmentType === 'delivery' ? deliveryFee : 0,
-          tax: 0,
-          total: total,
-          deliveryAddress: deliveryAddress,
-        })
-      } catch (emailError) {
-        console.error('Failed to send confirmation email:', emailError)
-        // Don't fail the request if email fails
-      }
-
-      // Send internal order notification to orders@tatlist.com
-      try {
-        await mailgunService.sendInternalOrderNotification({
-          orderId: order?.id || orderResponse.order.id,
-          orderNumber: order?.order_number,
-          customerName: customerInfo.name,
-          customerEmail: customerInfo.email,
-          customerPhone: customerInfo.phone,
-          items: items,
-          subtotal: subtotal,
-          deliveryFee: fulfillmentType === 'delivery' ? deliveryFee : 0,
-          tax: 0,
-          total: total,
-          deliveryAddress: deliveryAddress,
-          paymentMethod: 'Square',
-        })
-      } catch (emailError) {
-        console.error('Failed to send internal order notification:', emailError)
-        // Don't fail the request if email fails
-      }
+      // Note: Email confirmations are sent via webhook after payment is confirmed
+      // See app/api/square/webhooks/route.ts handlePaymentEvent()
 
       return NextResponse.json({
         orderId: order?.id || orderResponse.order.id,
