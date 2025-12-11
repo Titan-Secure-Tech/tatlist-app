@@ -43,6 +43,12 @@ CREATE INDEX IF NOT EXISTS idx_customer_information_email ON customer_informatio
 -- Enable Row Level Security
 ALTER TABLE customer_information ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist (for idempotent migrations)
+DROP POLICY IF EXISTS "Users can view their own customer information" ON customer_information;
+DROP POLICY IF EXISTS "Users can insert their own customer information" ON customer_information;
+DROP POLICY IF EXISTS "Users can update their own customer information" ON customer_information;
+DROP POLICY IF EXISTS "Users can delete their own customer information" ON customer_information;
+
 -- RLS Policies: Users can only access their own customer information
 CREATE POLICY "Users can view their own customer information"
   ON customer_information FOR SELECT
@@ -68,6 +74,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Drop existing trigger if it exists (for idempotent migrations)
+DROP TRIGGER IF EXISTS trigger_update_customer_information_updated_at ON customer_information;
 
 -- Create trigger to call the function on updates
 CREATE TRIGGER trigger_update_customer_information_updated_at
