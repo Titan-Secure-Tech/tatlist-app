@@ -509,4 +509,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 # Site URL (for OAuth callbacks)
 NEXT_PUBLIC_SITE_URL=http://localhost:7500  # Development
+
+# Web Push Notifications (VAPID Keys)
+# Generate your own keys with: bunx web-push generate-vapid-keys
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-vapid-public-key
+VAPID_PRIVATE_KEY=your-vapid-private-key
+VAPID_SUBJECT=mailto:support@tatlist.com
 ```
