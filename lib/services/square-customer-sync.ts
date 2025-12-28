@@ -1,14 +1,8 @@
-import { SquareError, SquareClient } from 'square'
 import { createClient } from '@/lib/supabase/server'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { getSquareConfig } from '@/lib/square/client-config'
+import { getSquareAPIClient } from '@/lib/square/api-client'
 
-// This function is deprecated - use getSquareConfig() directly
-// Kept for backward compatibility
-function initializeSquareClient(useSandbox: boolean = false) {
-  const config = getSquareConfig(useSandbox)
-  return config.client
-}
+type SquareAPIClient = ReturnType<typeof getSquareAPIClient>['client']
 
 interface SyncResult {
   success: boolean
@@ -34,23 +28,28 @@ interface SquareCustomer {
 }
 
 export class SquareCustomerSyncService {
-  private supabase: SupabaseClient
-  private squareClient: SquareClient | null
+  private supabase: SupabaseClient | Promise<SupabaseClient>
+  private squareClient: SquareAPIClient | null
+  private useSandbox: boolean
   private syncLogId?: string
 
-  constructor(supabaseClient?: SupabaseClient, squareClient?: SquareClient) {
+  constructor(
+    supabaseClient?: SupabaseClient | Promise<SupabaseClient>,
+    useSandbox: boolean = false
+  ) {
     this.supabase = supabaseClient || createClient()
-    this.squareClient = squareClient || null
+    this.squareClient = null
+    this.useSandbox = useSandbox
   }
 
   /**
-   * Get Square client - uses injected client or creates default production client
+   * Get Square API client - uses direct HTTP client (not SDK)
    */
-  private getSquareClient(): SquareClient {
+  private getSquareClient(): SquareAPIClient {
     if (this.squareClient) {
       return this.squareClient
     }
-    const config = getSquareConfig()
+    const config = getSquareAPIClient(this.useSandbox)
     return config.client
   }
 
@@ -191,14 +190,15 @@ export class SquareCustomerSyncService {
     }
 
     try {
-      // List all Square customers
+      // List all Square customers using direct API
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customers.list()
+      const response = await squareClient.listCustomers()
 
-      if (response.result.customers) {
-        for (const squareCustomer of response.result.customers) {
+      if (response.customers) {
+        for (const squareCustomer of response.customers) {
           try {
-            if (!squareCustomer.emailAddress) continue
+            const email = squareCustomer.email_address as string | undefined
+            if (!email) continue
 
             // Check if already linked
             const { data: existingLink } = await this.supabase
@@ -209,27 +209,28 @@ export class SquareCustomerSyncService {
 
             if (existingLink) {
               // Update existing link
-              await this.updateLinkedCustomer(existingLink.id, squareCustomer)
+              await this.updateLinkedCustomer(
+                existingLink.id,
+                squareCustomer as unknown as SquareCustomer
+              )
               result.customersUpdated++
             } else {
               // Try to match with Supabase user by email
               const { data: user } = await this.supabase.rpc('match_square_customer_to_user', {
-                p_email: squareCustomer.emailAddress,
+                p_email: email,
               })
 
               if (user) {
                 // Create new link
-                await this.linkSquareCustomer(user, squareCustomer)
+                await this.linkSquareCustomer(user, squareCustomer as unknown as SquareCustomer)
                 result.customersMatched++
               }
             }
           } catch (customerError) {
-            console.error(
-              `Failed to sync Square customer ${squareCustomer.emailAddress}:`,
-              customerError
-            )
+            const email = squareCustomer.email_address as string | undefined
+            console.error(`Failed to sync Square customer ${email}:`, customerError)
             result.customersFailed++
-            result.errors.push({ email: squareCustomer.emailAddress, error: String(customerError) })
+            result.errors.push({ email, error: String(customerError) })
           }
         }
       }
@@ -244,24 +245,36 @@ export class SquareCustomerSyncService {
   }
 
   /**
-   * Find Square customer by email
+   * Find Square customer by email using direct API
    */
   private async findSquareCustomerByEmail(email: string): Promise<SquareCustomer | null> {
     try {
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customers.search({
+      const response = await squareClient.searchCustomers({
         query: {
           filter: {
-            emailAddress: {
+            email_address: {
               exact: email.toLowerCase(),
             },
           },
         },
-        limit: BigInt(1),
+        limit: 1,
       })
 
-      if (response.result.customers && response.result.customers.length > 0) {
-        return response.result.customers[0] as SquareCustomer
+      if (response.customers && response.customers.length > 0) {
+        const customer = response.customers[0] as Record<string, unknown>
+        return {
+          id: customer.id as string,
+          givenName: customer.given_name as string | undefined,
+          familyName: customer.family_name as string | undefined,
+          emailAddress: customer.email_address as string | undefined,
+          phoneNumber: customer.phone_number as string | undefined,
+          companyName: customer.company_name as string | undefined,
+          address: customer.address as Record<string, unknown> | undefined,
+          referenceId: customer.reference_id as string | undefined,
+          createdAt: customer.created_at as string | undefined,
+          updatedAt: customer.updated_at as string | undefined,
+        }
       }
     } catch (error) {
       console.error('Failed to search Square customer:', error)
@@ -271,32 +284,43 @@ export class SquareCustomerSyncService {
   }
 
   /**
-   * Create Square customer
+   * Create Square customer using direct API
    */
   private async createSquareCustomer(
     user: Record<string, unknown>
   ): Promise<SquareCustomer | null> {
     try {
       const squareClient = this.getSquareClient()
-      const response = await squareClient.customers.create({
-        givenName: user.first_name || user.full_name?.split(' ')[0],
-        familyName: user.last_name || user.full_name?.split(' ').slice(1).join(' '),
-        emailAddress: user.email,
-        phoneNumber: user.phone,
-        referenceId: user.user_id, // Store our user ID in Square
+      const fullName = user.full_name as string | undefined
+      const response = await squareClient.createCustomer({
+        given_name: (user.first_name as string) || fullName?.split(' ')[0],
+        family_name: (user.last_name as string) || fullName?.split(' ').slice(1).join(' '),
+        email_address: user.email as string,
+        phone_number: user.phone as string | undefined,
+        reference_id: user.user_id as string, // Store our user ID in Square
       })
 
-      return response.result.customer as SquareCustomer
-    } catch (error) {
-      if (error instanceof SquareError) {
-        console.error('Square API error:', error.result)
+      const customer = response.customer as Record<string, unknown>
+      return {
+        id: customer.id as string,
+        givenName: customer.given_name as string | undefined,
+        familyName: customer.family_name as string | undefined,
+        emailAddress: customer.email_address as string | undefined,
+        phoneNumber: customer.phone_number as string | undefined,
+        companyName: customer.company_name as string | undefined,
+        address: customer.address as Record<string, unknown> | undefined,
+        referenceId: customer.reference_id as string | undefined,
+        createdAt: customer.created_at as string | undefined,
+        updatedAt: customer.updated_at as string | undefined,
       }
+    } catch (error) {
+      console.error('Square API error creating customer:', error)
       throw error
     }
   }
 
   /**
-   * Update Square customer
+   * Update Square customer using direct API
    */
   private async updateSquareCustomer(linkedCustomer: Record<string, unknown>): Promise<void> {
     try {
@@ -310,10 +334,10 @@ export class SquareCustomerSyncService {
       if (!user) return
 
       const squareClient = this.getSquareClient()
-      await squareClient.customers.update(linkedCustomer.square_customer_id as string, {
-        givenName: user.first_name,
-        familyName: user.last_name,
-        phoneNumber: user.phone,
+      await squareClient.updateCustomer(linkedCustomer.square_customer_id as string, {
+        given_name: user.first_name,
+        family_name: user.last_name,
+        phone_number: user.phone,
       })
 
       // Update sync timestamp
@@ -322,9 +346,7 @@ export class SquareCustomerSyncService {
         .update({ last_synced_at: new Date().toISOString() })
         .eq('id', linkedCustomer.id)
     } catch (error) {
-      if (error instanceof SquareError) {
-        console.error('Square API error:', error.result)
-      }
+      console.error('Square API error updating customer:', error)
       throw error
     }
   }
@@ -378,7 +400,7 @@ export class SquareCustomerSyncService {
   }
 
   /**
-   * Create or get Square customer for checkout
+   * Create or get Square customer for checkout using direct API
    */
   async getOrCreateSquareCustomerForCheckout(
     email: string,
@@ -409,18 +431,30 @@ export class SquareCustomerSyncService {
       let squareCustomer = await this.findSquareCustomerByEmail(email)
 
       if (!squareCustomer) {
-        // Create new Square customer
+        // Create new Square customer using direct API
         const squareClient = this.getSquareClient()
-        const response = await squareClient.customers.create({
-          emailAddress: email.toLowerCase(),
-          givenName: customerData.givenName,
-          familyName: customerData.familyName,
-          phoneNumber: customerData.phoneNumber,
-          companyName: customerData.companyName,
-          referenceId: customerData.userId,
+        const response = await squareClient.createCustomer({
+          email_address: email.toLowerCase(),
+          given_name: customerData.givenName,
+          family_name: customerData.familyName,
+          phone_number: customerData.phoneNumber,
+          company_name: customerData.companyName,
+          reference_id: customerData.userId,
         })
 
-        squareCustomer = response.result.customer as SquareCustomer
+        const customer = response.customer as Record<string, unknown>
+        squareCustomer = {
+          id: customer.id as string,
+          givenName: customer.given_name as string | undefined,
+          familyName: customer.family_name as string | undefined,
+          emailAddress: customer.email_address as string | undefined,
+          phoneNumber: customer.phone_number as string | undefined,
+          companyName: customer.company_name as string | undefined,
+          address: customer.address as Record<string, unknown> | undefined,
+          referenceId: customer.reference_id as string | undefined,
+          createdAt: customer.created_at as string | undefined,
+          updatedAt: customer.updated_at as string | undefined,
+        }
       }
 
       // Link to Supabase user if authenticated
