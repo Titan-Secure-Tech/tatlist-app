@@ -28,16 +28,14 @@ interface SquareCustomer {
 }
 
 export class SquareCustomerSyncService {
-  private supabase: SupabaseClient | Promise<SupabaseClient>
+  private supabase: SupabaseClient
   private squareClient: SquareAPIClient | null
   private useSandbox: boolean
   private syncLogId?: string
 
-  constructor(
-    supabaseClient?: SupabaseClient | Promise<SupabaseClient>,
-    useSandbox: boolean = false
-  ) {
-    this.supabase = supabaseClient || createClient()
+  constructor(supabaseClient?: SupabaseClient, useSandbox: boolean = false) {
+    // Note: createClient() is async, so always pass a SupabaseClient instance to constructor
+    this.supabase = supabaseClient || (createClient() as unknown as SupabaseClient)
     this.squareClient = null
     this.useSandbox = useSandbox
   }
@@ -355,11 +353,19 @@ export class SquareCustomerSyncService {
    * Link Square customer to Supabase user
    */
   private async linkSquareCustomer(userId: string, squareCustomer: SquareCustomer): Promise<void> {
+    // Skip customers without email addresses
+    if (!squareCustomer.emailAddress) {
+      console.warn(
+        `[Customer Sync] Skipping Square customer ${squareCustomer.id} - no email address`
+      )
+      return
+    }
+
     await this.supabase.from('square_customers').upsert(
       {
         user_id: userId,
         square_customer_id: squareCustomer.id,
-        email: squareCustomer.emailAddress!.toLowerCase(),
+        email: squareCustomer.emailAddress.toLowerCase(),
         given_name: squareCustomer.givenName,
         family_name: squareCustomer.familyName,
         phone_number: squareCustomer.phoneNumber,
@@ -384,10 +390,18 @@ export class SquareCustomerSyncService {
     linkId: string,
     squareCustomer: SquareCustomer
   ): Promise<void> {
+    // Skip customers without email addresses
+    if (!squareCustomer.emailAddress) {
+      console.warn(
+        `[Customer Sync] Skipping update for Square customer ${squareCustomer.id} - no email address`
+      )
+      return
+    }
+
     await this.supabase
       .from('square_customers')
       .update({
-        email: squareCustomer.emailAddress!.toLowerCase(),
+        email: squareCustomer.emailAddress.toLowerCase(),
         given_name: squareCustomer.givenName,
         family_name: squareCustomer.familyName,
         phone_number: squareCustomer.phoneNumber,
