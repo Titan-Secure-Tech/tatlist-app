@@ -89,31 +89,51 @@ async function syncSquareProducts() {
     .single()
 
   try {
-    // Fetch all products from Square using fetch API (SDK has auth issues with Bun)
+    // Fetch all products from Square using fetch API with pagination (SDK has auth issues with Bun)
     console.log('📦 Fetching products from Square...')
     console.log(
       'Using direct API call with token ending:',
       accessToken?.substring(accessToken.length - 5)
     )
 
-    const apiUrl = 'https://connect.squareup.com/v2/catalog/list?types=ITEM'
-    const response = await fetch(apiUrl, {
-      method: 'GET',
-      headers: {
-        'Square-Version': '2025-01-23',
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
+    // Paginate through all catalog items
+    let allSquareProducts: SquareProduct[] = []
+    let cursor: string | undefined = undefined
+    let pageCount = 0
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Square API error: ${JSON.stringify(errorData)}`)
-    }
+    do {
+      const apiUrl = cursor
+        ? `https://connect.squareup.com/v2/catalog/list?types=ITEM&cursor=${cursor}`
+        : 'https://connect.squareup.com/v2/catalog/list?types=ITEM'
 
-    const catalogResponse = await response.json()
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Square-Version': '2025-01-23',
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
 
-    if (!catalogResponse.objects || catalogResponse.objects.length === 0) {
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(`Square API error: ${JSON.stringify(errorData)}`)
+      }
+
+      const catalogResponse = await response.json()
+      pageCount++
+
+      if (catalogResponse.objects && catalogResponse.objects.length > 0) {
+        allSquareProducts = allSquareProducts.concat(catalogResponse.objects as SquareProduct[])
+        console.log(
+          `  Page ${pageCount}: Fetched ${catalogResponse.objects.length} items (total: ${allSquareProducts.length})`
+        )
+      }
+
+      cursor = catalogResponse.cursor
+    } while (cursor)
+
+    if (allSquareProducts.length === 0) {
       console.log('✅ No products found in Square catalog')
       console.log(
         '💡 Tip: First seed some products using: bun run scripts/seed-square-products.mjs'
@@ -138,8 +158,8 @@ async function syncSquareProducts() {
       return
     }
 
-    const squareProducts = catalogResponse.objects as SquareProduct[]
-    console.log(`Found ${squareProducts.length} products in Square\n`)
+    const squareProducts = allSquareProducts
+    console.log(`\nFound ${squareProducts.length} total products in Square\n`)
 
     let syncedCount = 0
     let failedCount = 0
@@ -272,7 +292,7 @@ async function syncSquareProducts() {
         const productData = {
           square_catalog_id: product.id,
           square_variation_id: primaryVariation.id,
-          sku: primaryVarData.sku || product.id,
+          sku: primaryVarData.sku ? `${primaryVarData.sku}-${product.id.slice(-8)}` : product.id,
           name: itemData.name || 'Unknown Product',
           description: itemData.description || '',
           price: priceMoney ? Number(priceMoney.amount) / 100 : 0,
