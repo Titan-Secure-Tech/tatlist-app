@@ -381,6 +381,7 @@ This project is configured with the following remote services:
 - **Database**: Supabase (PostgreSQL)
 - **Product Data**: FireCrawl AI-powered web scraping from Lucky Supply
 - **State Management**: Zustand for client-side state (cart functionality)
+- **Error Tracking**: Sentry for error monitoring and session replay
 
 ### Key Directories
 
@@ -476,6 +477,55 @@ The Mailgun service (`lib/email/mailgun.ts`) handles all email sending. Template
 MAILGUN_BASE_URL=https://api.mailgun.net
 MAILGUN_DOMAIN=your-domain.com
 MAILGUN_SENDING_KEY=your-private-api-key
+```
+
+### Sentry Error Tracking & Monitoring
+
+**Features:**
+
+- ✅ Client, server, and edge runtime error tracking
+- ✅ Session Replay (10% of sessions, 100% of sessions with errors)
+- ✅ Source map uploads for readable stack traces
+- ✅ React component annotations for better debugging
+- ✅ Ad-blocker bypass via `/monitoring` tunnel route
+- ✅ Global error boundary (`app/global-error.tsx`)
+
+**Configuration Files:**
+
+- `sentry.client.config.ts` - Client-side Sentry initialization
+- `sentry.server.config.ts` - Server-side Sentry initialization
+- `sentry.edge.config.ts` - Edge runtime Sentry initialization
+- `instrumentation.ts` - Next.js instrumentation for server/edge
+- `app/global-error.tsx` - App Router error boundary
+
+**Sentry Project:**
+
+- Organization: `full-stack-tech`
+- Project: `tatlist-web`
+- Dashboard: https://sentry.io/organizations/full-stack-tech/issues/
+
+**Required Environment Variables:**
+
+```bash
+# Sentry Error Tracking
+NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
+SENTRY_AUTH_TOKEN=your-sentry-auth-token  # For source map uploads
+```
+
+**Manual Error Capture:**
+
+```typescript
+import * as Sentry from '@sentry/nextjs'
+
+// Capture an exception
+Sentry.captureException(error)
+
+// Capture a message
+Sentry.captureMessage('Something happened')
+
+// Add context to errors
+Sentry.setUser({ id: userId, email: userEmail })
+Sentry.setTag('feature', 'checkout')
 ```
 
 ### Styling Conventions
