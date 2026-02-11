@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { render } from '@react-email/components'
-import { ContactForm } from '@/lib/email/templates/ContactForm'
 import { mailgunService } from '@/lib/email/mailgun'
 
 export async function POST(request: NextRequest) {
@@ -22,29 +20,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
-    // Render email HTML using React Email
-    const html = await render(
-      ContactForm({
-        name,
-        email,
-        phone,
-        subject,
-        message,
-      })
-    )
-
-    // Send email to info@tatlist.com
-    const success = await mailgunService.sendEmail({
-      to: 'info@tatlist.com',
-      subject: `Contact Form: ${subject}`,
-      html,
-      text: `New contact form submission from ${name} (${email})${phone ? ` - ${phone}` : ''}
-
-Subject: ${subject}
-
-Message:
-${message}`,
-      replyTo: email,
+    const success = await mailgunService.sendContactFormEmail({
+      name,
+      email,
+      phone,
+      subject,
+      message,
     })
 
     if (success) {
@@ -56,7 +37,7 @@ ${message}`,
       return NextResponse.json(
         {
           error:
-            'Failed to send message. Please try again or email us directly at info@tatlist.com',
+            'Failed to send message. Please try again or email us directly at support@tatlist.com',
         },
         { status: 500 }
       )

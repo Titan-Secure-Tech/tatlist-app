@@ -89,10 +89,10 @@ export default function ContactPage() {
                   <div>
                     <p className="font-medium text-gray-900">Email</p>
                     <a
-                      href="mailto:info@tatlist.com"
+                      href="mailto:support@tatlist.com"
                       className="text-gray-600 hover:text-gray-900 transition-colors"
                     >
-                      info@tatlist.com
+                      support@tatlist.com
                     </a>
                   </div>
                 </div>

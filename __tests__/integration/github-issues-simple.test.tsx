@@ -79,7 +79,7 @@ describe('GitHub Issues - Simple Integration Tests', () => {
     it('displays contact information including email', () => {
       render(<ContactPage />)
 
-      expect(screen.getByText('info@tatlist.com')).toBeInTheDocument()
+      expect(screen.getByText('support@tatlist.com')).toBeInTheDocument()
     })
 
     it('displays business hours', () => {

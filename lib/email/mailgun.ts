@@ -250,8 +250,10 @@ export class MailgunService {
       })
     )
 
+    const contactRecipient = process.env.CONTACT_FORM_EMAIL || 'support@tatlist.com'
+
     return this.sendEmail({
-      to: 'support@tatlist.com',
+      to: contactRecipient,
       subject: `Contact Form: ${contactData.subject}`,
       html,
       text: `New contact form submission from ${contactData.name} (${contactData.email}): ${contactData.message}`,
