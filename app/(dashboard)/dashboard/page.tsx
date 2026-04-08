@@ -1,7 +1,70 @@
 import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
-import FeaturedSection from '@/components/home/FeaturedSection'
-import ProductGrid from '@/components/products/ProductGrid'
+import { DashboardTopBar } from '@/components/dashboard/DashboardTopBar'
+import { BannerCarousel } from '@/components/dashboard/BannerCarousel'
+import { ProductSection } from '@/components/dashboard/ProductSection'
+import { PromoBanner } from '@/components/dashboard/PromoBanner'
+import { CategoryGrid } from '@/components/dashboard/CategoryGrid'
+import { Sparkles } from 'lucide-react'
+
+const recommendedProducts = [
+  {
+    id: '1',
+    name: 'KWADRON CARTRIDGE - Round Liners #12 LONG TAPER',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+  {
+    id: '2',
+    name: 'VERTIX PICO PMU MEMBRANE CARTRIDGE NEEDLES - BOX OF 20',
+    price: '$20',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+]
+
+const recentOrders = [
+  {
+    id: '3',
+    name: 'PEAK TRITON CARTRIDGE - #12 ROUND LINER LONG TAPER (5.5MM) - BOX OF 20',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+  {
+    id: '4',
+    name: 'ETERNAL INK - CARAMEL',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+]
+
+const limitedOffers = [
+  {
+    id: '5',
+    name: 'KNIFE & FLAG NON-POROUS CORE APRON - PICK COLOR',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+  {
+    id: '6',
+    name: 'SAFERLY VINYL APRON - CLEAR',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+]
+
+const popularOrders = [
+  {
+    id: '7',
+    name: 'VLAD BLAD INFINITE LINER PRO COIL MACHINE',
+    price: '$600',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+  {
+    id: '8',
+    name: 'KWADRON CARTRIDGE - Round Liners #12 LONG TAPER',
+    price: '$120',
+    image: '/assets/images/tatlist-ink-supplies.jpeg',
+  },
+]
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -9,179 +72,53 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase // eslint-disable-line @typescript-eslint/no-unused-vars
+  const { data: profile } = await supabase
     .from('users')
     .select('*')
     .eq('id', user?.id)
     .maybeSingle()
 
-  // Fetch featured products for the dashboard
-  const { data: featuredProducts } = await supabase
-    .from('products')
-    .select('*')
-    .limit(8)
-    .order('created_at', { ascending: false })
+  const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there'
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-black mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Manage your orders and browse products.</p>
-      </div>
+    <div className="flex flex-col items-start w-full max-w-[500px] mx-auto lg:max-w-full">
+      <DashboardTopBar
+        userName={displayName}
+        shopName={profile?.shop_name || 'Tattoo Shop'}
+        points={120}
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link
+      <div className="flex flex-col gap-8 px-4 py-6 w-full pb-32 md:pb-6">
+        {/* Banner Carousel */}
+        <BannerCarousel />
+
+        {/* Recommendations */}
+        <ProductSection
+          title="Recommendations for You"
           href="/products"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Shop Products</h3>
-              <p className="text-sm text-gray-600">Browse our tattoo supplies</p>
-            </div>
-          </div>
-        </Link>
+          products={recommendedProducts}
+        />
 
-        <Link
-          href="/inventory-lists"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Inventory Lists</h3>
-              <p className="text-sm text-gray-600">Manage your inventory</p>
-            </div>
-          </div>
-        </Link>
+        {/* Recent Orders */}
+        <ProductSection title="Recent Orders" href="/orders" products={recentOrders} />
 
-        <Link
-          href="/orders"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Recent Orders</h3>
-              <p className="text-sm text-gray-600">View order history</p>
-            </div>
-          </div>
-        </Link>
+        {/* Promo Banner */}
+        <PromoBanner />
 
-        <Link
-          href="/promotions"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Promotions</h3>
-              <p className="text-sm text-gray-600">Special offers & deals</p>
-            </div>
-          </div>
-        </Link>
+        {/* Limited Time Offers */}
+        <ProductSection
+          title="Limited Time Offer"
+          href="/products"
+          icon={<Sparkles className="size-5 text-[var(--tatlist-brand-400)]" />}
+          products={limitedOffers}
+        />
 
-        <Link
-          href="/events"
-          className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-8 h-8 text-black"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-black">Events</h3>
-              <p className="text-sm text-gray-600">Upcoming conventions</p>
-            </div>
-          </div>
-        </Link>
+        {/* Popular Orders */}
+        <ProductSection title="Popular Orders" href="/products" products={popularOrders} />
+
+        {/* Shop by Category */}
+        <CategoryGrid />
       </div>
-
-      {/* Featured Categories */}
-      <div className="mt-12">
-        <FeaturedSection />
-      </div>
-
-      {/* Featured Products */}
-      <section className="py-12 bg-gray-50 rounded-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-light text-gray-900 mb-4">New Arrivals</h2>
-            <p className="text-lg text-gray-600">Latest additions to our collection</p>
-          </div>
-
-          <ProductGrid products={featuredProducts || []} columns={4} />
-        </div>
-      </section>
     </div>
   )
 }

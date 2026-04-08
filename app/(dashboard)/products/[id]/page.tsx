@@ -1,19 +1,14 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import AnimatedProductDetail from '@/components/products/AnimatedProductDetail'
+import ProductDetail from '@/components/dashboard/ProductDetail'
 
-// Force dynamic rendering for Supabase data fetching
 export const dynamic = 'force-dynamic'
 
-// Generate static params for top products
 export async function generateStaticParams() {
-  // Return empty array to generate pages on-demand
-  // Products will be statically generated on first request with ISR
   return []
 }
 
-// Separate component for dynamic content
 async function ProductContent({ id }: { id: string }) {
   const supabase = await createClient()
 
@@ -23,16 +18,23 @@ async function ProductContent({ id }: { id: string }) {
     notFound()
   }
 
-  return <AnimatedProductDetail product={product} />
+  // Fetch related products from the same category
+  const { data: relatedProducts } = await supabase
+    .from('products')
+    .select('*')
+    .eq('category', product.category)
+    .neq('id', product.id)
+    .limit(6)
+
+  return <ProductDetail product={product} relatedProducts={relatedProducts || []} />
 }
 
-// Loading component
 function ProductLoading() {
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading product...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--tatlist-brand-400)] mx-auto mb-4"></div>
+        <p className="text-[var(--tatlist-text-secondary)]">Loading product...</p>
       </div>
     </div>
   )
