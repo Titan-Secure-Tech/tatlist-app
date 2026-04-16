@@ -123,10 +123,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+    <div className="border border-border rounded-xl p-4 hover:shadow-lg transition-shadow">
       {/* Product Images - Enhanced for FireCrawl data */}
       <Link href={`/products/${product.id}`} className="block">
-        <div className="relative w-full h-48 mb-4 bg-gray-100 rounded-lg overflow-hidden group">
+        <div className="relative w-full h-48 mb-4 bg-secondary rounded-xl overflow-hidden group">
           {product.images && product.images.length > 0 && !imageError ? (
             <>
               <Image
@@ -144,7 +144,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               )}
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
               <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -160,35 +160,35 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <div className="flex justify-between items-start mb-4">
         <Link href={`/products/${product.id}`} className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-black line-clamp-2 hover:underline">
+          <h3 className="text-lg font-semibold text-foreground line-clamp-2 hover:underline">
             {product.name}
           </h3>
         </Link>
         <button
           onClick={toggleInventory}
           type="button"
-          className="p-2 hover:bg-gray-100 rounded-full ml-2 transition-all hover:scale-110 active:scale-95 flex-shrink-0 relative z-10 cursor-pointer"
+          className="p-2 hover:bg-accent rounded-full ml-2 transition-all hover:scale-110 active:scale-95 flex-shrink-0 relative z-10 cursor-pointer"
           aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
         >
           {isInInventory ? (
-            <CircleMinus className="h-5 w-5 text-black transition-colors" />
+            <CircleMinus className="h-5 w-5 text-foreground transition-colors" />
           ) : (
-            <CirclePlus className="h-5 w-5 text-gray-400 hover:text-black transition-colors" />
+            <CirclePlus className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
           )}
         </button>
       </div>
 
-      <p className="text-gray-600 text-sm mb-1">{product.brand}</p>
-      {product.category && <p className="text-gray-500 text-xs mb-2">{product.category}</p>}
+      <p className="text-muted-foreground text-sm mb-1">{product.brand}</p>
+      {product.category && <p className="text-muted-foreground text-xs mb-2">{product.category}</p>}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xl font-bold text-black">${product.price}</p>
+        <p className="text-xl font-bold text-foreground">${product.price}</p>
         {product.stock_quantity && (
-          <p className="text-sm text-gray-600">In stock: {product.stock_quantity}</p>
+          <p className="text-sm text-muted-foreground">In stock: {product.stock_quantity}</p>
         )}
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <label htmlFor={`qty-${product.id}`} className="text-sm text-gray-600">
+        <label htmlFor={`qty-${product.id}`} className="text-sm text-muted-foreground">
           Qty:
         </label>
         <input
@@ -200,7 +200,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               Math.max(1, Math.min(parseInt(e.target.value) || 1, product.stock_quantity || 99))
             )
           }
-          className="w-16 px-2 py-1 border border-gray-300 rounded"
+          className="w-16 px-2 py-1 border border-border rounded"
           min="1"
           max={product.stock_quantity || 99}
         />
@@ -208,7 +208,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <button
         onClick={handleAddToCart}
-        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors"
+        className="w-full bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-2 rounded-xl hover:opacity-90 transition-opacity"
         disabled={!product.in_stock}
       >
         {product.in_stock ? 'Add to Cart' : 'Out of Stock'}

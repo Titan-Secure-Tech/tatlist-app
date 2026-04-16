@@ -101,7 +101,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   ])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Breadcrumb */}
       <div className="border-b bg-muted/20">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -202,7 +202,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       </Badge>
                     )}
                     {product.in_stock ? (
-                      <Badge variant="default" className="text-xs bg-green-600">
+                      <Badge variant="default" className="text-xs bg-success">
                         In Stock
                       </Badge>
                     ) : (

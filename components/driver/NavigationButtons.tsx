@@ -67,9 +67,9 @@ export function NavigationButtons({
   if (!navigationUrls) {
     return (
       <div
-        className={`bg-gray-100 rounded-lg p-6 text-center ${className}`}
+        className={`bg-secondary rounded-xl p-6 text-center ${className}`}
       >
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           No pending stops. All deliveries completed!
         </p>
       </div>
@@ -77,7 +77,7 @@ export function NavigationButtons({
   }
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-4 ${className}`}>
+    <div className={`bg-background rounded-xl border border-border p-4 ${className}`}>
       <h3 className="font-semibold mb-4">Start Navigation</h3>
 
       <div className="space-y-2">
@@ -178,7 +178,7 @@ export function NavigationButtons({
         </a>
       </div>
 
-      <p className="text-xs text-gray-500 mt-4 text-center">
+      <p className="text-xs text-muted-foreground mt-4 text-center">
         Navigation apps will open the first pending stop
       </p>
     </div>

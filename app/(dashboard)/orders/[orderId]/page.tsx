@@ -66,15 +66,15 @@ export default async function OrderDetailPage({
   if (error || !order) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 className="text-lg font-semibold text-red-900 mb-2">Order Not Found</h2>
-          <p className="text-red-700 mb-4">
+        <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-6 text-center">
+          <h2 className="text-lg font-semibold text-destructive mb-2">Order Not Found</h2>
+          <p className="text-destructive/80 mb-4">
             The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to
             it.
           </p>
           <Link
             href="/orders"
-            className="inline-block px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            className="inline-block px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl hover:opacity-90"
           >
             View All Orders
           </Link>
@@ -88,8 +88,8 @@ export default async function OrderDetailPage({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-black">Order #{order.order_number}</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Order #{order.order_number}</h1>
+          <p className="text-muted-foreground mt-1">
             Placed on {new Date(order.created_at).toLocaleDateString()}
           </p>
         </div>
@@ -100,8 +100,8 @@ export default async function OrderDetailPage({
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Order Items */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Package className="h-5 w-5" />
               Order Items
             </h2>
@@ -118,15 +118,15 @@ export default async function OrderDetailPage({
                     />
                   )}
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{item.product.name}</h3>
-                    <p className="text-sm text-gray-600">SKU: {item.product.sku}</p>
-                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                    <h3 className="font-medium text-foreground">{item.product.name}</h3>
+                    <p className="text-sm text-muted-foreground">SKU: {item.product.sku}</p>
+                    <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-foreground">
                       ${(item.price_at_time * item.quantity).toFixed(2)}
                     </p>
-                    <p className="text-sm text-gray-600">${item.price_at_time.toFixed(2)} each</p>
+                    <p className="text-sm text-muted-foreground">${item.price_at_time.toFixed(2)} each</p>
                   </div>
                 </div>
               ))}
@@ -135,14 +135,14 @@ export default async function OrderDetailPage({
 
           {/* Real-Time Tracking */}
           {(order.status === 'out_for_delivery' || order.status === 'ready_for_pickup') && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-black mb-4">Track Your Delivery</h2>
+            <div className="bg-background border border-border rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Track Your Delivery</h2>
               <DeliveryTrackingMap orderId={orderId} />
             </div>
           )}
 
           {/* Status Timeline */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="bg-background border border-border rounded-xl p-6">
             <OrderStatusTimeline orderId={orderId} currentStatus={order.status} />
           </div>
         </div>
@@ -150,43 +150,43 @@ export default async function OrderDetailPage({
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Order Summary */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <DollarSign className="h-5 w-5" />
               Order Summary
             </h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium text-gray-900">${order.subtotal.toFixed(2)}</span>
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium text-foreground">${order.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-medium text-gray-900">${order.tax.toFixed(2)}</span>
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-medium text-foreground">${order.tax.toFixed(2)}</span>
               </div>
               {order.delivery_fee && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Delivery Fee</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span className="font-medium text-foreground">
                     ${order.delivery_fee.toFixed(2)}
                   </span>
                 </div>
               )}
-              <div className="pt-3 border-t border-gray-200 flex justify-between">
-                <span className="font-semibold text-gray-900">Total</span>
-                <span className="font-bold text-black">${order.total.toFixed(2)}</span>
+              <div className="pt-3 border-t border-border flex justify-between">
+                <span className="font-semibold text-foreground">Total</span>
+                <span className="font-bold text-foreground">${order.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           {/* Delivery Information */}
           {order.delivery_address && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+            <div className="bg-background border border-border rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
                 Delivery Address
               </h2>
-              <address className="not-italic text-sm text-gray-700 space-y-1">
+              <address className="not-italic text-sm text-foreground space-y-1">
                 <p>{order.delivery_address.street}</p>
                 <p>
                   {order.delivery_address.city}, {order.delivery_address.state}{' '}
@@ -198,12 +198,12 @@ export default async function OrderDetailPage({
 
           {/* Delivery Date */}
           {order.delivery_date && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+            <div className="bg-background border border-border rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
                 Scheduled Delivery
               </h2>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-foreground">
                 {new Date(order.delivery_date).toLocaleDateString('en-US', {
                   weekday: 'long',
                   year: 'numeric',

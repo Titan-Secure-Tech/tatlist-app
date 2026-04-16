@@ -226,24 +226,24 @@ export default function AddressAutocomplete({
         />
         {isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-black rounded-full" />
+            <div className="animate-spin h-4 w-4 border-2 border-border border-t-foreground rounded-full" />
           </div>
         )}
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md max-h-60 overflow-auto">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
               type="button"
               onClick={() => handleSelectSuggestion(suggestion)}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-start gap-3"
+              className="w-full text-left px-4 py-3 hover:bg-accent transition-colors flex items-start gap-3"
             >
-              <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+              <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <div className="font-medium text-gray-900">{suggestion.text}</div>
-                <div className="text-sm text-gray-600">{suggestion.place_name}</div>
+                <div className="font-medium text-foreground">{suggestion.text}</div>
+                <div className="text-sm text-muted-foreground">{suggestion.place_name}</div>
               </div>
             </button>
           ))}
@@ -251,7 +251,7 @@ export default function AddressAutocomplete({
       )}
 
       {showSuggestions && !isLoading && suggestions.length === 0 && value.length >= 3 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg p-4 text-center text-gray-600 text-sm">
+        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md p-4 text-center text-muted-foreground text-sm">
           No addresses found. Please check your input.
         </div>
       )}

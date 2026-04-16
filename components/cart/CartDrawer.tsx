@@ -75,12 +75,12 @@ function CartContent({ onClose }: { onClose: () => void }) {
               <CardContent className="p-4">
                 <div className="flex gap-4">
                   {/* Product Image */}
-                  <div className="relative w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="relative w-20 h-20 bg-secondary rounded-md overflow-hidden flex-shrink-0">
                     {item.image ? (
                       <Image src={item.image} alt={item.name} fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingBag className="w-8 h-8 text-gray-400" />
+                        <ShoppingBag className="w-8 h-8 text-muted-foreground" />
                       </div>
                     )}
                   </div>

@@ -78,12 +78,12 @@ export function ProofOfDeliveryModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-black">Proof of Delivery</h2>
+      <div className="bg-background rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-background border-b border-border px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground">Proof of Delivery</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-xl transition-colors"
             disabled={uploading}
           >
             <X className="h-5 w-5" />
@@ -101,7 +101,7 @@ export function ProofOfDeliveryModal({
           <div>
             <label
               htmlFor="recipient-name"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-foreground mb-2"
             >
               Recipient Name *
             </label>
@@ -111,7 +111,7 @@ export function ProofOfDeliveryModal({
               value={recipientName}
               onChange={e => setRecipientName(e.target.value)}
               placeholder="Enter name of person who received delivery"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
               disabled={uploading}
               required
             />
@@ -121,7 +121,7 @@ export function ProofOfDeliveryModal({
           <div>
             <label
               htmlFor="delivery-notes"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-foreground mb-2"
             >
               Delivery Notes (Optional)
             </label>
@@ -131,14 +131,14 @@ export function ProofOfDeliveryModal({
               onChange={e => setDeliveryNotes(e.target.value)}
               placeholder="Add any additional notes about the delivery..."
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
               disabled={uploading}
             />
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-800">
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
               {error}
             </div>
           )}
@@ -149,14 +149,14 @@ export function ProofOfDeliveryModal({
               type="button"
               onClick={onClose}
               disabled={uploading}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-3 border border-border text-foreground rounded-md font-medium hover:bg-accent transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-3 bg-success text-white rounded-md font-medium hover:bg-success/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {uploading ? (
                 <>

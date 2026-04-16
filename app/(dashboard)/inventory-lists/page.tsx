@@ -101,10 +101,10 @@ export default async function InventoryListsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-black">Inventory</h1>
+        <h1 className="text-2xl font-bold text-foreground">Inventory</h1>
         <Link
           href="/inventory-lists/new"
-          className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-4 py-2 rounded-xl hover:opacity-90 transition-colors"
         >
           <Plus className="h-5 w-5" />
           Create Collection
@@ -113,11 +113,11 @@ export default async function InventoryListsPage() {
 
       {/* General Inventory Section */}
       <div>
-        <h2 className="text-lg font-semibold text-black mb-4">General Inventory</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">General Inventory</h2>
         {generalInventory.length === 0 ? (
-          <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-            <p className="text-gray-600 mb-2">No items in general inventory</p>
-            <p className="text-sm text-gray-500">
+          <div className="text-center py-8 bg-muted rounded-xl border-2 border-dashed border-border">
+            <p className="text-muted-foreground mb-2">No items in general inventory</p>
+            <p className="text-sm text-muted-foreground">
               Add products using the + button on product cards
             </p>
           </div>
@@ -127,9 +127,9 @@ export default async function InventoryListsPage() {
               <Link
                 key={product.id}
                 href={`/products/${product.id}`}
-                className="border border-gray-200 rounded-lg p-3 hover:shadow-lg transition-shadow"
+                className="border border-border rounded-xl p-3 hover:border-brand transition-shadow"
               >
-                <div className="relative w-full aspect-square mb-2 bg-gray-100 rounded overflow-hidden">
+                <div className="relative w-full aspect-square mb-2 bg-secondary rounded overflow-hidden">
                   {product.images && product.images.length > 0 ? (
                     <Image
                       src={product.images[0]}
@@ -139,7 +139,7 @@ export default async function InventoryListsPage() {
                       className="object-contain"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <svg
                         className="w-12 h-12"
                         fill="none"
@@ -156,8 +156,8 @@ export default async function InventoryListsPage() {
                     </div>
                   )}
                 </div>
-                <h3 className="text-sm font-medium text-black line-clamp-2 mb-1">{product.name}</h3>
-                <p className="text-sm font-bold text-black">${product.price}</p>
+                <h3 className="text-sm font-medium text-foreground line-clamp-2 mb-1">{product.name}</h3>
+                <p className="text-sm font-bold text-foreground">${product.price}</p>
               </Link>
             ))}
           </div>
@@ -166,13 +166,13 @@ export default async function InventoryListsPage() {
 
       {/* Collections Section */}
       <div>
-        <h2 className="text-lg font-semibold text-black mb-4">Collections</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">Collections</h2>
         {!inventoryLists || inventoryLists.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
-            <p className="text-gray-600 mb-4">You haven&apos;t created any collections yet.</p>
+          <div className="text-center py-12 bg-muted rounded-xl border-2 border-dashed border-border">
+            <p className="text-muted-foreground mb-4">You haven&apos;t created any collections yet.</p>
             <Link
               href="/inventory-lists/new"
-              className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+              className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-colors"
             >
               Create Your First Collection
             </Link>
@@ -182,18 +182,18 @@ export default async function InventoryListsPage() {
             {inventoryLists.map((list: InventoryList) => (
               <div
                 key={list.id}
-                className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
+                className="border border-border rounded-xl p-6 hover:border-brand transition-shadow"
               >
                 <div className="flex justify-between items-start mb-4">
                   <Link href={`/inventory-lists/${list.id}`} className="flex-1">
-                    <h3 className="text-xl font-semibold text-black hover:underline">
+                    <h3 className="text-xl font-semibold text-foreground hover:underline">
                       {list.name}
                     </h3>
                     <div className="flex items-center gap-4 mt-2">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-muted-foreground">
                         🌐 {list.inventory_list_items?.length || 0} items
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-muted-foreground">
                         Updated {new Date(list.updated_at).toLocaleDateString()}
                       </span>
                     </div>
@@ -213,10 +213,10 @@ export default async function InventoryListsPage() {
                     {list.inventory_list_items.slice(0, 5).map((item: InventoryListItem) => (
                       <div
                         key={item.id}
-                        className="flex-shrink-0 w-40 border border-gray-200 rounded-lg p-3 hover:bg-gray-50 flex flex-col"
+                        className="flex-shrink-0 w-40 border border-border rounded-xl p-3 hover:bg-accent flex flex-col"
                       >
                         <Link href={`/products/${item.product?.id}`} className="flex-1">
-                          <div className="relative w-full aspect-square mb-2 bg-gray-100 rounded overflow-hidden">
+                          <div className="relative w-full aspect-square mb-2 bg-secondary rounded overflow-hidden">
                             {item.product?.images && item.product.images.length > 0 ? (
                               <Image
                                 src={item.product.images[0]}
@@ -226,12 +226,12 @@ export default async function InventoryListsPage() {
                                 className="object-contain"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                                 📦
                               </div>
                             )}
                           </div>
-                          <p className="text-xs text-gray-600 line-clamp-2 mb-1">
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-1">
                             {item.product?.name}
                           </p>
                         </Link>
@@ -245,7 +245,7 @@ export default async function InventoryListsPage() {
                       </div>
                     ))}
                     {list.inventory_list_items.length > 5 && (
-                      <div className="flex-shrink-0 w-40 flex items-center justify-center border border-gray-200 rounded-lg text-gray-500 text-sm">
+                      <div className="flex-shrink-0 w-40 flex items-center justify-center border border-border rounded-xl text-muted-foreground text-sm">
                         +{list.inventory_list_items.length - 5} more
                       </div>
                     )}

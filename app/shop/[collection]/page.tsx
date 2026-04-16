@@ -79,7 +79,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Breadcrumb */}
       <div className="border-b bg-muted/20">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -126,7 +126,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
                   href={`/shop/${collectionSlug}/${category.slug}`}
                   className="group"
                 >
-                  <Card className="h-full transition-all hover:shadow-lg">
+                  <Card className="h-full transition-all hover:border-brand">
                     {category.image_url && (
                       <div className="aspect-video relative overflow-hidden rounded-t-lg">
                         <Image
@@ -181,7 +181,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
                   <CardContent className="flex-1 p-4 flex flex-col">
                     <div className="mb-2 flex items-center gap-2">
                       {product.in_stock ? (
-                        <Badge variant="default" className="text-xs bg-green-600">
+                        <Badge variant="default" className="text-xs bg-success">
                           In Stock
                         </Badge>
                       ) : (

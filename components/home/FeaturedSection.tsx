@@ -63,7 +63,7 @@ export default function FeaturedSection() {
   }
 
   return (
-    <section ref={ref} className="py-24 bg-white">
+    <section ref={ref} className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -72,8 +72,8 @@ export default function FeaturedSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">Shop by Category</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-4xl lg:text-5xl font-light text-foreground mb-4">Shop by Category</h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Explore our comprehensive range of professional tattoo supplies
           </p>
         </motion.div>
@@ -95,7 +95,7 @@ export default function FeaturedSection() {
                 className="group relative"
               >
                 <Link href={category.href}>
-                  <div className="relative bg-white rounded-2xl border border-gray-200 p-8 hover:border-gray-300 transition-all duration-300 hover:shadow-xl overflow-hidden">
+                  <div className="relative bg-background rounded-2xl border border-border p-8 hover:border-border transition-all duration-300 overflow-hidden">
                     {/* Gradient Background */}
                     <div
                       className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
@@ -111,13 +111,13 @@ export default function FeaturedSection() {
                     </motion.div>
 
                     {/* Content */}
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                    <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-foreground transition-colors">
                       {category.title}
                     </h3>
-                    <p className="text-gray-600 mb-4">{category.description}</p>
+                    <p className="text-muted-foreground mb-4">{category.description}</p>
 
                     {/* Arrow */}
-                    <div className="flex items-center text-gray-900 font-medium">
+                    <div className="flex items-center text-foreground font-medium">
                       <span className="mr-2">Browse</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform duration-300" />
                     </div>
@@ -137,7 +137,7 @@ export default function FeaturedSection() {
         >
           <Link href="/categories">
             <motion.button
-              className="inline-flex items-center gap-2 px-6 py-3 text-gray-700 font-medium hover:text-gray-900 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 text-foreground font-medium hover:text-foreground transition-colors"
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
             >

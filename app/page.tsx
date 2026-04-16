@@ -17,7 +17,7 @@ async function HomeContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <OAuthHandler />
 
       {/* Hero Section */}
@@ -34,10 +34,10 @@ async function HomeContent() {
 
 function HomeLoading() {
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>
   )

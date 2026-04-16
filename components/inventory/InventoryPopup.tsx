@@ -181,20 +181,20 @@ export default function InventoryPopup({
       onClick={() => onClose(false)}
     >
       <div
-        className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
+        className="bg-background rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-black">Add to Inventory</h2>
+          <h2 className="text-xl font-semibold text-foreground">Add to Inventory</h2>
           <button
             onClick={() => onClose(false)}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Choose an inventory list for &ldquo;{productName}&rdquo;
         </p>
 
@@ -206,13 +206,13 @@ export default function InventoryPopup({
                 key={list.id}
                 onClick={() => addToList(list.id)}
                 disabled={isLoading}
-                className="w-full flex justify-between items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="w-full flex justify-between items-center p-3 border border-border rounded-xl hover:bg-accent transition-colors disabled:opacity-50"
               >
                 <div className="text-left">
-                  <p className="font-medium text-black">{list.name}</p>
-                  <p className="text-sm text-gray-500">{list.item_count || 0} items</p>
+                  <p className="font-medium text-foreground">{list.name}</p>
+                  <p className="text-sm text-muted-foreground">{list.item_count || 0} items</p>
                 </div>
-                <span className="text-sm text-gray-400">Add →</span>
+                <span className="text-sm text-muted-foreground">Add →</span>
               </button>
             ))}
           </div>
@@ -222,10 +222,10 @@ export default function InventoryPopup({
         {!isCreatingNew ? (
           <button
             onClick={() => setIsCreatingNew(true)}
-            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-border rounded-xl hover:border-border hover:bg-accent transition-colors"
           >
-            <Plus className="h-5 w-5 text-gray-600" />
-            <span className="text-gray-600">Create New List</span>
+            <Plus className="h-5 w-5 text-muted-foreground" />
+            <span className="text-muted-foreground">Create New List</span>
           </button>
         ) : (
           <div className="space-y-3 border-t pt-4">
@@ -234,7 +234,7 @@ export default function InventoryPopup({
               value={newListName}
               onChange={e => setNewListName(e.target.value)}
               placeholder="Enter list name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:border-brand"
               onKeyDown={e => {
                 if (e.key === 'Enter') createNewList()
                 if (e.key === 'Escape') {
@@ -248,7 +248,7 @@ export default function InventoryPopup({
               <button
                 onClick={createNewList}
                 disabled={isLoading || !newListName.trim()}
-                className="flex-1 bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                className="flex-1 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-2 rounded-xl hover:bg-accent transition-colors disabled:opacity-50"
               >
                 Create & Add
               </button>
@@ -258,7 +258,7 @@ export default function InventoryPopup({
                   setNewListName('')
                 }}
                 disabled={isLoading}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-border rounded-xl hover:bg-accent transition-colors"
               >
                 Cancel
               </button>

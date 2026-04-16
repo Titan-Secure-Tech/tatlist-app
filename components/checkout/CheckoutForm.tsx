@@ -183,12 +183,12 @@ export default function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Customer Information */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="bg-background p-6 rounded-xl border border-border">
         <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
               Full Name
             </label>
             <input
@@ -197,12 +197,12 @@ export default function CheckoutForm() {
               required
               value={customerInfo.name}
               onChange={e => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
               Email
             </label>
             <input
@@ -211,12 +211,12 @@ export default function CheckoutForm() {
               required
               value={customerInfo.email}
               onChange={e => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-1">
               Phone Number
             </label>
             <input
@@ -225,22 +225,22 @@ export default function CheckoutForm() {
               required
               value={customerInfo.phone}
               onChange={e => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
         </div>
       </div>
 
       {/* Delivery Address */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="bg-background p-6 rounded-xl border border-border">
         <h2 className="text-xl font-semibold mb-4">Delivery Address</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           We deliver to the Tampa Bay area. Start typing your address for suggestions.
         </p>
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="line1" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="line1" className="block text-sm font-medium text-foreground mb-1">
               Street Address
             </label>
             <AddressAutocomplete
@@ -282,12 +282,12 @@ export default function CheckoutForm() {
               }}
               placeholder="Start typing your address..."
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
           <div>
-            <label htmlFor="line2" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="line2" className="block text-sm font-medium text-foreground mb-1">
               Apartment, suite, etc. (optional)
             </label>
             <input
@@ -295,13 +295,13 @@ export default function CheckoutForm() {
               id="line2"
               value={deliveryAddress.line2}
               onChange={e => setDeliveryAddress({ ...deliveryAddress, line2: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="city" className="block text-sm font-medium text-foreground mb-1">
                 City
               </label>
               <input
@@ -318,12 +318,12 @@ export default function CheckoutForm() {
                     distance: null,
                   })
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
               />
             </div>
 
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="state" className="block text-sm font-medium text-foreground mb-1">
                 State
               </label>
               <input
@@ -342,13 +342,13 @@ export default function CheckoutForm() {
                     distance: null,
                   })
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="postalCode" className="block text-sm font-medium text-foreground mb-1">
               ZIP Code
             </label>
             <input
@@ -367,7 +367,7 @@ export default function CheckoutForm() {
                   distance: null,
                 })
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
@@ -380,7 +380,7 @@ export default function CheckoutForm() {
                 type="button"
                 onClick={validateAddress}
                 disabled={addressValidation.isValidating}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-border rounded-md text-sm font-medium text-foreground bg-background hover:bg-accent disabled:opacity-50"
               >
                 {addressValidation.isValidating ? (
                   <>
@@ -395,17 +395,17 @@ export default function CheckoutForm() {
 
           {/* Validation Success */}
           {addressValidation.isValid === true && (
-            <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
-              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-green-800">
+            <div className="flex items-start gap-2 p-3 bg-success/10 border border-success/20 rounded-md">
+              <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-success">
                 <p className="font-medium">Address validated</p>
                 {addressValidation.distance && addressValidation.distance > 0 ? (
-                  <p className="text-green-700">
+                  <p className="text-success">
                     {addressValidation.distance.toFixed(1)} miles from our delivery center. Delivery
                     available!
                   </p>
                 ) : (
-                  <p className="text-green-700">Your address is in our Tampa Bay delivery area.</p>
+                  <p className="text-success">Your address is in our Tampa Bay delivery area.</p>
                 )}
               </div>
             </div>
@@ -413,11 +413,11 @@ export default function CheckoutForm() {
 
           {/* Validation Error */}
           {addressValidation.isValid === false && (
-            <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
-              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-red-800">
+            <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-destructive">
                 <p className="font-medium">Delivery not available</p>
-                <p className="text-red-700">{addressValidation.error}</p>
+                <p className="text-destructive">{addressValidation.error}</p>
               </div>
             </div>
           )}
@@ -425,7 +425,7 @@ export default function CheckoutForm() {
       </div>
 
       {/* Order Summary */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200">
+      <div className="bg-background p-6 rounded-xl border border-border">
         <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
         <div className="space-y-2">
@@ -456,7 +456,7 @@ export default function CheckoutForm() {
               <span>Delivery Fee</span>
               <span>${deliveryFee.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-600">
+            <div className="flex justify-between text-sm text-muted-foreground">
               <span>Estimated Delivery</span>
               <span>{getEstimatedDeliveryTime()}</span>
             </div>
@@ -471,7 +471,7 @@ export default function CheckoutForm() {
       <button
         type="submit"
         disabled={isProcessing || items.length === 0 || addressValidation.isValid !== true}
-        className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isProcessing
           ? 'Processing...'

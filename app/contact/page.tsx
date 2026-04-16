@@ -63,11 +63,11 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-foreground mb-4">Contact Us</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Have questions about our products or services? We&apos;re here to help! Reach out to us
             and we&apos;ll get back to you as soon as possible.
           </p>
@@ -85,12 +85,12 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-start space-x-3">
-                  <Mail className="w-5 h-5 text-gray-600 mt-1" />
+                  <Mail className="w-5 h-5 text-muted-foreground mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Email</p>
+                    <p className="font-medium text-foreground">Email</p>
                     <a
                       href="mailto:support@tatlist.com"
-                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
                     >
                       support@tatlist.com
                     </a>
@@ -98,12 +98,12 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <Phone className="w-5 h-5 text-gray-600 mt-1" />
+                  <Phone className="w-5 h-5 text-muted-foreground mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Phone</p>
+                    <p className="font-medium text-foreground">Phone</p>
                     <a
                       href="tel:813-897-3979"
-                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
                     >
                       813-897-3979
                     </a>
@@ -111,10 +111,10 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex items-start space-x-3">
-                  <MapPin className="w-5 h-5 text-gray-600 mt-1" />
+                  <MapPin className="w-5 h-5 text-muted-foreground mt-1" />
                   <div>
-                    <p className="font-medium text-gray-900">Service Area</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-foreground">Service Area</p>
+                    <p className="text-muted-foreground">
                       Tampa Bay Area
                       <br />
                       Tampa, St. Petersburg, Clearwater
@@ -124,11 +124,11 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-gray-200">
-                  <p className="font-medium text-gray-900 mb-2">Business Hours</p>
+                <div className="pt-6 border-t border-border">
+                  <p className="font-medium text-foreground mb-2">Business Hours</p>
                   <p className="text-gray-600">Monday - Saturday</p>
                   <p className="text-gray-600">9:00 AM - 6:00 PM</p>
-                  <p className="text-sm text-gray-500 mt-2">Closed Sundays</p>
+                  <p className="text-sm text-muted-foreground mt-2">Closed Sundays</p>
                 </div>
               </CardContent>
             </Card>

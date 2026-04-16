@@ -42,7 +42,7 @@ async function BlogList() {
     console.error('Error fetching blog posts:', error)
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">Unable to load posts at this time.</p>
+        <p className="text-muted-foreground">Unable to load posts at this time.</p>
       </div>
     )
   }
@@ -50,7 +50,7 @@ async function BlogList() {
   if (!posts || posts.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600">No posts available yet. Check back soon!</p>
+        <p className="text-muted-foreground">No posts available yet. Check back soon!</p>
       </div>
     )
   }
@@ -63,7 +63,7 @@ async function BlogList() {
         <Link key={post.id} href={`/blog/${post.slug}`}>
           <article className="group cursor-pointer">
             {/* Featured Image */}
-            <div className="relative aspect-[16/9] bg-gray-100 rounded-2xl overflow-hidden mb-4">
+            <div className="relative aspect-[16/9] bg-secondary rounded-2xl overflow-hidden mb-4">
               {post.featured_image_url ? (
                 <Image
                   src={post.featured_image_url}
@@ -73,8 +73,8 @@ async function BlogList() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <span className="text-gray-400">No image</span>
+                <div className="w-full h-full flex items-center justify-center bg-muted">
+                  <span className="text-muted-foreground">No image</span>
                 </div>
               )}
 
@@ -94,7 +94,7 @@ async function BlogList() {
                   {post.categories.slice(0, 2).map(category => (
                     <span
                       key={category}
-                      className="text-xs text-gray-600 font-medium uppercase tracking-wide"
+                      className="text-xs text-muted-foreground font-medium uppercase tracking-wide"
                     >
                       {category}
                     </span>
@@ -103,14 +103,14 @@ async function BlogList() {
               )}
 
               {/* Title */}
-              <h2 className="text-2xl font-medium text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+              <h2 className="text-2xl font-medium text-foreground mb-2 group-hover:text-foreground transition-colors">
                 {post.title}
               </h2>
 
               {/* Event Details */}
               {post.post_type === 'event' && post.event_start_time && (
                 <div className="space-y-1 mb-3">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <time>
                       {new Date(post.event_start_time).toLocaleDateString('en-US', {
@@ -121,7 +121,7 @@ async function BlogList() {
                     </time>
                   </div>
                   {post.event_location && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <MapPin className="w-4 h-4" />
                       <span>{post.event_location}</span>
                     </div>
@@ -130,10 +130,10 @@ async function BlogList() {
               )}
 
               {/* Excerpt */}
-              {post.excerpt && <p className="text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>}
+              {post.excerpt && <p className="text-muted-foreground mb-4 line-clamp-2">{post.excerpt}</p>}
 
               {/* Meta Info */}
-              <div className="flex items-center justify-between text-sm text-gray-500">
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <span>{post.author_name}</span>
                 {post.published_at && (
                   <time>
@@ -147,7 +147,7 @@ async function BlogList() {
               </div>
 
               {/* Read More */}
-              <div className="mt-4 flex items-center gap-2 text-black font-medium group-hover:gap-3 transition-all">
+              <div className="mt-4 flex items-center gap-2 text-foreground font-medium group-hover:gap-3 transition-all">
                 <span>{post.post_type === 'event' ? 'View Event' : 'Read More'}</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
@@ -164,12 +164,12 @@ function BlogListSkeleton() {
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
       {[1, 2, 3, 4, 5, 6].map(i => (
         <div key={i} className="animate-pulse">
-          <div className="aspect-[16/9] bg-gray-200 rounded-2xl mb-4" />
+          <div className="aspect-[16/9] bg-muted rounded-2xl mb-4" />
           <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-1/4" />
-            <div className="h-6 bg-gray-200 rounded w-3/4" />
-            <div className="h-4 bg-gray-200 rounded w-full" />
-            <div className="h-4 bg-gray-200 rounded w-5/6" />
+            <div className="h-4 bg-muted rounded w-1/4" />
+            <div className="h-6 bg-muted rounded w-3/4" />
+            <div className="h-4 bg-muted rounded w-full" />
+            <div className="h-4 bg-muted rounded w-5/6" />
           </div>
         </div>
       ))}
@@ -179,13 +179,13 @@ function BlogListSkeleton() {
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-b from-gray-50 to-white py-16 border-b border-gray-100">
+      <div className="bg-gradient-to-b from-muted to-background py-16 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="text-5xl font-light text-gray-900 mb-4">Blog & Events</h1>
-            <p className="text-lg text-gray-600">
+            <h1 className="text-5xl font-light text-foreground mb-4">Blog & Events</h1>
+            <p className="text-lg text-muted-foreground">
               Stay connected with the Tampa tattoo community. Get the latest news, event
               announcements, and industry updates.
             </p>

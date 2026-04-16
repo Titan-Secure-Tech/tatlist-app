@@ -92,7 +92,7 @@ export default function QuickCheckoutButton({
   return (
     <button
       onClick={handleQuickCheckout}
-      className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors text-sm"
+      className="flex items-center gap-2 px-3 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl hover:bg-accent transition-colors text-sm"
       title="Add all items to cart"
     >
       <ShoppingCart className="h-4 w-4" />

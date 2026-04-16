@@ -191,8 +191,8 @@ function CheckoutContent() {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading checkout...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading checkout...</p>
         </div>
       </div>
     )
@@ -246,25 +246,25 @@ function CheckoutContent() {
               className={`rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold ${
                 currentStep === 'business'
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-green-500 text-white'
+                  : 'bg-success text-white'
               }`}
             >
               {currentStep === 'payment' ? <CheckCircle className="h-5 w-5" /> : '1'}
             </div>
             <span className="ml-2 text-sm font-medium">Business Details</span>
           </div>
-          <div className="w-16 h-0.5 bg-gray-300" />
+          <div className="w-16 h-0.5 bg-border" />
           <div className="flex items-center">
             <div
               className={`rounded-full h-8 w-8 flex items-center justify-center text-sm font-semibold ${
                 currentStep === 'payment'
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-gray-300 text-gray-600'
+                  : 'bg-muted text-muted-foreground'
               }`}
             >
               2
             </div>
-            <span className="ml-2 text-sm font-medium text-gray-600">Payment</span>
+            <span className="ml-2 text-sm font-medium text-muted-foreground">Payment</span>
           </div>
         </div>
       </div>
@@ -426,9 +426,9 @@ function CheckoutContent() {
               </div>
 
               {businessDetails?.validated && (
-                <Alert className="border-green-200 bg-green-50">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-700 text-xs">
+                <Alert className="border-success/30 bg-success/10">
+                  <CheckCircle className="h-4 w-4 text-success" />
+                  <AlertDescription className="text-success text-xs">
                     Delivery address validated
                   </AlertDescription>
                 </Alert>
@@ -443,7 +443,7 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <CheckoutContent />
       </div>

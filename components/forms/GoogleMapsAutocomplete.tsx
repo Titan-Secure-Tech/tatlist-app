@@ -130,12 +130,12 @@ export default function GoogleMapsAutocomplete({
         />
         {isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           </div>
         )}
         {isInitialized && !isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <MapPin className="h-4 w-4 text-gray-400" />
+            <MapPin className="h-4 w-4 text-muted-foreground" />
           </div>
         )}
       </div>

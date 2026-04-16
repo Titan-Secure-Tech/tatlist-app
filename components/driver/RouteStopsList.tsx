@@ -57,25 +57,25 @@ export function RouteStopsList({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-success/10 text-success border-success/20';
       case 'enroute':
         return 'bg-orange-100 text-orange-800 border-orange-200';
       case 'arrived':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-info/10 text-info border-info/20';
       case 'skipped':
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-secondary text-foreground border-border';
       default:
-        return 'bg-gray-50 text-gray-700 border-gray-200';
+        return 'bg-muted text-foreground border-border';
     }
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      <div className="p-4 border-b border-gray-200">
+    <div className="bg-background rounded-xl border border-border">
+      <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold">Stops ({stops.length})</h2>
       </div>
 
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-border">
         {stops.map((stop) => {
           const isUpdating = updatingStopId === stop.id;
           const isCurrent = currentStop?.id === stop.id;
@@ -94,10 +94,10 @@ export function RouteStopsList({
                 <div
                   className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                     isCompleted
-                      ? 'bg-green-600 text-white'
+                      ? 'bg-success text-white'
                       : isCurrent
                         ? 'bg-orange-500 text-white'
-                        : 'bg-gray-200 text-gray-700'
+                        : 'bg-muted text-foreground'
                   }`}
                 >
                   {stop.stop_number}
@@ -106,7 +106,7 @@ export function RouteStopsList({
                 {/* Stop Details */}
                 <div className="flex-1 min-w-0">
                   {/* Address */}
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-foreground mb-1">
                     {(stop.address as any)?.formatted_address ||
                       (stop.address as any)?.street ||
                       'Address unavailable'}
@@ -114,12 +114,12 @@ export function RouteStopsList({
 
                   {/* Customer Info */}
                   {customer && (
-                    <div className="text-sm text-gray-600 mb-2">
+                    <div className="text-sm text-muted-foreground mb-2">
                       <p>{customer.name}</p>
                       {customer.phone_number && (
                         <a
                           href={`tel:${customer.phone_number}`}
-                          className="text-blue-600 hover:underline"
+                          className="text-brand hover:underline"
                         >
                           {customer.phone_number}
                         </a>
@@ -129,7 +129,7 @@ export function RouteStopsList({
 
                   {/* Order Number */}
                   {order && (
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-muted-foreground mb-2">
                       Order: #{order.order_number}
                     </p>
                   )}
@@ -168,7 +168,7 @@ export function RouteStopsList({
                         <button
                           onClick={() => updateStopStatus(stop.id, 'completed')}
                           disabled={isUpdating}
-                          className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 text-sm font-medium text-white bg-success rounded-md hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {isUpdating ? 'Updating...' : 'Complete Delivery'}
                         </button>
@@ -182,7 +182,7 @@ export function RouteStopsList({
                           }
                         }}
                         disabled={isUpdating}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Skip Stop
                       </button>
@@ -200,7 +200,7 @@ export function RouteStopsList({
 
                   {/* Time Info */}
                   {(stop.arrival_time || stop.departure_time) && (
-                    <div className="mt-3 text-xs text-gray-500 space-y-1">
+                    <div className="mt-3 text-xs text-muted-foreground space-y-1">
                       {stop.arrival_time && (
                         <p>
                           Arrived:{' '}

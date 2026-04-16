@@ -212,32 +212,32 @@ export function PicklistDashboard() {
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6 print:hidden">
-        <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+      <div className="bg-background border border-border rounded-xl p-6 print:hidden">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
           <Filter className="h-5 w-5" />
           Filters
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="search" className="block text-sm font-medium text-foreground mb-2">
               Search
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 id="search"
                 type="text"
                 value={filters.search}
                 onChange={e => setFilters({ ...filters, search: e.target.value })}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+                className="w-full pl-10 pr-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
                 placeholder="Order, product, customer..."
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="date" className="block text-sm font-medium text-foreground mb-2">
               <Calendar className="inline h-4 w-4 mr-1" />
               Delivery Date
             </label>
@@ -246,19 +246,19 @@ export function PicklistDashboard() {
               type="date"
               value={filters.date}
               onChange={e => setFilters({ ...filters, date: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
             />
           </div>
 
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="status" className="block text-sm font-medium text-foreground mb-2">
               Status
             </label>
             <select
               id="status"
               value={filters.status}
               onChange={e => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
             >
               <option value="all">All Items</option>
               <option value="unpicked">Unpicked</option>
@@ -271,14 +271,14 @@ export function PicklistDashboard() {
         <div className="mt-4 flex gap-3">
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-md hover:opacity-90"
           >
             <Printer className="h-4 w-4" />
             Print Picklist
           </button>
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+            className="flex items-center gap-2 px-4 py-2 border border-border rounded-md hover:bg-accent"
           >
             <Download className="h-4 w-4" />
             Export CSV
@@ -288,20 +288,20 @@ export function PicklistDashboard() {
 
       {/* Loading State */}
       {loading && (
-        <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">Loading picklist...</p>
+        <div className="bg-background border border-border rounded-xl p-12 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading picklist...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm font-semibold text-red-900">Error loading picklist</h3>
-              <p className="text-sm text-red-800 mt-1">{error}</p>
+              <h3 className="text-sm font-semibold text-destructive">Error loading picklist</h3>
+              <p className="text-sm text-destructive/80 mt-1">{error}</p>
             </div>
           </div>
         </div>
@@ -309,48 +309,48 @@ export function PicklistDashboard() {
 
       {/* Picklist Items */}
       {!loading && !error && (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-background border border-border rounded-xl overflow-hidden">
           {items.length === 0 ? (
             <div className="p-12 text-center">
-              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No items found</h3>
-              <p className="text-gray-600">
+              <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No items found</h3>
+              <p className="text-muted-foreground">
                 Try adjusting your filters or check back when there are orders to fulfill.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-muted border-b border-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Order
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Quantity
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider print:hidden">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider print:hidden">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-background divide-y divide-border">
                   {items.map(item => (
-                    <tr key={item.id} className="hover:bg-gray-50">
+                    <tr key={item.id} className="hover:bg-accent">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {item.order.order_number}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {item.order.delivery_date
                             ? new Date(item.order.delivery_date).toLocaleDateString()
                             : 'No date set'}
@@ -366,23 +366,23 @@ export function PicklistDashboard() {
                             />
                           )}
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-foreground">
                               {item.product.name}
                             </div>
-                            <div className="text-sm text-gray-500">SKU: {item.product.sku}</div>
+                            <div className="text-sm text-muted-foreground">SKU: {item.product.sku}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-2xl font-bold text-gray-900">{item.quantity}</span>
+                        <span className="text-2xl font-bold text-foreground">{item.quantity}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-foreground">
                           {item.order.user.business_name ||
                             `${item.order.user.first_name} ${item.order.user.last_name}`}
                         </div>
                         {item.order.delivery_address && (
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-muted-foreground">
                             {item.order.delivery_address.street}, {item.order.delivery_address.city}
                           </div>
                         )}
@@ -390,17 +390,17 @@ export function PicklistDashboard() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="space-y-1">
                           {item.packed_at ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
                               <CheckCircle2 className="h-3 w-3" />
                               Packed
                             </span>
                           ) : item.picked_at ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-info/10 text-info">
                               <Package className="h-3 w-3" />
                               Picked
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-secondary text-foreground">
                               Unpicked
                             </span>
                           )}
@@ -412,7 +412,7 @@ export function PicklistDashboard() {
                             <button
                               onClick={() => markAsPicked(item.id)}
                               disabled={updating === item.id}
-                              className="inline-flex items-center gap-1 px-3 py-1 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="inline-flex items-center gap-1 px-3 py-1 border border-brand text-brand rounded-md hover:bg-brand/10 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {updating === item.id ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -426,7 +426,7 @@ export function PicklistDashboard() {
                             <button
                               onClick={() => markAsPacked(item.id)}
                               disabled={updating === item.id}
-                              className="inline-flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="inline-flex items-center gap-1 px-3 py-1 bg-success text-white rounded-md hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {updating === item.id ? (
                                 <Loader2 className="h-3 w-3 animate-spin" />

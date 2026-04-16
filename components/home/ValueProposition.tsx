@@ -58,9 +58,9 @@ export default function ValueProposition() {
   ]
 
   return (
-    <section className="relative py-24 bg-white overflow-hidden">
+    <section className="relative py-24 bg-background overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50 opacity-50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-muted/50 via-transparent to-muted/50 opacity-50" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -72,10 +72,10 @@ export default function ValueProposition() {
           variants={fadeInUp}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-light text-gray-900 mb-4">
+          <h2 className="text-4xl lg:text-5xl font-light text-foreground mb-4">
             Why Tampa Artists Choose Tatlist
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             The official delivery service for Tattoo Supplies in Tampa Bay and surrounding area
           </p>
         </motion.div>
@@ -92,11 +92,11 @@ export default function ValueProposition() {
               variants={fadeInUp}
               className="text-center"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-black/5 mb-4">
-                <feature.icon className="w-8 h-8 text-gray-900" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/5 mb-4">
+                <feature.icon className="w-8 h-8 text-foreground" />
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <h3 className="text-xl font-medium text-foreground mb-2">{feature.title}</h3>
+              <p className="text-muted-foreground">{feature.description}</p>
             </motion.div>
           ))}
         </div>
@@ -112,7 +112,7 @@ export default function ValueProposition() {
             variants={imageReveal}
             className="lg:col-span-2"
           >
-            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100 group">
+            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-secondary group">
               <Image
                 src="/assets/images/tatlist-delivery-van.jpg"
                 alt="Tatlist delivery van bringing supplies to Tampa tattoo shops"
@@ -137,7 +137,7 @@ export default function ValueProposition() {
             viewport={{ once: true, margin: '-100px' }}
             variants={imageReveal}
           >
-            <div className="relative aspect-[9/16] lg:aspect-[9/16] rounded-2xl overflow-hidden bg-gray-100 group">
+            <div className="relative aspect-[9/16] lg:aspect-[9/16] rounded-2xl overflow-hidden bg-secondary group">
               <Image
                 src="/assets/images/tatlist-ink-supplies.jpeg"
                 alt="Professional tattoo inks and supplies in Tampa shop"
@@ -162,7 +162,7 @@ export default function ValueProposition() {
             viewport={{ once: true, margin: '-100px' }}
             variants={imageReveal}
           >
-            <div className="relative aspect-[16/9] lg:aspect-[9/16] rounded-2xl overflow-hidden bg-gray-100 group">
+            <div className="relative aspect-[16/9] lg:aspect-[9/16] rounded-2xl overflow-hidden bg-secondary group">
               <Image
                 src="/assets/images/tatlist-artists-in-shop-conversation.jpeg"
                 alt="Tampa tattoo artists collaborating in shop"
@@ -188,7 +188,7 @@ export default function ValueProposition() {
             variants={imageReveal}
             className="lg:col-span-2"
           >
-            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-gray-100 group">
+            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-secondary group">
               <Image
                 src="/assets/images/tatlist-artist-tattoo-mascot.jpg"
                 alt="Tatlist mascot representing Tampa tattoo culture"
@@ -218,13 +218,13 @@ export default function ValueProposition() {
           <div className="inline-flex flex-col sm:flex-row gap-4">
             <a
               href="/login"
-              className="px-8 py-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-300"
+              className="px-8 py-4 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl font-medium transition-all duration-300"
             >
               Start Ordering Today
             </a>
             <a
               href="/contact"
-              className="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-300"
+              className="px-8 py-4 border border-border text-foreground rounded-xl font-medium hover:bg-secondary transition-all duration-300"
             >
               Contact Our Team
             </a>

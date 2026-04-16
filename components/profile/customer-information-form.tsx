@@ -266,7 +266,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
           <div>
             <Label htmlFor="business_name">
-              Business Name <span className="text-red-500">*</span>
+              Business Name <span className="text-destructive">*</span>
             </Label>
             <Input
               id="business_name"
@@ -280,7 +280,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
           <div>
             <Label htmlFor="license_number">
-              Tattoo Shop License Number <span className="text-red-500">*</span>
+              Tattoo Shop License Number <span className="text-destructive">*</span>
             </Label>
             <Input
               id="license_number"
@@ -297,7 +297,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
           <div>
             <Label htmlFor="contact_name">
-              Contact Name <span className="text-red-500">*</span>
+              Contact Name <span className="text-destructive">*</span>
             </Label>
             <Input
               id="contact_name"
@@ -312,7 +312,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="email">
-                Email <span className="text-red-500">*</span>
+                Email <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="email"
@@ -336,7 +336,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
                 placeholder="(555) 123-4567"
               />
               {formData.phone && initialData?.phone_verified && (
-                <p className="text-sm text-green-600 mt-1 flex items-center">
+                <p className="text-sm text-success mt-1 flex items-center">
                   <CheckCircle className="w-4 h-4 mr-1" />
                   Verified
                 </p>
@@ -354,7 +354,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
           <div>
             <Label htmlFor="street_address">
-              Street Address <span className="text-red-500">*</span>
+              Street Address <span className="text-destructive">*</span>
             </Label>
             <AddressAutocomplete
               id="street_address"
@@ -398,7 +398,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
               }}
               placeholder="Start typing your address..."
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+              className="mt-1 block w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
             />
           </div>
 
@@ -416,7 +416,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="city">
-                City <span className="text-red-500">*</span>
+                City <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="city"
@@ -430,7 +430,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
             <div>
               <Label htmlFor="state">
-                State <span className="text-red-500">*</span>
+                State <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="state"
@@ -446,7 +446,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
 
           <div>
             <Label htmlFor="zip_code">
-              ZIP Code <span className="text-red-500">*</span>
+              ZIP Code <span className="text-destructive">*</span>
             </Label>
             <Input
               id="zip_code"
@@ -467,7 +467,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
               value={formData.delivery_instructions}
               onChange={handleInputChange}
               placeholder="Any special delivery instructions..."
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black min-h-[80px]"
+              className="mt-1 block w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand min-h-[80px]"
             />
           </div>
         </div>
@@ -482,10 +482,10 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
         )}
 
         {validationState.isValid && validationState.distance !== null && (
-          <Alert className="border-green-500 bg-green-50">
-            <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertTitle className="text-green-900">Address Validated</AlertTitle>
-            <AlertDescription className="text-green-800">
+          <Alert className="border-success bg-success/10">
+            <CheckCircle className="h-4 w-4 text-success" />
+            <AlertTitle className="text-success">Address Validated</AlertTitle>
+            <AlertDescription className="text-success">
               <div className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
                 <span>
@@ -518,7 +518,7 @@ export function CustomerInformationForm({ userId, initialData }: CustomerInforma
               variant="outline"
               onClick={handleDelete}
               disabled={isDeleting || isSaving}
-              className="text-red-600 border-red-600 hover:bg-red-50"
+              className="text-destructive border-destructive hover:bg-destructive/10"
             >
               {isDeleting ? (
                 <>

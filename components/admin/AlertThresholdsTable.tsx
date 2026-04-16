@@ -124,45 +124,45 @@ export function AlertThresholdsTable({
 
   const getAlertTypeColor = (alertType: AlertType): string => {
     if (alertType === 'arriving_now' || alertType === 'distance_half_mile')
-      return 'text-green-600';
+      return 'text-success';
     if (alertType === 'eta_5_minutes' || alertType === 'distance_1_mile')
-      return 'text-orange-600';
-    return 'text-blue-600';
+      return 'text-warning';
+    return 'text-info';
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div className="bg-background border border-border rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-border">
         <h2 className="text-xl font-semibold">Alert Thresholds</h2>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Configure when customers receive proximity alerts
         </p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-muted">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Alert Type
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Threshold
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Priority
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Channel
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-background divide-y divide-border">
             {thresholds.map((threshold) => (
-              <tr key={threshold.id} className="hover:bg-gray-50">
+              <tr key={threshold.id} className="hover:bg-accent">
                 <td className="px-6 py-4">
                   <div className="flex items-center">
                     <span className="text-2xl mr-3">
@@ -174,7 +174,7 @@ export function AlertThresholdsTable({
                       >
                         {ALERT_TYPE_LABELS[threshold.alert_type]}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-muted-foreground">
                         {ALERT_TYPE_DESCRIPTIONS[threshold.alert_type]}
                       </div>
                     </div>
@@ -193,7 +193,7 @@ export function AlertThresholdsTable({
                   )}
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-gray-900">
+                  <span className="text-sm text-foreground">
                     {threshold.priority}
                   </span>
                 </td>
@@ -207,7 +207,7 @@ export function AlertThresholdsTable({
                       )
                     }
                     disabled={updating === threshold.id}
-                    className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="text-sm border border-border rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand"
                   >
                     <option value="email">Email Only</option>
                     <option value="sms">SMS Only</option>
@@ -222,8 +222,8 @@ export function AlertThresholdsTable({
                     disabled={updating === threshold.id}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                       threshold.is_enabled
-                        ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        ? 'bg-success/10 text-success hover:bg-success/20'
+                        : 'bg-secondary text-foreground hover:bg-muted'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {updating === threshold.id
@@ -239,8 +239,8 @@ export function AlertThresholdsTable({
         </table>
       </div>
 
-      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-        <p className="text-sm text-gray-600">
+      <div className="px-6 py-4 bg-muted border-t border-border">
+        <p className="text-sm text-muted-foreground">
           <strong>Note:</strong> Alerts are checked every minute via cron job.
           Customers will receive alerts based on their notification preferences
           and quiet hours settings.

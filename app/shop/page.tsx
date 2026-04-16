@@ -36,7 +36,7 @@ export default async function ShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
@@ -55,7 +55,7 @@ export default async function ShopPage() {
 
               return (
                 <Link key={collection.id} href={`/shop/${collection.slug}`} className="group">
-                  <Card className="h-full transition-all hover:shadow-lg">
+                  <Card className="h-full transition-all hover:border-brand">
                     {collection.image_url && (
                       <div className="aspect-video relative overflow-hidden rounded-t-lg">
                         <Image

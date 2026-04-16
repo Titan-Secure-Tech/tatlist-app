@@ -91,7 +91,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
     return (
       <div className="max-w-4xl mx-auto text-center py-16">
         <h1 className="text-4xl font-bold mb-4">Blog Coming Soon</h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           The blog system is currently being set up. Please check back soon!
         </p>
       </div>
@@ -116,7 +116,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
       {/* Back Button */}
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Blog
@@ -135,7 +135,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
           {blogPost.categories.map(category => (
             <span
               key={category}
-              className="text-sm text-gray-600 font-medium uppercase tracking-wide"
+              className="text-sm text-muted-foreground font-medium uppercase tracking-wide"
             >
               {category}
             </span>
@@ -144,10 +144,10 @@ async function BlogPostContent({ slug }: { slug: string }) {
       )}
 
       {/* Title */}
-      <h1 className="text-5xl lg:text-6xl font-light text-gray-900 mb-6">{blogPost.title}</h1>
+      <h1 className="text-5xl lg:text-6xl font-light text-foreground mb-6">{blogPost.title}</h1>
 
       {/* Meta Information */}
-      <div className="flex items-center gap-4 text-gray-600 mb-8 pb-8 border-b border-gray-200">
+      <div className="flex items-center gap-4 text-muted-foreground mb-8 pb-8 border-b border-border">
         <span className="font-medium">{blogPost.author_name}</span>
         {blogPost.published_at && (
           <>
@@ -171,7 +171,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
 
       {/* Featured Image */}
       {blogPost.featured_image_url && (
-        <div className="relative aspect-[16/9] bg-gray-100 rounded-2xl overflow-hidden mb-12">
+        <div className="relative aspect-[16/9] bg-secondary rounded-2xl overflow-hidden mb-12">
           <Image
             src={blogPost.featured_image_url}
             alt={blogPost.featured_image_alt || blogPost.title}
@@ -185,16 +185,16 @@ async function BlogPostContent({ slug }: { slug: string }) {
 
       {/* Event Details Card */}
       {blogPost.post_type === 'event' && (
-        <div className="bg-gray-50 rounded-2xl p-8 mb-12 border border-gray-200">
-          <h2 className="text-2xl font-medium text-gray-900 mb-6">Event Details</h2>
+        <div className="bg-muted rounded-2xl p-8 mb-12 border border-border">
+          <h2 className="text-2xl font-medium text-foreground mb-6">Event Details</h2>
 
           <div className="space-y-4">
             {blogPost.event_start_time && (
               <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-gray-600 mt-0.5" />
+                <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-gray-900">Date & Time</p>
-                  <p className="text-gray-600">
+                  <p className="font-medium text-foreground">Date & Time</p>
+                  <p className="text-muted-foreground">
                     {new Date(blogPost.event_start_time).toLocaleDateString('en-US', {
                       weekday: 'long',
                       month: 'long',
@@ -203,7 +203,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
                     })}
                   </p>
                   {blogPost.event_end_time && (
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-muted-foreground text-sm">
                       {new Date(blogPost.event_start_time).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: '2-digit',
@@ -221,14 +221,14 @@ async function BlogPostContent({ slug }: { slug: string }) {
 
             {(blogPost.event_location || blogPost.event_address) && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gray-600 mt-0.5" />
+                <MapPin className="w-5 h-5 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-gray-900">Location</p>
+                  <p className="font-medium text-foreground">Location</p>
                   {blogPost.event_location && (
-                    <p className="text-gray-600">{blogPost.event_location}</p>
+                    <p className="text-muted-foreground">{blogPost.event_location}</p>
                   )}
                   {blogPost.event_address && (
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       {blogPost.event_address}
                       {blogPost.event_city && `, ${blogPost.event_city}`}
                       {blogPost.event_state && `, ${blogPost.event_state}`}
@@ -241,16 +241,16 @@ async function BlogPostContent({ slug }: { slug: string }) {
 
             {(blogPost.event_contact_email || blogPost.event_contact_phone) && (
               <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-gray-600 mt-0.5" />
+                <Mail className="w-5 h-5 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-gray-900">Contact</p>
+                  <p className="font-medium text-foreground">Contact</p>
                   {blogPost.event_contact_name && (
-                    <p className="text-gray-600">{blogPost.event_contact_name}</p>
+                    <p className="text-muted-foreground">{blogPost.event_contact_name}</p>
                   )}
                   {blogPost.event_contact_email && (
                     <a
                       href={`mailto:${blogPost.event_contact_email}`}
-                      className="text-gray-600 hover:text-gray-900 block"
+                      className="text-muted-foreground hover:text-foreground block"
                     >
                       {blogPost.event_contact_email}
                     </a>
@@ -258,7 +258,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
                   {blogPost.event_contact_phone && (
                     <a
                       href={`tel:${blogPost.event_contact_phone}`}
-                      className="text-gray-600 hover:text-gray-900 block"
+                      className="text-muted-foreground hover:text-foreground block"
                     >
                       {blogPost.event_contact_phone}
                     </a>
@@ -273,7 +273,7 @@ async function BlogPostContent({ slug }: { slug: string }) {
                   href={blogPost.event_registration_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl font-medium transition-colors"
                 >
                   Register for Event
                   <ExternalLink className="w-4 h-4" />
@@ -286,16 +286,16 @@ async function BlogPostContent({ slug }: { slug: string }) {
 
       {/* Post Content */}
       <div
-        className="prose prose-lg prose-gray max-w-none mb-12"
+        className="prose prose-lg prose-invert max-w-none mb-12"
         dangerouslySetInnerHTML={{ __html: blogPost.content }}
       />
 
       {/* Tags */}
       {blogPost.tags && blogPost.tags.length > 0 && (
-        <div className="pt-8 border-t border-gray-200">
+        <div className="pt-8 border-t border-border">
           <div className="flex flex-wrap gap-2">
             {blogPost.tags.map(tag => (
-              <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+              <span key={tag} className="px-3 py-1 bg-secondary text-muted-foreground text-sm rounded-full">
                 #{tag}
               </span>
             ))}
@@ -309,14 +309,14 @@ async function BlogPostContent({ slug }: { slug: string }) {
 function BlogPostSkeleton() {
   return (
     <div className="max-w-4xl mx-auto animate-pulse">
-      <div className="h-4 bg-gray-200 rounded w-24 mb-8" />
-      <div className="h-12 bg-gray-200 rounded w-3/4 mb-6" />
-      <div className="h-4 bg-gray-200 rounded w-1/2 mb-8" />
-      <div className="aspect-[16/9] bg-gray-200 rounded-2xl mb-12" />
+      <div className="h-4 bg-muted rounded w-24 mb-8" />
+      <div className="h-12 bg-muted rounded w-3/4 mb-6" />
+      <div className="h-4 bg-muted rounded w-1/2 mb-8" />
+      <div className="aspect-[16/9] bg-muted rounded-2xl mb-12" />
       <div className="space-y-4">
-        <div className="h-4 bg-gray-200 rounded w-full" />
-        <div className="h-4 bg-gray-200 rounded w-full" />
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-4 bg-muted rounded w-full" />
+        <div className="h-4 bg-muted rounded w-full" />
+        <div className="h-4 bg-muted rounded w-3/4" />
       </div>
     </div>
   )
@@ -329,7 +329,7 @@ export default async function BlogPostPage({ params }: Props) {
   const resolvedParams = await params
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <Suspense fallback={<BlogPostSkeleton />}>
           <BlogPostContent slug={resolvedParams.slug} />

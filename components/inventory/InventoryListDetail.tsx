@@ -115,10 +115,10 @@ export default function InventoryListDetail({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-black">{inventoryList.name}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{inventoryList.name}</h1>
         <button
           onClick={() => setShowAddProducts(!showAddProducts)}
-          className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
+          className="flex items-center gap-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-4 py-2 rounded-xl hover:bg-accent transition-colors"
         >
           <Plus className="h-5 w-5" />
           Add Products
@@ -126,10 +126,10 @@ export default function InventoryListDetail({
       </div>
 
       {showAddProducts && (
-        <div className="mb-6 p-4 border border-gray-200 rounded-lg">
+        <div className="mb-6 p-4 border border-border rounded-xl">
           <h3 className="font-semibold mb-3">Add from Inventory</h3>
           {favoriteProducts.length === 0 ? (
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               No inventory products yet. Add products to your inventory to see them here.
             </p>
           ) : (
@@ -137,15 +137,15 @@ export default function InventoryListDetail({
               {favoriteProducts.map(product => (
                 <div
                   key={product.id}
-                  className="flex justify-between items-center p-2 hover:bg-gray-50 rounded"
+                  className="flex justify-between items-center p-2 hover:bg-accent rounded"
                 >
                   <div>
                     <p className="font-medium">{product.name}</p>
-                    <p className="text-sm text-gray-600">${product.price}</p>
+                    <p className="text-sm text-muted-foreground">${product.price}</p>
                   </div>
                   <button
                     onClick={() => addProductToList(product)}
-                    className="px-3 py-1 bg-black text-white text-sm rounded hover:bg-gray-800"
+                    className="px-3 py-1 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground text-sm rounded-xl hover:bg-accent"
                   >
                     Add
                   </button>
@@ -157,32 +157,32 @@ export default function InventoryListDetail({
       )}
 
       {items.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-600 mb-4">This list is empty.</p>
-          <p className="text-sm text-gray-500">Add products from your inventory to get started.</p>
+        <div className="text-center py-12 bg-muted rounded-xl">
+          <p className="text-muted-foreground mb-4">This list is empty.</p>
+          <p className="text-sm text-muted-foreground">Add products from your inventory to get started.</p>
         </div>
       ) : (
         <>
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
-            <div className="divide-y divide-gray-200">
+          <div className="bg-background border border-border rounded-xl overflow-hidden mb-6">
+            <div className="divide-y divide-border">
               {items.map(item => (
                 <div key={item.id} className="p-4 flex items-center space-x-4">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-black">{item.product.name}</h3>
-                    <p className="text-gray-600">${item.product.price} each</p>
+                    <h3 className="font-semibold text-foreground">{item.product.name}</h3>
+                    <p className="text-muted-foreground">${item.product.price} each</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-50"
+                      className="px-2 py-1 border border-border rounded hover:bg-accent"
                     >
                       -
                     </button>
                     <span className="w-12 text-center">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-50"
+                      className="px-2 py-1 border border-border rounded hover:bg-accent"
                     >
                       +
                     </button>
@@ -196,7 +196,7 @@ export default function InventoryListDetail({
 
                   <button
                     onClick={() => removeItem(item.id)}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
@@ -205,15 +205,15 @@ export default function InventoryListDetail({
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted p-4 rounded-xl">
             <div className="flex justify-between items-center mb-4">
               <span className="text-lg font-semibold">Total:</span>
-              <span className="text-2xl font-bold text-black">${totalPrice.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-foreground">${totalPrice.toFixed(2)}</span>
             </div>
 
             <button
               onClick={addAllToCart}
-              className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded hover:bg-gray-800 transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-3 rounded-xl hover:bg-accent transition-colors"
             >
               <ShoppingCart className="h-5 w-5" />
               Add All to Cart

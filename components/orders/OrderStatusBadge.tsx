@@ -26,14 +26,14 @@ const STATUS_CONFIG: Record<
 > = {
   pending: {
     label: 'Pending',
-    color: 'text-gray-700',
-    bgColor: 'bg-gray-100',
+    color: 'text-foreground',
+    bgColor: 'bg-secondary',
     icon: Clock,
   },
   processing: {
     label: 'Processing',
-    color: 'text-blue-700',
-    bgColor: 'bg-blue-100',
+    color: 'text-info',
+    bgColor: 'bg-info/10',
     icon: Package,
   },
   ready_for_pickup: {
@@ -50,20 +50,20 @@ const STATUS_CONFIG: Record<
   },
   delivered: {
     label: 'Delivered',
-    color: 'text-green-700',
-    bgColor: 'bg-green-100',
+    color: 'text-success',
+    bgColor: 'bg-success/10',
     icon: CheckCircle2,
   },
   completed: {
     label: 'Completed',
-    color: 'text-green-800',
-    bgColor: 'bg-green-200',
+    color: 'text-success',
+    bgColor: 'bg-success/20',
     icon: CheckCircle2,
   },
   cancelled: {
     label: 'Cancelled',
-    color: 'text-red-700',
-    bgColor: 'bg-red-100',
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/10',
     icon: XCircle,
   },
 }

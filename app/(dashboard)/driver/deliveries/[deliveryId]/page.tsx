@@ -83,11 +83,11 @@ const DELIVERY_STATUS_CONFIG: Record<
   DeliveryStatus,
   { label: string; color: string; bgColor: string }
 > = {
-  pending: { label: 'Pending', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-  assigned: { label: 'Assigned', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-  in_progress: { label: 'In Progress', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-  completed: { label: 'Completed', color: 'text-green-700', bgColor: 'bg-green-100' },
-  failed: { label: 'Failed', color: 'text-red-700', bgColor: 'bg-red-100' },
+  pending: { label: 'Pending', color: 'text-foreground', bgColor: 'bg-secondary' },
+  assigned: { label: 'Assigned', color: 'text-info', bgColor: 'bg-info/20' },
+  in_progress: { label: 'In Progress', color: 'text-warning', bgColor: 'bg-warning/20' },
+  completed: { label: 'Completed', color: 'text-success', bgColor: 'bg-success/20' },
+  failed: { label: 'Failed', color: 'text-destructive', bgColor: 'bg-destructive/20' },
 }
 
 export default function DeliveryDetailPage({
@@ -202,7 +202,7 @@ export default function DeliveryDetailPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -210,12 +210,12 @@ export default function DeliveryDetailPage({
   if (error || !delivery) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 className="text-lg font-semibold text-red-900 mb-2">Error Loading Delivery</h2>
-          <p className="text-red-700 mb-4">{error || 'Delivery not found'}</p>
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6 text-center">
+          <h2 className="text-lg font-semibold text-destructive mb-2">Error Loading Delivery</h2>
+          <p className="text-destructive mb-4">{error || 'Delivery not found'}</p>
           <Link
             href="/driver"
-            className="inline-block px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+            className="inline-block px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-md"
           >
             Back to Dashboard
           </Link>
@@ -233,14 +233,14 @@ export default function DeliveryDetailPage({
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/driver" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+        <Link href="/driver" className="p-2 hover:bg-accent rounded-lg transition-colors">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-black">
+          <h1 className="text-3xl font-bold text-foreground">
             Order #{delivery.order.order_number || delivery.order_id.slice(0, 8).toUpperCase()}
           </h1>
-          <p className="text-gray-600 mt-1">Delivery Details</p>
+          <p className="text-muted-foreground mt-1">Delivery Details</p>
         </div>
         <span
           className={`inline-flex items-center gap-1.5 rounded-full font-medium px-3 py-1.5 text-base ${deliveryConfig.color} ${deliveryConfig.bgColor}`}
@@ -256,29 +256,29 @@ export default function DeliveryDetailPage({
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Customer & Delivery Info */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Delivery Information</h2>
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Delivery Information</h2>
 
             <div className="space-y-4">
               {/* Customer */}
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">Customer</p>
-                <p className="text-base font-semibold text-black">{customerName}</p>
+                <p className="text-sm font-medium text-foreground mb-2">Customer</p>
+                <p className="text-base font-semibold text-foreground">{customerName}</p>
               </div>
 
               {/* Address */}
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
                   Delivery Address
                 </p>
-                <div className="text-base text-gray-900">
+                <div className="text-base text-foreground">
                   <p>{street}</p>
                   <p>{cityState}</p>
                 </div>
                 <button
                   onClick={openInMaps}
-                  className="mt-2 flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
+                  className="mt-2 flex items-center gap-2 text-sm text-brand hover:text-brand"
                 >
                   <Navigation className="h-4 w-4" />
                   Open in Maps
@@ -290,7 +290,7 @@ export default function DeliveryDetailPage({
                 {customer.phone && (
                   <a
                     href={`tel:${customer.phone}`}
-                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+                    className="flex items-center gap-2 text-sm text-foreground hover:text-foreground"
                   >
                     <Phone className="h-4 w-4" />
                     {customer.phone}
@@ -299,7 +299,7 @@ export default function DeliveryDetailPage({
                 {customer.email && (
                   <a
                     href={`mailto:${customer.email}`}
-                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+                    className="flex items-center gap-2 text-sm text-foreground hover:text-foreground"
                   >
                     <Mail className="h-4 w-4" />
                     {customer.email}
@@ -310,11 +310,11 @@ export default function DeliveryDetailPage({
               {/* Estimated Time */}
               {delivery.estimated_delivery_time && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     Estimated Delivery
                   </p>
-                  <p className="text-base text-gray-900">
+                  <p className="text-base text-foreground">
                     {new Date(delivery.estimated_delivery_time).toLocaleString('en-US', {
                       weekday: 'short',
                       month: 'short',
@@ -329,8 +329,8 @@ export default function DeliveryDetailPage({
           </div>
 
           {/* Order Items */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
               <Package className="h-5 w-5" />
               Order Items ({delivery.order.order_items.length})
             </h2>
@@ -347,12 +347,12 @@ export default function DeliveryDetailPage({
                     />
                   )}
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-900">{item.product.name}</h3>
-                    <p className="text-sm text-gray-600">SKU: {item.product.sku}</p>
-                    <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                    <h3 className="font-medium text-foreground">{item.product.name}</h3>
+                    <p className="text-sm text-muted-foreground">SKU: {item.product.sku}</p>
+                    <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-foreground">
                       ${(item.price_at_time * item.quantity).toFixed(2)}
                     </p>
                   </div>
@@ -365,11 +365,11 @@ export default function DeliveryDetailPage({
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Actions */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Actions</h2>
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Actions</h2>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-800">
+              <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
                 {error}
               </div>
             )}
@@ -379,7 +379,7 @@ export default function DeliveryDetailPage({
                 <button
                   onClick={() => updateDeliveryStatus('in_progress')}
                   disabled={updating}
-                  className="w-full px-4 py-3 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {updating ? (
                     <>
@@ -400,7 +400,7 @@ export default function DeliveryDetailPage({
                   <button
                     onClick={() => setShowPODModal(true)}
                     disabled={updating}
-                    className="w-full px-4 py-3 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 bg-success text-white rounded-md font-medium hover:bg-success/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <CheckCircle className="h-4 w-4" />
                     Mark as Delivered
@@ -409,7 +409,7 @@ export default function DeliveryDetailPage({
                   <button
                     onClick={() => updateDeliveryStatus('failed')}
                     disabled={updating}
-                    className="w-full px-4 py-3 bg-red-600 text-white rounded-md font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3 bg-destructive text-white rounded-md font-medium hover:bg-destructive/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {updating ? (
                       <>
@@ -427,7 +427,7 @@ export default function DeliveryDetailPage({
               )}
 
               {(delivery.status === 'completed' || delivery.status === 'failed') && (
-                <p className="text-sm text-gray-600 text-center py-2">
+                <p className="text-sm text-muted-foreground text-center py-2">
                   Delivery is {delivery.status}. No actions available.
                 </p>
               )}
@@ -435,37 +435,37 @@ export default function DeliveryDetailPage({
           </div>
 
           {/* Order Summary */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Order Summary</h2>
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Order Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium text-foreground">
                   ${delivery.order.subtotal.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-medium text-gray-900">${delivery.order.tax.toFixed(2)}</span>
+                <span className="text-muted-foreground">Tax</span>
+                <span className="font-medium text-foreground">${delivery.order.tax.toFixed(2)}</span>
               </div>
               {delivery.order.delivery_fee && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Delivery Fee</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span className="font-medium text-foreground">
                     ${delivery.order.delivery_fee.toFixed(2)}
                   </span>
                 </div>
               )}
-              <div className="pt-3 border-t border-gray-200 flex justify-between">
-                <span className="font-semibold text-gray-900">Total</span>
-                <span className="font-bold text-black">${delivery.order.total.toFixed(2)}</span>
+              <div className="pt-3 border-t border-border flex justify-between">
+                <span className="font-semibold text-foreground">Total</span>
+                <span className="font-bold text-foreground">${delivery.order.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           {/* Order Status */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-black mb-4">Order Status</h2>
+          <div className="bg-background border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Order Status</h2>
             <OrderStatusBadge status={delivery.order.status} />
           </div>
         </div>

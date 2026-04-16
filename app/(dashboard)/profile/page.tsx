@@ -34,43 +34,43 @@ export default async function ProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className="bg-white border border-gray-200 rounded-lg p-8">
+      <div className="bg-background border border-border rounded-xl p-8">
         <div className="flex items-center mb-6">
-          <User className="h-8 w-8 text-gray-600 mr-3" />
-          <h1 className="text-2xl font-bold text-black">My Profile</h1>
+          <User className="h-8 w-8 text-muted-foreground mr-3" />
+          <h1 className="text-2xl font-bold text-foreground">My Profile</h1>
         </div>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <p className="text-black">{user.email}</p>
+            <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+            <p className="text-foreground">{user.email}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
-            <p className="text-gray-600 text-sm font-mono">{user.id}</p>
+            <label className="block text-sm font-medium text-foreground mb-1">User ID</label>
+            <p className="text-muted-foreground text-sm font-mono">{user.id}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Account Created</label>
-            <p className="text-gray-600">
+            <label className="block text-sm font-medium text-foreground mb-1">Account Created</label>
+            <p className="text-muted-foreground">
               {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Sign In</label>
-            <p className="text-gray-600">
+            <label className="block text-sm font-medium text-foreground mb-1">Last Sign In</label>
+            <p className="text-muted-foreground">
               {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'N/A'}
             </p>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-border">
           <form action="/api/auth/signout" method="post">
             <button
               type="submit"
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+              className="bg-destructive text-white px-4 py-2 rounded-xl hover:bg-destructive/90 transition-colors"
             >
               Sign Out
             </button>
@@ -79,12 +79,12 @@ export default async function ProfilePage() {
       </div>
 
       {/* Customer Information (Business & Shipping) */}
-      <div className="bg-white border border-gray-200 rounded-lg p-8">
+      <div className="bg-background border border-border rounded-xl p-8">
         <div className="flex items-center mb-6">
-          <Package className="h-6 w-6 text-gray-600 mr-3" />
-          <h2 className="text-xl font-bold text-black">Customer Information</h2>
+          <Package className="h-6 w-6 text-muted-foreground mr-3" />
+          <h2 className="text-xl font-bold text-foreground">Customer Information</h2>
         </div>
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-muted-foreground mb-6">
           Save your business and shipping information for faster checkout. Your address will be validated
           and checked for delivery eligibility.
         </p>
@@ -92,8 +92,8 @@ export default async function ProfilePage() {
       </div>
 
       {/* Contact Preferences */}
-      <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <h2 className="text-xl font-bold text-black mb-4">Contact Preferences</h2>
+      <div className="bg-background border border-border rounded-xl p-8">
+        <h2 className="text-xl font-bold text-foreground mb-4">Contact Preferences</h2>
         <ContactPreferenceEditor
           userId={user.id}
           initialPreference={profile?.contact_preference || null}
@@ -103,15 +103,15 @@ export default async function ProfilePage() {
 
       {/* Business Hours (Shop Owners Only) */}
       {isShopOwner && (
-        <div className="bg-white border border-gray-200 rounded-lg p-8">
-          <h2 className="text-xl font-bold text-black mb-4">Business Hours</h2>
+        <div className="bg-background border border-border rounded-xl p-8">
+          <h2 className="text-xl font-bold text-foreground mb-4">Business Hours</h2>
           <BusinessHoursEditor userId={user.id} initialHours={profile?.business_hours || null} />
         </div>
       )}
 
       {/* Push Notifications Settings */}
-      <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <h2 className="text-xl font-bold text-black mb-4">Push Notification Settings</h2>
+      <div className="bg-background border border-border rounded-xl p-8">
+        <h2 className="text-xl font-bold text-foreground mb-4">Push Notification Settings</h2>
         <PushNotificationToggle />
       </div>
     </div>

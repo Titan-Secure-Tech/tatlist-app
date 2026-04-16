@@ -205,15 +205,15 @@ export default function CollectionModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
+        className="bg-background rounded-xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-xl font-semibold text-black">Add to collection</h2>
-            {productName && <p className="text-sm text-gray-500 mt-1">{productName}</p>}
+            <h2 className="text-xl font-semibold text-foreground">Add to collection</h2>
+            {productName && <p className="text-sm text-muted-foreground mt-1">{productName}</p>}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -222,21 +222,21 @@ export default function CollectionModal({
         {!isCreatingNew ? (
           <button
             onClick={() => setIsCreatingNew(true)}
-            className="w-full flex items-center gap-3 p-4 mb-4 bg-black rounded-lg hover:bg-gray-800 transition-colors"
+            className="w-full flex items-center gap-3 p-4 mb-4 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] rounded-xl hover:bg-accent transition-colors"
           >
-            <div className="flex items-center justify-center w-12 h-12 bg-white rounded">
-              <Plus className="h-6 w-6 text-black" />
+            <div className="flex items-center justify-center w-12 h-12 bg-background rounded">
+              <Plus className="h-6 w-6 text-foreground" />
             </div>
-            <span className="text-white font-medium">Create new collection</span>
+            <span className="text-primary-foreground font-medium">Create new collection</span>
           </button>
         ) : (
-          <div className="space-y-3 mb-4 p-4 border border-gray-200 rounded-lg">
+          <div className="space-y-3 mb-4 p-4 border border-border rounded-xl">
             <input
               type="text"
               value={newCollectionName}
               onChange={e => setNewCollectionName(e.target.value)}
               placeholder="Collection name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+              className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:border-brand"
               onKeyDown={e => {
                 if (e.key === 'Enter') createNewCollection()
                 if (e.key === 'Escape') {
@@ -250,7 +250,7 @@ export default function CollectionModal({
               <button
                 onClick={createNewCollection}
                 disabled={isLoading || !newCollectionName.trim()}
-                className="flex-1 bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                className="flex-1 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-2 rounded-xl hover:bg-accent transition-colors disabled:opacity-50"
               >
                 Create
               </button>
@@ -260,7 +260,7 @@ export default function CollectionModal({
                   setNewCollectionName('')
                 }}
                 disabled={isLoading}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-border rounded-xl hover:bg-accent transition-colors"
               >
                 Cancel
               </button>
@@ -276,22 +276,22 @@ export default function CollectionModal({
                 key={collection.id}
                 onClick={() => addToCollection(collection.id)}
                 disabled={isLoading}
-                className="w-full flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="w-full flex items-center gap-3 p-3 border border-border rounded-xl hover:bg-accent transition-colors disabled:opacity-50"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded">
+                <div className="flex items-center justify-center w-12 h-12 bg-secondary rounded">
                   <span className="text-xl">📦</span>
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="font-medium text-black">{collection.name}</p>
-                  <p className="text-sm text-gray-500">🌐 {collection.item_count || 0} items</p>
+                  <p className="font-medium text-foreground">{collection.name}</p>
+                  <p className="text-sm text-muted-foreground">🌐 {collection.item_count || 0} items</p>
                 </div>
-                <div className="w-6 h-6 border-2 border-gray-300 rounded" />
+                <div className="w-6 h-6 border-2 border-border rounded" />
               </button>
             ))}
           </div>
         ) : (
           !isCreatingNew && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <p className="mb-2">No collections yet</p>
               <p className="text-sm">Create your first collection to organize your inventory</p>
             </div>
@@ -301,7 +301,7 @@ export default function CollectionModal({
         <div className="mt-6 pt-4 border-t">
           <button
             onClick={onClose}
-            className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+            className="w-full bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-3 rounded-xl hover:bg-accent transition-colors font-medium"
           >
             Done
           </button>

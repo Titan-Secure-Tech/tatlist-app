@@ -105,7 +105,7 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
 
   return (
     <header
-      className="fixed left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
+      className="fixed left-0 right-0 z-40 bg-secondary/80 backdrop-blur-md border-b border-border transition-all duration-300"
       style={{ top: `${bannerHeight}px` }}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -124,8 +124,8 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
               return (
                 <Link key={item.href} href={item.href}>
                   <motion.div
-                    className={`relative px-4 py-2 rounded-lg transition-colors ${
-                      isActive ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+                    className={`relative px-4 py-2 rounded-xl transition-colors ${
+                      isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -137,7 +137,7 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
 
                     {isActive && (
                       <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-black rounded-full"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand rounded-full"
                         layoutId="navbar-indicator"
                         transition={{
                           type: 'spring',
@@ -160,7 +160,7 @@ export default function AnimatedNavigation({ isAdmin = false }: AnimatedNavigati
             {/* Sign Out Button - Enhanced touch target for mobile */}
             <motion.button
               onClick={handleSignOut}
-              className="p-3 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="p-3 text-muted-foreground hover:text-foreground hover:bg-accent rounded-xl transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title="Sign out"

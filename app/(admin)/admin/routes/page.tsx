@@ -75,12 +75,12 @@ export default async function AdminRoutesPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Route Management</h1>
-          <p className="text-gray-600">Create and manage delivery routes</p>
+          <p className="text-muted-foreground">Create and manage delivery routes</p>
         </div>
 
         <Link
           href="/admin/routes/create"
-          className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+          className="px-6 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground font-medium rounded-md transition-colors"
         >
           + Create Route
         </Link>
@@ -88,73 +88,73 @@ export default async function AdminRoutesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-sm font-medium text-gray-600 mb-2">
+        <div className="bg-background border border-border rounded-xl p-6">
+          <div className="text-sm font-medium text-muted-foreground mb-2">
             Total Routes
           </div>
-          <div className="text-3xl font-bold text-gray-900">
+          <div className="text-3xl font-bold text-foreground">
             {routes?.length || 0}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-sm font-medium text-gray-600 mb-2">Active</div>
-          <div className="text-3xl font-bold text-green-600">
+        <div className="bg-background border border-border rounded-xl p-6">
+          <div className="text-sm font-medium text-muted-foreground mb-2">Active</div>
+          <div className="text-3xl font-bold text-success">
             {routes?.filter((r: any) => r.status === 'active').length || 0}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-sm font-medium text-gray-600 mb-2">Draft</div>
-          <div className="text-3xl font-bold text-blue-600">
+        <div className="bg-background border border-border rounded-xl p-6">
+          <div className="text-sm font-medium text-muted-foreground mb-2">Draft</div>
+          <div className="text-3xl font-bold text-brand">
             {routes?.filter((r: any) => r.status === 'draft').length || 0}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <div className="text-sm font-medium text-gray-600 mb-2">
+        <div className="bg-background border border-border rounded-xl p-6">
+          <div className="text-sm font-medium text-muted-foreground mb-2">
             Completed
           </div>
-          <div className="text-3xl font-bold text-gray-600">
+          <div className="text-3xl font-bold text-muted-foreground">
             {routes?.filter((r: any) => r.status === 'completed').length || 0}
           </div>
         </div>
       </div>
 
       {/* Routes Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-background border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-muted border-b border-border">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Route
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Driver
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Stops
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Distance
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Progress
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-background divide-y divide-border">
               {routesWithStats.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center">
-                    <div className="text-gray-400 mb-2">
+                    <div className="text-muted-foreground mb-2">
                       <svg
                         className="w-12 h-12 mx-auto"
                         fill="none"
@@ -169,50 +169,50 @@ export default async function AdminRoutesPage() {
                         />
                       </svg>
                     </div>
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       No routes yet. Create your first optimized route!
                     </p>
                   </td>
                 </tr>
               ) : (
                 routesWithStats.map((route: any) => (
-                  <tr key={route.id} className="hover:bg-gray-50">
+                  <tr key={route.id} className="hover:bg-accent">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-foreground">
                           {route.name}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-muted-foreground">
                           {new Date(route.created_at).toLocaleDateString()}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-foreground">
                         {route.driver?.name || 'Unassigned'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-foreground">
                         {route.total_stops}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-foreground">
                         {route.total_distance_miles?.toFixed(1)} mi
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="w-24 bg-gray-200 rounded-full h-2 mr-3">
+                        <div className="w-24 bg-muted rounded-full h-2 mr-3">
                           <div
-                            className="bg-green-600 h-2 rounded-full"
+                            className="bg-success h-2 rounded-full"
                             style={{
                               width: `${route.completion_percentage}%`,
                             }}
                           />
                         </div>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-muted-foreground">
                           {route.completion_percentage}%
                         </span>
                       </div>
@@ -221,12 +221,12 @@ export default async function AdminRoutesPage() {
                       <span
                         className={`px-2 py-1 text-xs font-medium rounded-full ${
                           route.status === 'active'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-success/20 text-success'
                             : route.status === 'draft'
-                              ? 'bg-blue-100 text-blue-800'
+                              ? 'bg-info/20 text-info'
                               : route.status === 'completed'
-                                ? 'bg-gray-100 text-gray-800'
-                                : 'bg-red-100 text-red-800'
+                                ? 'bg-secondary text-foreground'
+                                : 'bg-destructive/20 text-destructive'
                         }`}
                       >
                         {route.status}
@@ -235,7 +235,7 @@ export default async function AdminRoutesPage() {
                     <td className="px-6 py-4">
                       <Link
                         href={`/admin/routes/${route.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        className="text-brand hover:text-brand text-sm font-medium"
                       >
                         View →
                       </Link>

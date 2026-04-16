@@ -41,11 +41,11 @@ export default function NewInventoryListPage() {
 
   return (
     <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-black mb-6">Create New Inventory List</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6">Create New Inventory List</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
             List Name
           </label>
           <input
@@ -53,28 +53,28 @@ export default function NewInventoryListPage() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
+            className="w-full px-3 py-2 border border-border rounded-xl focus:outline-none focus:ring-brand focus:border-brand"
             placeholder="e.g., Weekly Supplies, Station 1 Inventory"
             required
           />
         </div>
 
         {error && (
-          <div className="text-red-600 text-sm">{error}</div>
+          <div className="text-destructive text-sm">{error}</div>
         )}
 
         <div className="flex gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-2 border border-border text-foreground rounded-xl hover:bg-accent transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading || !name.trim()}
-            className="flex-1 px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl hover:opacity-90 transition-colors disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create List'}
           </button>

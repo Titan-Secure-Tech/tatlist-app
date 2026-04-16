@@ -24,42 +24,42 @@ export function AlertStats({ stats }: AlertStatsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       {/* Total Alerts */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="text-sm font-medium text-gray-600 mb-2">
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">
           Total Alerts
         </div>
-        <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-        <div className="text-xs text-gray-500 mt-1">Last 24 hours</div>
+        <div className="text-3xl font-bold text-foreground">{stats.total}</div>
+        <div className="text-xs text-muted-foreground mt-1">Last 24 hours</div>
       </div>
 
       {/* Sent */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="text-sm font-medium text-gray-600 mb-2">Sent</div>
-        <div className="text-3xl font-bold text-green-600">{stats.sent}</div>
-        <div className="text-xs text-gray-500 mt-1">
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">Sent</div>
+        <div className="text-3xl font-bold text-success">{stats.sent}</div>
+        <div className="text-xs text-muted-foreground mt-1">
           {successRate}% success rate
         </div>
       </div>
 
       {/* Pending */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="text-sm font-medium text-gray-600 mb-2">Pending</div>
-        <div className="text-3xl font-bold text-blue-600">{stats.pending}</div>
-        <div className="text-xs text-gray-500 mt-1">Awaiting delivery</div>
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">Pending</div>
+        <div className="text-3xl font-bold text-info">{stats.pending}</div>
+        <div className="text-xs text-muted-foreground mt-1">Awaiting delivery</div>
       </div>
 
       {/* Failed */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="text-sm font-medium text-gray-600 mb-2">Failed</div>
-        <div className="text-3xl font-bold text-red-600">{stats.failed}</div>
-        <div className="text-xs text-gray-500 mt-1">Delivery errors</div>
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">Failed</div>
+        <div className="text-3xl font-bold text-destructive">{stats.failed}</div>
+        <div className="text-xs text-muted-foreground mt-1">Delivery errors</div>
       </div>
 
       {/* Skipped */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="text-sm font-medium text-gray-600 mb-2">Skipped</div>
-        <div className="text-3xl font-bold text-gray-600">{stats.skipped}</div>
-        <div className="text-xs text-gray-500 mt-1">Quiet hours / prefs</div>
+      <div className="bg-background border border-border rounded-xl p-6">
+        <div className="text-sm font-medium text-muted-foreground mb-2">Skipped</div>
+        <div className="text-3xl font-bold text-muted-foreground">{stats.skipped}</div>
+        <div className="text-xs text-muted-foreground mt-1">Quiet hours / prefs</div>
       </div>
     </div>
   );

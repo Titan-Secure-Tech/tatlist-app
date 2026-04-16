@@ -100,22 +100,22 @@ export function RouteCreationForm({
     <div className="space-y-6">
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4">
+          <p className="text-destructive">{error}</p>
         </div>
       )}
 
       {/* Driver Selection */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4">1. Select Driver</h2>
 
         {availableDrivers.length === 0 ? (
-          <p className="text-gray-600">No drivers available</p>
+          <p className="text-muted-foreground">No drivers available</p>
         ) : (
           <select
             value={selectedDriver}
             onChange={(e) => setSelectedDriver(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
           >
             <option value="">Choose a driver...</option>
             {availableDrivers.map((driver) => (
@@ -128,19 +128,19 @@ export function RouteCreationForm({
       </div>
 
       {/* Route Name (Optional) */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4">2. Route Name (Optional)</h2>
         <input
           type="text"
           value={routeName}
           onChange={(e) => setRouteName(e.target.value)}
           placeholder="e.g., Morning Route - Downtown Tampa"
-          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
         />
       </div>
 
       {/* Delivery Selection */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">
             3. Select Deliveries ({selectedDeliveries.size} / 12 selected)
@@ -148,13 +148,13 @@ export function RouteCreationForm({
           <div className="flex gap-2">
             <button
               onClick={selectAll}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-accent"
             >
               Select All (Max 12)
             </button>
             <button
               onClick={clearSelection}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-md hover:bg-accent"
             >
               Clear
             </button>
@@ -162,7 +162,7 @@ export function RouteCreationForm({
         </div>
 
         {availableDeliveries.length === 0 ? (
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             No pending deliveries available for routing
           </p>
         ) : (
@@ -179,7 +179,7 @@ export function RouteCreationForm({
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
                     isSelected
                       ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border hover:border-foreground/30'
                   }`}
                 >
                   <div className="flex items-start gap-4">
@@ -187,38 +187,38 @@ export function RouteCreationForm({
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => {}}
-                      className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="mt-1 w-4 h-4 text-brand border-border rounded focus:ring-brand"
                     />
 
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-foreground">
                             Order #{order.order_number}
                           </h3>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-muted-foreground">
                             {order.user?.name || 'Unknown Customer'}
                           </p>
                         </div>
-                        <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
+                        <span className="px-2 py-1 text-xs font-medium bg-secondary text-foreground rounded">
                           {delivery.status}
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-700 mb-1">
+                      <p className="text-sm text-foreground mb-1">
                         {address?.formatted_address ||
                           address?.street ||
                           'Address unavailable'}
                       </p>
 
                       {address?.city && address?.state && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           {address.city}, {address.state} {address.zipCode}
                         </p>
                       )}
 
                       {!address?.latitude || !address?.longitude ? (
-                        <p className="text-xs text-red-600 mt-2">
+                        <p className="text-xs text-destructive mt-2">
                           ⚠️ Missing coordinates - cannot optimize
                         </p>
                       ) : null}
@@ -232,13 +232,13 @@ export function RouteCreationForm({
       </div>
 
       {/* Optimize Button */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">
+            <h3 className="font-semibold text-foreground mb-1">
               Ready to optimize?
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               {selectedDeliveries.size} deliveries selected
               {selectedDriver &&
                 ` for ${availableDrivers.find((d) => d.id === selectedDriver)?.name}`}
@@ -252,7 +252,7 @@ export function RouteCreationForm({
               selectedDeliveries.size === 0 ||
               !selectedDriver
             }
-            className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground font-medium rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {optimizing ? (
               <span className="flex items-center">

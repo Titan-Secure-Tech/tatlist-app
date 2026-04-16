@@ -57,31 +57,31 @@ export function OrderStatusTimeline({ orderId, currentStatus }: OrderStatusTimel
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-4 bg-muted rounded w-3/4"></div>
+        <div className="h-4 bg-muted rounded w-1/2"></div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="text-sm text-red-600">Failed to load order history. Please try again.</div>
+      <div className="text-sm text-destructive">Failed to load order history. Please try again.</div>
     )
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Order Status History</h3>
+        <h3 className="text-lg font-semibold text-foreground">Order Status History</h3>
         <OrderStatusBadge status={currentStatus} />
       </div>
 
       {history.length === 0 ? (
-        <p className="text-sm text-gray-600">No status updates yet.</p>
+        <p className="text-sm text-muted-foreground">No status updates yet.</p>
       ) : (
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-gray-200"></div>
+          <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-muted"></div>
 
           {/* Timeline items */}
           <div className="space-y-6">
@@ -90,12 +90,12 @@ export function OrderStatusTimeline({ orderId, currentStatus }: OrderStatusTimel
                 {/* Timeline dot */}
                 <div className="relative z-10 flex-shrink-0">
                   {index === history.length - 1 ? (
-                    <div className="rounded-full bg-green-500 p-1.5">
+                    <div className="rounded-full bg-success p-1.5">
                       <CheckCircle2 className="h-4 w-4 text-white" />
                     </div>
                   ) : (
-                    <div className="rounded-full bg-gray-300 p-1.5">
-                      <Circle className="h-4 w-4 text-gray-600" />
+                    <div className="rounded-full bg-border p-1.5">
+                      <Circle className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )}
                 </div>
@@ -104,26 +104,26 @@ export function OrderStatusTimeline({ orderId, currentStatus }: OrderStatusTimel
                 <div className="flex-1 pt-0.5">
                   <div className="flex items-center gap-2 mb-1">
                     <OrderStatusBadge status={item.to_status} size="sm" />
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground">
                       {new Date(item.changed_at).toLocaleString()}
                     </span>
                   </div>
 
                   {item.from_status && (
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-sm text-muted-foreground mb-1">
                       Changed from{' '}
                       <span className="font-medium">{item.from_status.replace(/_/g, ' ')}</span>
                     </p>
                   )}
 
                   {item.changed_by_user && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       By {item.changed_by_user.first_name} {item.changed_by_user.last_name}
                     </p>
                   )}
 
                   {item.notes && (
-                    <div className="mt-2 p-2 bg-gray-50 rounded text-sm text-gray-700">
+                    <div className="mt-2 p-2 bg-muted rounded text-sm text-foreground">
                       {item.notes}
                     </div>
                   )}

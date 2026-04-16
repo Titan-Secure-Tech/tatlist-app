@@ -183,16 +183,16 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
         {/* Fulfillment Type Toggle */}
         <div>
           <Label className="mb-3 block">
-            Fulfillment Method <span className="text-red-500">*</span>
+            Fulfillment Method <span className="text-destructive">*</span>
           </Label>
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
               onClick={() => setFormData({ ...formData, fulfillmentType: 'delivery' })}
-              className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+              className={`flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${
                 formData.fulfillmentType === 'delivery'
-                  ? 'border-black bg-black text-white'
-                  : 'border-gray-300 hover:border-gray-400'
+                  ? 'border-transparent bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground'
+                  : 'border-border hover:border-foreground/40'
               }`}
             >
               <Truck className="w-5 h-5" />
@@ -201,10 +201,10 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
             <button
               type="button"
               onClick={() => setFormData({ ...formData, fulfillmentType: 'pickup' })}
-              className={`flex items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all ${
+              className={`flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${
                 formData.fulfillmentType === 'pickup'
-                  ? 'border-black bg-black text-white'
-                  : 'border-gray-300 hover:border-gray-400'
+                  ? 'border-transparent bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground'
+                  : 'border-border hover:border-foreground/40'
               }`}
             >
               <Package className="w-5 h-5" />
@@ -215,7 +215,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
         <div>
           <Label htmlFor="businessName">
-            Business Name <span className="text-red-500">*</span>
+            Business Name <span className="text-destructive">*</span>
           </Label>
           <Input
             id="businessName"
@@ -252,7 +252,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
             <div>
               <Label htmlFor="street">
-                Street Address <span className="text-red-500">*</span>
+                Street Address <span className="text-destructive">*</span>
               </Label>
               <AddressAutocomplete
                 id="street"
@@ -296,14 +296,14 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
                 }}
                 placeholder="Start typing your address..."
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                className="mt-1 block w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="city">
-                  City <span className="text-red-500">*</span>
+                  City <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="city"
@@ -317,7 +317,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
               <div>
                 <Label htmlFor="state">
-                  State <span className="text-red-500">*</span>
+                  State <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="state"
@@ -333,7 +333,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
             <div>
               <Label htmlFor="zipCode">
-                ZIP Code <span className="text-red-500">*</span>
+                ZIP Code <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="zipCode"
@@ -372,10 +372,10 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
             </Button>
 
             {validationState.isValid === true && (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertTitle className="text-green-800">Address Validated</AlertTitle>
-                <AlertDescription className="text-green-700">
+              <Alert className="border-success/20 bg-success/10">
+                <CheckCircle className="h-4 w-4 text-success" />
+                <AlertTitle className="text-success">Address Validated</AlertTitle>
+                <AlertDescription className="text-success">
                   {validationState.distance && validationState.distance > 0 ? (
                     <>
                       Your business is {validationState.distance.toFixed(1)} miles from our delivery
@@ -392,10 +392,10 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
             )}
 
             {validationState.isValid === false && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertTitle className="text-red-800">Delivery Not Available</AlertTitle>
-                <AlertDescription className="text-red-700">
+              <Alert className="border-destructive/20 bg-destructive/10">
+                <AlertCircle className="h-4 w-4 text-destructive" />
+                <AlertTitle className="text-destructive">Delivery Not Available</AlertTitle>
+                <AlertDescription className="text-destructive">
                   {validationState.error}
                 </AlertDescription>
               </Alert>
@@ -404,10 +404,10 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
         )}
 
         {formData.fulfillmentType === 'pickup' && (
-          <Alert className="border-blue-200 bg-blue-50">
-            <Package className="h-4 w-4 text-blue-600" />
-            <AlertTitle className="text-blue-800">Pickup Location</AlertTitle>
-            <AlertDescription className="text-blue-700">
+          <Alert className="border-info/20 bg-info/10">
+            <Package className="h-4 w-4 text-info" />
+            <AlertTitle className="text-info">Pickup Location</AlertTitle>
+            <AlertDescription className="text-info">
               <p className="font-semibold mb-2">Black Eye Tattoo</p>
               <p>1234 Main Street</p>
               <p>Tampa, FL 33601</p>
@@ -424,7 +424,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
           <div>
             <Label htmlFor="phone">
-              Phone Number <span className="text-red-500">*</span>
+              Phone Number <span className="text-destructive">*</span>
             </Label>
             <Input
               id="phone"
@@ -439,7 +439,7 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
 
           <div>
             <Label htmlFor="email">
-              Email Address <span className="text-red-500">*</span>
+              Email Address <span className="text-destructive">*</span>
             </Label>
             <Input
               id="email"
@@ -452,12 +452,12 @@ export function BusinessDetailsForm({ onSubmit, initialValues = {} }: BusinessDe
               required
               className={
                 emailTouched && formData.email && !isValidEmail(formData.email)
-                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  ? 'border-destructive focus:border-destructive focus:ring-destructive'
                   : ''
               }
             />
             {emailTouched && formData.email && !isValidEmail(formData.email) && (
-              <p className="text-sm text-red-600 mt-1">Please enter a valid email address</p>
+              <p className="text-sm text-destructive mt-1">Please enter a valid email address</p>
             )}
           </div>
         </div>

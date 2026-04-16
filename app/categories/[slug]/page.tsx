@@ -45,13 +45,13 @@ async function CategoryContent({ slug }: { slug: string }) {
     console.error('Error fetching category:', categoryError)
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-black mb-4">Category Not Found</h1>
-        <p className="text-gray-600 mb-8">
+        <h1 className="text-2xl font-bold text-foreground mb-4">Category Not Found</h1>
+        <p className="text-muted-foreground mb-8">
           The category you&apos;re looking for doesn&apos;t exist.
         </p>
         <Link
           href="/categories"
-          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+          className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
         >
           Back to Categories
         </Link>
@@ -70,8 +70,8 @@ async function CategoryContent({ slug }: { slug: string }) {
     console.error('Error fetching products:', error)
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-black mb-4">Error Loading Category</h1>
-        <p className="text-gray-600">There was an error loading this category.</p>
+        <h1 className="text-2xl font-bold text-foreground mb-4">Error Loading Category</h1>
+        <p className="text-muted-foreground">There was an error loading this category.</p>
       </div>
     )
   }
@@ -83,7 +83,7 @@ async function CategoryContent({ slug }: { slug: string }) {
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/categories"
-            className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Categories
@@ -91,15 +91,15 @@ async function CategoryContent({ slug }: { slug: string }) {
         </div>
 
         <div className="text-center py-16">
-          <Package className="mx-auto h-16 w-16 text-gray-400 mb-6" />
-          <h1 className="text-3xl font-bold text-black mb-4">{category.name}</h1>
-          {category.description && <p className="text-gray-600 mb-4">{category.description}</p>}
-          <p className="text-gray-600 mb-8">
+          <Package className="mx-auto h-16 w-16 text-muted-foreground mb-6" />
+          <h1 className="text-3xl font-bold text-foreground mb-4">{category.name}</h1>
+          {category.description && <p className="text-muted-foreground mb-4">{category.description}</p>}
+          <p className="text-muted-foreground mb-8">
             No products found in this category yet. Check back soon!
           </p>
           <Link
             href="/products"
-            className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
+            className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
           >
             Browse All Products
           </Link>
@@ -115,7 +115,7 @@ async function CategoryContent({ slug }: { slug: string }) {
         <div className="flex items-center gap-4">
           <Link
             href="/categories"
-            className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Categories
@@ -125,11 +125,11 @@ async function CategoryContent({ slug }: { slug: string }) {
 
       {/* Category Title */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-black mb-4">{category.name}</h1>
+        <h1 className="text-4xl font-bold text-foreground mb-4">{category.name}</h1>
         {category.description && (
-          <p className="text-lg text-gray-600 mb-4">{category.description}</p>
+          <p className="text-lg text-muted-foreground mb-4">{category.description}</p>
         )}
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           {products.length} {products.length === 1 ? 'product' : 'products'} available
         </p>
       </div>
@@ -139,7 +139,7 @@ async function CategoryContent({ slug }: { slug: string }) {
 
       {/* Back to categories link */}
       <div className="mt-12 text-center">
-        <Link href="/categories" className="inline-block text-black underline hover:no-underline">
+        <Link href="/categories" className="inline-block text-foreground underline hover:no-underline">
           ← Browse other categories
         </Link>
       </div>
@@ -152,8 +152,8 @@ function CategoryLoading() {
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading category...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto mb-4"></div>
+        <p className="text-muted-foreground">Loading category...</p>
       </div>
     </div>
   )

@@ -190,8 +190,8 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
         <div
           className={`p-4 rounded-md ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
+              ? 'bg-success/10 text-success border border-success/20'
+              : 'bg-destructive/10 text-destructive border border-destructive/20'
           }`}
         >
           {message.text}
@@ -199,7 +199,7 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
       )}
 
       {/* Notification Channels */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <h2 className="text-xl font-semibold mb-4">Notification Channels</h2>
 
         <div className="space-y-4">
@@ -214,11 +214,11 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                     email_enabled: e.target.checked,
                   })
                 }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand border-border rounded focus:ring-brand"
               />
-              <span className="text-sm font-medium text-gray-900">Email Notifications</span>
+              <span className="text-sm font-medium text-foreground">Email Notifications</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">Receive delivery alerts via email</p>
+            <p className="text-sm text-muted-foreground mt-1 ml-7">Receive delivery alerts via email</p>
           </div>
 
           <div>
@@ -227,18 +227,18 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                 type="checkbox"
                 checked={formData.sms_enabled}
                 onChange={e => setFormData({ ...formData, sms_enabled: e.target.checked })}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand border-border rounded focus:ring-brand"
               />
-              <span className="text-sm font-medium text-gray-900">SMS Notifications</span>
+              <span className="text-sm font-medium text-foreground">SMS Notifications</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">
+            <p className="text-sm text-muted-foreground mt-1 ml-7">
               Receive delivery alerts via text message
             </p>
 
             {formData.sms_enabled && (
               <div className="mt-4 ml-7 space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     Phone Number
                   </label>
                   <div className="flex gap-2">
@@ -261,7 +261,7 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                       disabled={
                         verificationState === 'sending' || verificationState === 'verifying'
                       }
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black disabled:opacity-50"
+                      className="flex-1 px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50"
                     />
                     {formData.phone_number &&
                       !formData.phone_verified &&
@@ -270,7 +270,7 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                           type="button"
                           onClick={handleSendVerificationCode}
                           disabled={verificationState === 'sending'}
-                          className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-50"
+                          className="px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground text-sm font-medium rounded-xl hover:bg-accent disabled:opacity-50"
                         >
                           {verificationState === 'sending' ? 'Sending...' : 'Send Code'}
                         </button>
@@ -279,8 +279,8 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
 
                   {/* Verification Code Input */}
                   {verificationState === 'code_sent' && (
-                    <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-md">
-                      <p className="text-sm text-blue-900 mb-3">
+                    <div className="mt-3 p-4 bg-info/10 border border-info/20 rounded-md">
+                      <p className="text-sm text-info mb-3">
                         We&apos;ve sent a 6-digit verification code to{' '}
                         <span className="font-medium">{formData.phone_number}</span>
                       </p>
@@ -296,30 +296,30 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                           }}
                           placeholder="Enter 6-digit code"
                           maxLength={6}
-                          className="flex-1 px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black text-center text-lg tracking-widest font-mono"
+                          className="flex-1 px-3 py-2 border border-info/30 rounded-md focus:outline-none focus:ring-2 focus:ring-brand text-center text-lg tracking-widest font-mono"
                         />
                         <button
                           type="button"
                           onClick={handleVerifyCode}
                           disabled={verificationCode.length !== 6}
-                          className="px-4 py-2 bg-black text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-50"
+                          className="px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground text-sm font-medium rounded-xl hover:bg-accent disabled:opacity-50"
                         >
                           Verify
                         </button>
                       </div>
                       <div className="flex items-center justify-between mt-2">
                         {expiresIn && expiresIn > 0 ? (
-                          <p className="text-xs text-blue-700">
+                          <p className="text-xs text-info">
                             Code expires in {Math.floor(expiresIn / 60)}:
                             {String(expiresIn % 60).padStart(2, '0')}
                           </p>
                         ) : (
-                          <p className="text-xs text-red-600">Code expired</p>
+                          <p className="text-xs text-destructive">Code expired</p>
                         )}
                         <button
                           type="button"
                           onClick={handleResendCode}
-                          className="text-xs text-blue-700 hover:text-blue-900 underline"
+                          className="text-xs text-info hover:text-info underline"
                         >
                           Resend code
                         </button>
@@ -328,17 +328,17 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                   )}
 
                   {verificationState === 'verifying' && (
-                    <p className="text-sm text-blue-600 mt-2">Verifying code...</p>
+                    <p className="text-sm text-info mt-2">Verifying code...</p>
                   )}
 
                   {/* Verification Error */}
                   {verificationError && (
-                    <p className="text-sm text-red-600 mt-2">{verificationError}</p>
+                    <p className="text-sm text-destructive mt-2">{verificationError}</p>
                   )}
 
                   {/* Verification Success */}
                   {formData.phone_verified && (
-                    <p className="text-sm text-green-600 mt-2">
+                    <p className="text-sm text-success mt-2">
                       ✓ Phone number verified - you&apos;ll receive SMS alerts
                     </p>
                   )}
@@ -347,7 +347,7 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                   {formData.phone_number &&
                     !formData.phone_verified &&
                     verificationState === 'idle' && (
-                      <p className="text-sm text-orange-600 mt-2">
+                      <p className="text-sm text-warning mt-2">
                         ⚠ Phone number not verified. SMS alerts will not be sent until verified.
                       </p>
                     )}
@@ -359,9 +359,9 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
       </div>
 
       {/* Alert Types */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <h2 className="text-xl font-semibold mb-4">Alert Types</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Choose which delivery alerts you want to receive
         </p>
 
@@ -377,11 +377,11 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                     enable_eta_alerts: e.target.checked,
                   })
                 }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand border-border rounded focus:ring-brand"
               />
-              <span className="text-sm font-medium text-gray-900">⏱️ ETA Alerts</span>
+              <span className="text-sm font-medium text-foreground">⏱️ ETA Alerts</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">
+            <p className="text-sm text-muted-foreground mt-1 ml-7">
               Notify when driver is 10 minutes, 5 minutes away
             </p>
           </div>
@@ -397,11 +397,11 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                     enable_distance_alerts: e.target.checked,
                   })
                 }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand border-border rounded focus:ring-brand"
               />
-              <span className="text-sm font-medium text-gray-900">🚗 Distance Alerts</span>
+              <span className="text-sm font-medium text-foreground">🚗 Distance Alerts</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">
+            <p className="text-sm text-muted-foreground mt-1 ml-7">
               Notify when driver is 2 miles, 1 mile, 0.5 miles away
             </p>
           </div>
@@ -417,11 +417,11 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                     enable_arrival_alerts: e.target.checked,
                   })
                 }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-brand border-border rounded focus:ring-brand"
               />
-              <span className="text-sm font-medium text-gray-900">📍 Arrival Alert</span>
+              <span className="text-sm font-medium text-foreground">📍 Arrival Alert</span>
             </label>
-            <p className="text-sm text-gray-500 mt-1 ml-7">
+            <p className="text-sm text-muted-foreground mt-1 ml-7">
               Notify when driver is arriving now (urgent)
             </p>
           </div>
@@ -429,15 +429,15 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
       </div>
 
       {/* Quiet Hours */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-background border border-border rounded-xl p-6">
         <h2 className="text-xl font-semibold mb-4">Quiet Hours</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Set hours when you don&apos;t want to receive notifications
         </p>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Start Time</label>
             <input
               type="time"
               value={formData.quiet_hours_start || ''}
@@ -447,12 +447,12 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                   quiet_hours_start: e.target.value || null,
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+            <label className="block text-sm font-medium text-foreground mb-1">End Time</label>
             <input
               type="time"
               value={formData.quiet_hours_end || ''}
@@ -462,13 +462,13 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
                   quiet_hours_end: e.target.value || null,
                 })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
         </div>
 
         {formData.quiet_hours_start && formData.quiet_hours_end && (
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             No notifications between {formData.quiet_hours_start} and {formData.quiet_hours_end}
           </p>
         )}
@@ -479,7 +479,7 @@ export function NotificationPreferencesForm({ preferences }: NotificationPrefere
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground font-medium rounded-xl hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? 'Saving...' : 'Save Preferences'}
         </button>
