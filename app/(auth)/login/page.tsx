@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 function LoginForm() {
@@ -115,6 +116,12 @@ function LoginForm() {
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
+
+            <div className="text-center text-sm">
+              <Link href="/forgot-password" className="text-muted-foreground hover:text-foreground">
+                Forgot password?
+              </Link>
+            </div>
           </form>
 
           {/* Google OAuth Login */}
