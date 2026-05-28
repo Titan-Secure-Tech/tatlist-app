@@ -13,12 +13,12 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <Image
               src="/logo.webp"
-              alt="Tatlist - Blackeye Natural"
-              width={40}
-              height={40}
-              className="h-10 w-10 object-contain"
+              alt="Tatlist - Tampa Tattoo Supply"
+              width={2576}
+              height={490}
+              priority
+              className="h-8 w-auto"
             />
-            <span className="text-xl font-bold">Tatlist</span>
           </Link>
 
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
