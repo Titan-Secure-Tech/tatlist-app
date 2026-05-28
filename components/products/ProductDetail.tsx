@@ -142,7 +142,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <button
         onClick={() => router.back()}
-        className="mb-6 text-muted-foreground hover:text-foreground flex items-center gap-2"
+        className="mb-6 text-gray-600 hover:text-black flex items-center gap-2"
       >
         <ChevronLeft className="h-4 w-4" />
         Back to Products
@@ -151,7 +151,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Image Gallery */}
         <div className="space-y-4">
-          <div className="relative bg-secondary rounded-xl overflow-hidden aspect-square">
+          <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
             {images.length > 0 ? (
               <>
                 <Image
@@ -166,13 +166,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   <>
                     <button
                       onClick={previousImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-secondary/80 hover:bg-secondary p-2 rounded-full shadow-md z-10"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-secondary/80 hover:bg-secondary p-2 rounded-full shadow-md z-10"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
@@ -180,7 +180,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 )}
               </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
                 <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -201,7 +201,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
-                    index === currentImageIndex ? 'border-foreground' : 'border-border'
+                    index === currentImageIndex ? 'border-black' : 'border-gray-200'
                   }`}
                 >
                   <Image
@@ -220,26 +220,26 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         {/* Product Info */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
-            <p className="text-lg text-muted-foreground">{product.brand}</p>
+            <h1 className="text-3xl font-bold text-black mb-2">{product.name}</h1>
+            <p className="text-lg text-gray-600">{product.brand}</p>
             {product.category && (
-              <p className="text-sm text-muted-foreground">Category: {product.category}</p>
+              <p className="text-sm text-gray-500">Category: {product.category}</p>
             )}
-            <p className="text-sm text-muted-foreground mt-1">SKU: {product.sku}</p>
+            <p className="text-sm text-gray-500 mt-1">SKU: {product.sku}</p>
           </div>
 
-          <div className="text-3xl font-bold text-foreground">${product.price}</div>
+          <div className="text-3xl font-bold text-black">${product.price}</div>
 
           <div className="prose prose-sm max-w-none">
-            <p className="text-foreground">{product.description}</p>
+            <p className="text-gray-700">{product.description}</p>
           </div>
 
           {/* Stock Status */}
           <div className="flex items-center gap-2">
             <div
-              className={`h-3 w-3 rounded-full ${product.in_stock ? 'bg-success' : 'bg-destructive'}`}
+              className={`h-3 w-3 rounded-full ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`}
             />
-            <span className={product.in_stock ? 'text-success' : 'text-destructive'}>
+            <span className={product.in_stock ? 'text-green-700' : 'text-red-700'}>
               {product.in_stock
                 ? `In Stock${product.stock_quantity ? ` (${product.stock_quantity} available)` : ''}`
                 : 'Out of Stock'}
@@ -252,7 +252,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {product.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-secondary text-foreground text-sm rounded-full"
+                  className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full"
                 >
                   {tag}
                 </span>
@@ -263,7 +263,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           {/* Add to Cart */}
           <div className="space-y-4 border-t pt-6">
             <div className="flex items-center gap-4">
-              <label htmlFor="quantity" className="text-foreground">
+              <label htmlFor="quantity" className="text-gray-700">
                 Quantity:
               </label>
               <input
@@ -271,7 +271,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 type="number"
                 value={quantity}
                 onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-20 px-3 py-2 border border-border rounded-xl"
+                className="w-20 px-3 py-2 border border-gray-300 rounded-lg"
                 min="1"
                 max={product.stock_quantity || 999}
               />
@@ -280,7 +280,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             <div className="flex gap-4">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400"
                 disabled={!product.in_stock}
               >
                 {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
@@ -289,13 +289,13 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <button
                 onClick={toggleFavorite}
                 type="button"
-                className="p-3 border border-border rounded-xl hover:bg-accent transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 aria-label={isFavorited ? 'Remove from inventory' : 'Add to inventory'}
               >
                 {isFavorited ? (
-                  <CircleMinus className="h-5 w-5 text-foreground transition-colors" />
+                  <CircleMinus className="h-5 w-5 text-black transition-colors" />
                 ) : (
-                  <CirclePlus className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                  <CirclePlus className="h-5 w-5 text-gray-400 hover:text-black transition-colors" />
                 )}
               </button>
             </div>
@@ -314,10 +314,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       href={attachment}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 border border-border rounded-xl hover:bg-accent"
+                      className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
                     >
-                      <Download className="h-5 w-5 text-muted-foreground" />
-                      <span className="text-foreground">{filename}</span>
+                      <Download className="h-5 w-5 text-gray-500" />
+                      <span className="text-gray-700">{filename}</span>
                     </a>
                   )
                 })}
@@ -332,7 +332,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 href={(product as Product & { source_url?: string }).source_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-brand hover:text-brand/80 text-sm"
+                className="text-blue-600 hover:text-blue-800 text-sm"
               >
                 View on Lucky Supply →
               </a>

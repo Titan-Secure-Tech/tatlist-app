@@ -5,7 +5,7 @@ export default function TestLayoutPage() {
       <p className="mb-4">
         This page is to test if the banner and navigation are properly positioned.
       </p>
-      <div className="bg-secondary p-4 rounded">
+      <div className="bg-gray-100 p-4 rounded">
         <p>The announcement banner should be at the very top.</p>
         <p>The navigation bar should be positioned below the banner.</p>
         <p>This content should not be hidden behind either element.</p>

@@ -90,8 +90,8 @@ export function DriverAssignment({
 
   if (fetching) {
     return (
-      <div className="p-4 bg-muted border border-border rounded-xl">
-        <div className="flex items-center gap-2 text-muted-foreground">
+      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="flex items-center gap-2 text-gray-600">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm">Loading drivers...</span>
         </div>
@@ -101,7 +101,7 @@ export function DriverAssignment({
 
   if (drivers.length === 0) {
     return (
-      <div className="p-4 bg-warning/10 border border-warning/20 rounded-xl">
+      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
         <div className="flex items-center gap-2 text-yellow-800">
           <AlertCircle className="h-4 w-4" />
           <span className="text-sm">No drivers available. Please add drivers to the system.</span>
@@ -113,7 +113,7 @@ export function DriverAssignment({
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
           <Truck className="h-4 w-4" />
           Assign Driver
         </h3>
@@ -121,14 +121,14 @@ export function DriverAssignment({
 
       {/* Driver Selection */}
       <div>
-        <label htmlFor="driver-select" className="block text-sm font-medium text-foreground mb-2">
+        <label htmlFor="driver-select" className="block text-sm font-medium text-gray-700 mb-2">
           Select Driver
         </label>
         <select
           id="driver-select"
           value={selectedDriverId}
           onChange={e => setSelectedDriverId(e.target.value)}
-          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
         >
           <option value="">-- Select a driver --</option>
           {drivers.map(driver => (
@@ -143,7 +143,7 @@ export function DriverAssignment({
       <div>
         <label
           htmlFor="estimated-time"
-          className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2"
+          className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2"
         >
           <Calendar className="h-4 w-4" />
           Estimated Delivery Time (Optional)
@@ -153,7 +153,7 @@ export function DriverAssignment({
           type="datetime-local"
           value={estimatedTime}
           onChange={e => setEstimatedTime(e.target.value)}
-          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
         />
       </div>
 
@@ -161,7 +161,7 @@ export function DriverAssignment({
       <button
         onClick={handleAssign}
         disabled={loading || !selectedDriverId}
-        className="w-full px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl font-medium hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full px-4 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {loading ? (
           <>
@@ -178,17 +178,17 @@ export function DriverAssignment({
 
       {/* Success Message */}
       {success && (
-        <div className="flex items-start gap-2 p-3 bg-success/10 border border-success/20 rounded-md">
-          <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-success">Driver assigned successfully!</p>
+        <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+          <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-green-800">Driver assigned successfully!</p>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-          <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
     </div>

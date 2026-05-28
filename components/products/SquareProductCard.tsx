@@ -62,9 +62,9 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
   }
 
   return (
-    <div className="border border-border rounded-xl p-4 hover:shadow-lg transition-shadow">
+    <div className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
       <Link href={`/products/${product.id}`} className="block">
-        <div className="relative w-full h-48 mb-4 bg-secondary rounded-xl overflow-hidden group">
+        <div className="relative w-full h-48 mb-4 bg-gray-100 rounded-lg overflow-hidden group">
           {product.imageUrl && !imageError ? (
             <Image
               src={product.imageUrl}
@@ -75,7 +75,7 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
               <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -91,25 +91,25 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
 
       <div className="mb-4">
         <Link href={`/products/${product.id}`}>
-          <h3 className="text-lg font-semibold text-foreground line-clamp-2 hover:underline">
+          <h3 className="text-lg font-semibold text-black line-clamp-2 hover:underline">
             {product.name}
           </h3>
         </Link>
         {product.description && (
-          <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{product.description}</p>
+          <p className="text-gray-600 text-sm mt-1 line-clamp-2">{product.description}</p>
         )}
       </div>
 
       {product.variations.length > 1 && (
         <div className="mb-4">
-          <label className="text-sm text-muted-foreground block mb-1">Variant:</label>
+          <label className="text-sm text-gray-600 block mb-1">Variant:</label>
           <select
             value={selectedVariation.id}
             onChange={e => {
               const variation = product.variations.find(v => v.id === e.target.value)
               if (variation) setSelectedVariation(variation)
             }}
-            className="w-full px-2 py-1 border border-border rounded"
+            className="w-full px-2 py-1 border border-gray-300 rounded"
           >
             {product.variations.map(variation => (
               <option key={variation.id} value={variation.id}>
@@ -120,10 +120,10 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
         </div>
       )}
 
-      <p className="text-xl font-bold text-foreground mb-4">${selectedVariation.price.toFixed(2)}</p>
+      <p className="text-xl font-bold text-black mb-4">${selectedVariation.price.toFixed(2)}</p>
 
       <div className="flex items-center gap-2 mb-4">
-        <label htmlFor={`qty-${product.id}`} className="text-sm text-muted-foreground">
+        <label htmlFor={`qty-${product.id}`} className="text-sm text-gray-600">
           Qty:
         </label>
         <input
@@ -131,14 +131,14 @@ export default function SquareProductCard({ product }: SquareProductCardProps) {
           type="number"
           value={quantity}
           onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-          className="w-16 px-2 py-1 border border-border rounded"
+          className="w-16 px-2 py-1 border border-gray-300 rounded"
           min="1"
         />
       </div>
 
       <button
         onClick={handleAddToCart}
-        className="w-full bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground py-2 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         disabled={!selectedVariation.availableForSale}
       >
         {selectedVariation.availableForSale ? 'Add to Cart' : 'Out of Stock'}

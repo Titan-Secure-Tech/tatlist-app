@@ -5,7 +5,7 @@ import { AuthShopHeader } from '@/components/navigation/auth-shop-header'
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         {/* Unified Authenticated Header */}
         <AuthShopHeader />
 

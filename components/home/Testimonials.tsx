@@ -42,14 +42,14 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonials() {
   return (
-    <section className="py-16 bg-muted">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Trusted by Tampa Bay&apos;s Top Tattoo Shops
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             See what professional tattoo artists and shop owners are saying about Tatlist
           </p>
         </div>
@@ -59,24 +59,24 @@ export default function Testimonials() {
           {testimonials.map(testimonial => (
             <div
               key={testimonial.id}
-              className="bg-secondary p-6 rounded-xl border border-border hover:border-brand/50 transition-colors"
+              className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
             >
               {/* Rating */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-brand text-brand" />
+                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
 
               {/* Content */}
-              <blockquote className="text-muted-foreground mb-6 italic">
+              <blockquote className="text-gray-700 mb-6 italic">
                 &ldquo;{testimonial.content}&rdquo;
               </blockquote>
 
               {/* Author */}
-              <div className="border-t border-border pt-4">
-                <div className="font-semibold text-foreground">{testimonial.name}</div>
-                <div className="text-sm text-muted-foreground">
+              <div className="border-t border-gray-200 pt-4">
+                <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                <div className="text-sm text-gray-600">
                   {testimonial.role}, {testimonial.shop}
                 </div>
               </div>
@@ -86,12 +86,12 @@ export default function Testimonials() {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <p className="text-muted-foreground mb-4">
+          <p className="text-gray-600 mb-4">
             Join hundreds of satisfied tattoo professionals in Tampa Bay
           </p>
           <a
             href="/register"
-            className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-8 py-3 rounded-xl font-medium transition-colors"
+            className="inline-block bg-black text-white px-8 py-3 rounded-md font-medium hover:bg-gray-800 transition-colors"
           >
             Get Started Today
           </a>

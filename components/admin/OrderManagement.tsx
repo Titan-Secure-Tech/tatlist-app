@@ -92,8 +92,8 @@ export function OrderManagement({ orderId, currentStatus, onStatusUpdate }: Orde
 
   if (currentStatus === 'completed' || currentStatus === 'cancelled') {
     return (
-      <div className="p-4 bg-muted border border-border rounded-xl">
-        <div className="flex items-center gap-2 text-muted-foreground">
+      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+        <div className="flex items-center gap-2 text-gray-600">
           <OrderStatusBadge status={currentStatus} />
           <span className="text-sm">Order is {currentStatus}. No further actions available.</span>
         </div>
@@ -104,15 +104,15 @@ export function OrderManagement({ orderId, currentStatus, onStatusUpdate }: Orde
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-sm font-semibold text-foreground mb-2">Update Order Status</h3>
-        <p className="text-sm text-muted-foreground mb-3">
+        <h3 className="text-sm font-semibold text-gray-900 mb-2">Update Order Status</h3>
+        <p className="text-sm text-gray-600 mb-3">
           Current status: <OrderStatusBadge status={currentStatus} size="sm" />
         </p>
       </div>
 
       {/* Notes Input */}
       <div>
-        <label htmlFor="status-notes" className="block text-sm font-medium text-foreground mb-2">
+        <label htmlFor="status-notes" className="block text-sm font-medium text-gray-700 mb-2">
           Notes (Optional)
         </label>
         <textarea
@@ -120,7 +120,7 @@ export function OrderManagement({ orderId, currentStatus, onStatusUpdate }: Orde
           value={notes}
           onChange={e => setNotes(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-brand focus:border-brand"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black focus:border-black"
           placeholder="Add notes about this status change..."
         />
       </div>
@@ -134,10 +134,10 @@ export function OrderManagement({ orderId, currentStatus, onStatusUpdate }: Orde
             disabled={updating}
             className={`px-4 py-2 rounded-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               transition.value === 'cancelled'
-                ? 'bg-destructive text-white hover:bg-destructive/90'
+                ? 'bg-red-600 text-white hover:bg-red-700'
                 : transition.value === 'delivered' || transition.value === 'completed'
-                  ? 'bg-success text-white hover:bg-success/90'
-                  : 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground hover:opacity-90'
+                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-black text-white hover:bg-gray-800'
             }`}
           >
             {updating ? (
@@ -154,17 +154,17 @@ export function OrderManagement({ orderId, currentStatus, onStatusUpdate }: Orde
 
       {/* Success Message */}
       {success && (
-        <div className="flex items-start gap-2 p-3 bg-success/10 border border-success/20 rounded-md">
-          <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-success">Order status updated successfully!</p>
+        <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+          <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-green-800">Order status updated successfully!</p>
         </div>
       )}
 
       {/* Error Message */}
       {error && (
-        <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-          <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+          <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
     </div>

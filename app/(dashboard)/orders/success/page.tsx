@@ -55,8 +55,8 @@ export default function OrderSuccessPage() {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading order details...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading order details...</p>
         </div>
       </div>
     )
@@ -71,8 +71,8 @@ export default function OrderSuccessPage() {
     <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center py-12">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center pb-8">
-          <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-12 h-12 text-success" />
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
           <p className="text-muted-foreground">
@@ -90,7 +90,7 @@ export default function OrderSuccessPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Status</span>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 <span className="text-sm font-medium">Processing</span>
               </div>
             </div>
@@ -108,15 +108,15 @@ export default function OrderSuccessPage() {
             </h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
-                <span className="text-success mt-0.5">✓</span>
+                <span className="text-green-600 mt-0.5">✓</span>
                 <span>You&apos;ll receive an email confirmation shortly</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-success mt-0.5">✓</span>
+                <span className="text-green-600 mt-0.5">✓</span>
                 <span>Our team will prepare your order for delivery</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-success mt-0.5">✓</span>
+                <span className="text-green-600 mt-0.5">✓</span>
                 <span>You&apos;ll get a notification when your order is on the way</span>
               </li>
             </ul>

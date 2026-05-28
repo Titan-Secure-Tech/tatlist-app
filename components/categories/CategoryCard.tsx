@@ -20,9 +20,9 @@ export default function CategoryCard({ category, slug, imageUrl, credit }: Categ
   return (
     <Link
       href={`/categories/${slug}`}
-      className="bg-background border-2 border-foreground rounded-xl overflow-hidden hover:shadow-xl transition-all group"
+      className="bg-white border-2 border-black rounded-lg overflow-hidden hover:shadow-xl transition-all group"
     >
-      <div className="aspect-square bg-secondary relative overflow-hidden border-b-2 border-foreground">
+      <div className="aspect-square bg-gray-100 relative overflow-hidden border-b-2 border-black">
         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity z-10" />
         <Image
           src={imageUrl}
@@ -57,9 +57,9 @@ export default function CategoryCard({ category, slug, imageUrl, credit }: Categ
           </div>
         )}
       </div>
-      <div className="p-6 bg-background">
-        <h3 className="text-xl font-bold text-foreground mb-2 group-hover:underline">{category.name}</h3>
-        <p className="text-foreground font-medium">
+      <div className="p-6 bg-white">
+        <h3 className="text-xl font-bold text-black mb-2 group-hover:underline">{category.name}</h3>
+        <p className="text-gray-700 font-medium">
           {category.count} {category.count === 1 ? 'product' : 'products'}
         </p>
       </div>

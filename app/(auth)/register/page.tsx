@@ -181,18 +181,18 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-foreground">Create your account</h1>
-        <p className="mt-2 text-muted-foreground">Join Tatlist to start ordering supplies</p>
+        <h1 className="text-3xl font-bold text-black">Create your account</h1>
+        <p className="mt-2 text-gray-600">Join Tatlist to start ordering supplies</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Personal Information */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-foreground">Personal Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                 First Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -201,13 +201,13 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.firstName}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                 Last Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -216,14 +216,14 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.lastName}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email <span className="text-red-500">*</span>
             </label>
             <input
@@ -232,13 +232,13 @@ export default function RegisterPage() {
               type="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
               Phone{' '}
               {(formData.contactPreference === 'sms' || formData.contactPreference === 'both') && (
                 <span className="text-red-500">*</span>
@@ -250,7 +250,7 @@ export default function RegisterPage() {
               type="tel"
               value={formData.phone}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               placeholder="(555) 123-4567"
               required={
                 formData.contactPreference === 'sms' || formData.contactPreference === 'both'
@@ -259,7 +259,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="contactPreference" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="contactPreference" className="block text-sm font-medium text-gray-700">
               Preferred Contact Method <span className="text-red-500">*</span>
             </label>
             <select
@@ -271,7 +271,7 @@ export default function RegisterPage() {
                   contactPreference: e.target.value as 'sms' | 'email' | 'both',
                 })
               }
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             >
               <option value="">Select your preference...</option>
@@ -279,13 +279,13 @@ export default function RegisterPage() {
               <option value="sms">SMS/Text only</option>
               <option value="both">Both Email and SMS</option>
             </select>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-gray-500">
               We&apos;ll use this to send you order updates and delivery notifications.
             </p>
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -294,18 +294,18 @@ export default function RegisterPage() {
               type="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             />
           </div>
         </div>
 
         {/* Address Information */}
-        <div className="space-y-4 pt-4 border-t border-border">
-          <h2 className="text-lg font-semibold text-foreground">Business Address</h2>
+        <div className="space-y-4 pt-4 border-t border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Business Address</h2>
 
           <div>
-            <label htmlFor="streetAddress" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">
               Street Address <span className="text-red-500">*</span>
             </label>
             <AddressAutocomplete
@@ -338,13 +338,13 @@ export default function RegisterPage() {
               }}
               placeholder="Start typing your address..."
               required
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
 
           <div className="grid grid-cols-6 gap-4">
             <div className="col-span-3">
-              <label htmlFor="city" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="city" className="block text-sm font-medium text-gray-700">
                 City <span className="text-red-500">*</span>
               </label>
               <input
@@ -353,13 +353,13 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.city}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
             </div>
 
             <div className="col-span-1">
-              <label htmlFor="state" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="state" className="block text-sm font-medium text-gray-700">
                 State <span className="text-red-500">*</span>
               </label>
               <input
@@ -368,7 +368,7 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.state}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 placeholder="FL"
                 maxLength={2}
                 required
@@ -376,7 +376,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="col-span-2">
-              <label htmlFor="zipCode" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
                 ZIP Code <span className="text-red-500">*</span>
               </label>
               <input
@@ -385,7 +385,7 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.zipCode}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 placeholder="12345"
                 required
               />
@@ -404,7 +404,7 @@ export default function RegisterPage() {
                 !formData.state ||
                 !formData.zipCode
               }
-              className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl text-sm font-medium text-foreground bg-secondary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {addressValidation.isValidating ? (
                 <>
@@ -422,33 +422,33 @@ export default function RegisterPage() {
 
           {/* Validation Success Message */}
           {addressValidation.isValid && (
-            <div className="flex items-start gap-2 p-3 bg-success/10 border border-success/30 rounded-xl">
-              <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-success">
+            <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-green-800">
                 <p className="font-medium">Address validated successfully</p>
-                <p>This address is within our delivery area.</p>
+                <p className="text-green-700">This address is within our delivery area.</p>
               </div>
             </div>
           )}
 
           {/* Validation Error Message */}
           {addressValidation.isValid === false && (
-            <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-xl">
-              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-destructive">
+            <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-red-800">
                 <p className="font-medium">Address validation failed</p>
-                <p>{addressValidation.error}</p>
+                <p className="text-red-700">{addressValidation.error}</p>
               </div>
             </div>
           )}
         </div>
 
         {/* Business Information */}
-        <div className="space-y-4 pt-4 border-t border-border">
-          <h2 className="text-lg font-semibold text-foreground">Business Information</h2>
+        <div className="space-y-4 pt-4 border-t border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Business Information</h2>
 
           <div>
-            <label htmlFor="userType" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="userType" className="block text-sm font-medium text-gray-700">
               Are you a shop owner or tattoo artist? <span className="text-red-500">*</span>
             </label>
             <select
@@ -460,7 +460,7 @@ export default function RegisterPage() {
                   userType: e.target.value as 'shop_owner' | 'tattoo_artist',
                 })
               }
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
               required
             >
               <option value="">Select...</option>
@@ -471,7 +471,7 @@ export default function RegisterPage() {
 
           {formData.userType === 'shop_owner' && (
             <div>
-              <label htmlFor="shopName" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="shopName" className="block text-sm font-medium text-gray-700">
                 Tattoo Shop Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -480,7 +480,7 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.shopName}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 required
               />
             </div>
@@ -488,7 +488,7 @@ export default function RegisterPage() {
 
           {(formData.userType === 'shop_owner' || formData.userType === 'tattoo_artist') && (
             <div>
-              <label htmlFor="taxId" className="block text-sm font-medium text-muted-foreground">
+              <label htmlFor="taxId" className="block text-sm font-medium text-gray-700">
                 Tax Identification Number
               </label>
               <input
@@ -497,14 +497,14 @@ export default function RegisterPage() {
                 type="text"
                 value={formData.taxId}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                 placeholder="XX-XXXXXXX"
               />
             </div>
           )}
 
           <div>
-            <label htmlFor="businessName" className="block text-sm font-medium text-muted-foreground">
+            <label htmlFor="businessName" className="block text-sm font-medium text-gray-700">
               Business Name (Optional)
             </label>
             <input
@@ -513,7 +513,7 @@ export default function RegisterPage() {
               type="text"
               value={formData.businessName}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand text-foreground placeholder:text-muted-foreground"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
             />
           </div>
 
@@ -524,29 +524,29 @@ export default function RegisterPage() {
               type="checkbox"
               checked={formData.taxExempt}
               onChange={handleInputChange}
-              className="h-4 w-4 text-brand focus:ring-brand border-border rounded accent-brand"
+              className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
             />
-            <label htmlFor="taxExempt" className="ml-2 block text-sm text-muted-foreground">
+            <label htmlFor="taxExempt" className="ml-2 block text-sm text-gray-700">
               I have tax exempt status
             </label>
           </div>
         </div>
 
-        {error && <div className="text-destructive text-sm bg-destructive/10 p-2 rounded-xl">{error}</div>}
-        {success && <div className="text-success text-sm bg-success/10 p-2 rounded-xl">{success}</div>}
+        {error && <div className="text-red-600 text-sm">{error}</div>}
+        {success && <div className="text-green-600 text-sm">{success}</div>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center py-3 px-4 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl font-medium disabled:opacity-50"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
         >
           {loading ? 'Creating account...' : 'Create account'}
         </button>
       </form>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <Link href="/login" className="font-medium text-brand hover:underline">
+        <Link href="/login" className="font-medium text-black hover:underline">
           Sign in
         </Link>
       </p>

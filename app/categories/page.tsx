@@ -36,12 +36,12 @@ export async function CategoriesContent() {
     console.error('Error fetching collections:', collectionsError)
     return (
       <div className="text-center py-12">
-        <Grid3x3 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold text-foreground mb-4">Error Loading Categories</h1>
-        <p className="text-muted-foreground mb-8">Unable to load product categories</p>
+        <Grid3x3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-black mb-4">Error Loading Categories</h1>
+        <p className="text-gray-600 mb-8">Unable to load product categories</p>
         <Link
           href="/products"
-          className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
         >
           Browse All Products
         </Link>
@@ -108,14 +108,14 @@ export async function CategoriesContent() {
   if (collectionsWithProducts.length === 0) {
     return (
       <div className="text-center py-12">
-        <Grid3x3 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold text-foreground mb-4">No Categories Found</h1>
-        <p className="text-muted-foreground mb-8">
+        <Grid3x3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-black mb-4">No Categories Found</h1>
+        <p className="text-gray-600 mb-8">
           Product categories will appear here once products are added
         </p>
         <Link
           href="/products"
-          className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
         >
           Browse All Products
         </Link>
@@ -126,8 +126,8 @@ export async function CategoriesContent() {
   return (
     <div>
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-foreground mb-4">Product Categories</h1>
-        <p className="text-lg text-muted-foreground">
+        <h1 className="text-4xl font-bold text-black mb-4">Product Categories</h1>
+        <p className="text-lg text-gray-600">
           Browse our comprehensive selection of professional tattoo and piercing supplies
         </p>
       </div>
@@ -141,12 +141,12 @@ export async function CategoriesContent() {
             <div key={collection.id}>
               {/* Collection Header */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] rounded-xl">
-                  <Icon className="w-6 h-6 text-primary-foreground" />
+                <div className="p-3 bg-black rounded-lg">
+                  <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">{collection.name}</h2>
-                  <p className="text-muted-foreground">{collection.description}</p>
+                  <h2 className="text-2xl font-bold text-black">{collection.name}</h2>
+                  <p className="text-gray-600">{collection.description}</p>
                 </div>
               </div>
 
@@ -167,7 +167,7 @@ export async function CategoriesContent() {
       </div>
 
       <div className="mt-12 text-center">
-        <Link href="/products" className="inline-block text-foreground underline hover:no-underline">
+        <Link href="/products" className="inline-block text-black underline hover:no-underline">
           View all products →
         </Link>
       </div>
@@ -179,8 +179,8 @@ function CategoriesLoading() {
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto mb-4"></div>
-        <p className="text-muted-foreground">Loading categories...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading categories...</p>
       </div>
     </div>
   )

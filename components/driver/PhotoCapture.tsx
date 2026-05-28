@@ -94,35 +94,35 @@ export function PhotoCapture({ onPhotoCapture, label = 'Delivery Photo' }: Photo
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-foreground">{label}</label>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
 
       {!capturedImage && !cameraActive && (
         <div className="space-y-3">
           <button
             type="button"
             onClick={startCamera}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg hover:border-foreground/40 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
           >
-            <Camera className="h-5 w-5 text-muted-foreground" />
-            <span className="text-foreground font-medium">Take Photo</span>
+            <Camera className="h-5 w-5 text-gray-600" />
+            <span className="text-gray-700 font-medium">Take Photo</span>
           </button>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
+              <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-background text-muted-foreground">or</span>
+              <span className="px-2 bg-white text-gray-500">or</span>
             </div>
           </div>
 
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg hover:border-foreground/40 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
           >
-            <ImageIcon className="h-5 w-5 text-muted-foreground" />
-            <span className="text-foreground font-medium">Upload from Gallery</span>
+            <ImageIcon className="h-5 w-5 text-gray-600" />
+            <span className="text-gray-700 font-medium">Upload from Gallery</span>
           </button>
 
           <input
@@ -151,14 +151,14 @@ export function PhotoCapture({ onPhotoCapture, label = 'Delivery Photo' }: Photo
             <button
               type="button"
               onClick={stopCamera}
-              className="flex-1 px-4 py-2 bg-muted text-foreground rounded-md font-medium hover:bg-accent transition-colors"
+              className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={capturePhoto}
-              className="flex-1 px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-md font-medium hover:opacity-90 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 bg-black text-white rounded-md font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
             >
               <Camera className="h-4 w-4" />
               Capture
@@ -169,7 +169,7 @@ export function PhotoCapture({ onPhotoCapture, label = 'Delivery Photo' }: Photo
 
       {capturedImage && (
         <div className="space-y-3">
-          <div className="relative bg-secondary rounded-xl overflow-hidden">
+          <div className="relative bg-gray-100 rounded-lg overflow-hidden">
             <Image
               src={capturedImage}
               alt="Captured delivery proof"
@@ -181,7 +181,7 @@ export function PhotoCapture({ onPhotoCapture, label = 'Delivery Photo' }: Photo
             <button
               type="button"
               onClick={removePhoto}
-              className="absolute top-2 right-2 p-2 bg-destructive text-white rounded-full hover:bg-destructive/90 transition-colors"
+              className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -190,7 +190,7 @@ export function PhotoCapture({ onPhotoCapture, label = 'Delivery Photo' }: Photo
           <button
             type="button"
             onClick={retakePhoto}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-border text-foreground rounded-md font-medium hover:bg-accent transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors"
           >
             <RotateCcw className="h-4 w-4" />
             Retake Photo

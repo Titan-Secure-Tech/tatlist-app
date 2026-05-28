@@ -53,7 +53,7 @@ export default function AnnouncementBanner() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <div className="bg-background p-1.5 sm:p-1 rounded">
+                    <div className="bg-white p-1.5 sm:p-1 rounded">
                       <svg viewBox="0 0 44 44" className="w-7 h-7 sm:w-5 sm:h-5">
                         <path
                           fill="#000"
@@ -74,9 +74,9 @@ export default function AnnouncementBanner() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <Truck className="w-7 h-7 sm:w-5 sm:h-5 text-success" />
+                    <Truck className="w-7 h-7 sm:w-5 sm:h-5 text-green-400" />
                     <span className="text-sm font-medium">Fast delivery in Tampa, FL area</span>
-                    <MapPin className="w-6 h-6 sm:w-4 sm:h-4 text-success" />
+                    <MapPin className="w-6 h-6 sm:w-4 sm:h-4 text-green-400" />
                   </motion.div>
 
                   {/* Separator */}
@@ -91,10 +91,10 @@ export default function AnnouncementBanner() {
                   >
                     <div className="flex items-center space-x-1">
                       <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                       </span>
-                      <span className="text-sm font-medium text-success">
+                      <span className="text-sm font-medium text-green-400">
                         Under 3 hour delivery
                       </span>
                     </div>
@@ -122,10 +122,10 @@ export default function AnnouncementBanner() {
                 transition={{ delay: 0.3 }}
               >
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                <span className="text-sm font-medium text-success">Under 60 min delivery</span>
+                <span className="text-sm font-medium text-green-400">Under 60 min delivery</span>
               </motion.div>
             </div>
           </div>

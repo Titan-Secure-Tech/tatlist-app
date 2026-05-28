@@ -89,13 +89,13 @@ export default async function AdminRouteDetailPage({
     total_stops > 0 ? (completed_stops / total_stops) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-background border-b border-border">
+      <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
           <Link
             href="/admin/routes"
-            className="text-sm text-brand hover:text-brand mb-4 inline-block"
+            className="text-sm text-blue-600 hover:text-blue-800 mb-4 inline-block"
           >
             ← Back to Routes
           </Link>
@@ -103,7 +103,7 @@ export default async function AdminRouteDetailPage({
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">{routeData.name}</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 Driver: {routeData.driver?.name || 'Unassigned'} • {total_stops}{' '}
                 stops • {routeData.total_distance_miles?.toFixed(1)} miles •{' '}
                 {routeData.total_duration_minutes} min
@@ -116,14 +116,14 @@ export default async function AdminRouteDetailPage({
           {/* Progress Bar */}
           <div className="mt-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Progress</span>
+              <span className="text-gray-600">Progress</span>
               <span className="font-medium">
                 {completed_stops} / {total_stops} completed
               </span>
             </div>
-            <div className="w-full bg-muted rounded-full h-3">
+            <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="bg-success h-3 rounded-full transition-all"
+                className="bg-green-600 h-3 rounded-full transition-all"
                 style={{ width: `${completion_percentage}%` }}
               />
             </div>
@@ -135,20 +135,20 @@ export default async function AdminRouteDetailPage({
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Route Info Cards */}
           <div className="lg:col-span-3 grid md:grid-cols-4 gap-4">
-            <div className="bg-background border border-border rounded-xl p-4">
-              <div className="text-sm font-medium text-muted-foreground mb-1">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="text-sm font-medium text-gray-600 mb-1">
                 Status
               </div>
               <div className="text-2xl font-bold">
                 <span
                   className={`px-3 py-1 text-base font-medium rounded-full ${
                     routeData.status === 'active'
-                      ? 'bg-success/20 text-success'
+                      ? 'bg-green-100 text-green-800'
                       : routeData.status === 'draft'
-                        ? 'bg-info/20 text-info'
+                        ? 'bg-blue-100 text-blue-800'
                         : routeData.status === 'completed'
-                          ? 'bg-secondary text-foreground'
-                          : 'bg-destructive/20 text-destructive'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-red-100 text-red-800'
                   }`}
                 >
                   {routeData.status}
@@ -156,29 +156,29 @@ export default async function AdminRouteDetailPage({
               </div>
             </div>
 
-            <div className="bg-background border border-border rounded-xl p-4">
-              <div className="text-sm font-medium text-muted-foreground mb-1">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="text-sm font-medium text-gray-600 mb-1">
                 Total Distance
               </div>
-              <div className="text-2xl font-bold text-foreground">
+              <div className="text-2xl font-bold text-gray-900">
                 {routeData.total_distance_miles?.toFixed(1)} mi
               </div>
             </div>
 
-            <div className="bg-background border border-border rounded-xl p-4">
-              <div className="text-sm font-medium text-muted-foreground mb-1">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="text-sm font-medium text-gray-600 mb-1">
                 Est. Duration
               </div>
-              <div className="text-2xl font-bold text-foreground">
+              <div className="text-2xl font-bold text-gray-900">
                 {routeData.total_duration_minutes} min
               </div>
             </div>
 
-            <div className="bg-background border border-border rounded-xl p-4">
-              <div className="text-sm font-medium text-muted-foreground mb-1">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="text-sm font-medium text-gray-600 mb-1">
                 Completion
               </div>
-              <div className="text-2xl font-bold text-foreground">
+              <div className="text-2xl font-bold text-gray-900">
                 {completion_percentage}%
               </div>
             </div>
@@ -191,12 +191,12 @@ export default async function AdminRouteDetailPage({
 
           {/* Stops List */}
           <div className="lg:col-span-1">
-            <div className="bg-background border border-border rounded-xl">
-              <div className="p-4 border-b border-border">
+            <div className="bg-white border border-gray-200 rounded-lg">
+              <div className="p-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold">Route Stops</h2>
               </div>
 
-              <div className="divide-y divide-border max-h-[600px] overflow-y-auto">
+              <div className="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
                 {stops.map((stop: any) => {
                   const order = stop.delivery?.order;
                   const customer = order?.user;
@@ -208,8 +208,8 @@ export default async function AdminRouteDetailPage({
                         <div
                           className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                             stop.status === 'completed'
-                              ? 'bg-success text-white'
-                              : 'bg-muted text-muted-foreground'
+                              ? 'bg-green-600 text-white'
+                              : 'bg-gray-200 text-gray-700'
                           }`}
                         >
                           {stop.stop_number}
@@ -217,19 +217,19 @@ export default async function AdminRouteDetailPage({
 
                         {/* Stop Details */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground mb-1">
+                          <p className="text-sm font-medium text-gray-900 mb-1">
                             {(stop.address as any)?.formatted_address ||
                               'Address'}
                           </p>
 
                           {customer && (
-                            <p className="text-xs text-muted-foreground mb-1">
+                            <p className="text-xs text-gray-600 mb-1">
                               {customer.name}
                             </p>
                           )}
 
                           {order && (
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-gray-500">
                               Order #{order.order_number}
                             </p>
                           )}
@@ -237,10 +237,10 @@ export default async function AdminRouteDetailPage({
                           <span
                             className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded ${
                               stop.status === 'completed'
-                                ? 'bg-success/20 text-success'
+                                ? 'bg-green-100 text-green-800'
                                 : stop.status === 'enroute'
-                                  ? 'bg-warning/20 text-warning'
-                                  : 'bg-secondary text-foreground'
+                                  ? 'bg-orange-100 text-orange-800'
+                                  : 'bg-gray-100 text-gray-800'
                             }`}
                           >
                             {stop.status}

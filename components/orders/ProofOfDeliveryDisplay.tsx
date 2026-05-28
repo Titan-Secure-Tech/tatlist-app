@@ -23,8 +23,8 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
   }
 
   return (
-    <div className="bg-background border border-border rounded-xl p-6">
-      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+    <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
         <FileCheck className="h-5 w-5" />
         Proof of Delivery
       </h2>
@@ -33,19 +33,19 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
         {/* Recipient Name */}
         {proof.recipient_name && (
           <div>
-            <p className="text-sm font-medium text-foreground mb-1 flex items-center gap-2">
+            <p className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
               <User className="h-4 w-4" />
               Received By
             </p>
-            <p className="text-base font-semibold text-foreground">{proof.recipient_name}</p>
+            <p className="text-base font-semibold text-black">{proof.recipient_name}</p>
           </div>
         )}
 
         {/* Delivery Time */}
         {proof.delivered_at && (
           <div>
-            <p className="text-sm font-medium text-foreground mb-1">Delivered At</p>
-            <p className="text-base text-foreground">
+            <p className="text-sm font-medium text-gray-700 mb-1">Delivered At</p>
+            <p className="text-base text-gray-900">
               {new Date(proof.delivered_at).toLocaleString('en-US', {
                 weekday: 'short',
                 month: 'short',
@@ -61,10 +61,10 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
         {/* Photo */}
         {proof.photo_url && (
           <div>
-            <p className="text-sm font-medium text-foreground mb-2">Delivery Photo</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">Delivery Photo</p>
             <button
               onClick={() => setShowPhotoModal(true)}
-              className="relative w-full h-48 rounded-lg overflow-hidden border border-border hover:border-foreground/40 transition-colors"
+              className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-300 hover:border-gray-400 transition-colors"
             >
               <Image
                 src={proof.photo_url}
@@ -79,10 +79,10 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
         {/* Signature */}
         {proof.signature_data && (
           <div>
-            <p className="text-sm font-medium text-foreground mb-2">Customer Signature</p>
+            <p className="text-sm font-medium text-gray-700 mb-2">Customer Signature</p>
             <button
               onClick={() => setShowSignatureModal(true)}
-              className="relative w-full h-32 rounded-lg overflow-hidden border border-border hover:border-foreground/40 transition-colors bg-background"
+              className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300 hover:border-gray-400 transition-colors bg-white"
             >
               <Image
                 src={proof.signature_data}
@@ -97,11 +97,11 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
         {/* Delivery Notes */}
         {proof.delivery_notes && (
           <div>
-            <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+            <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Delivery Notes
             </p>
-            <div className="p-3 bg-muted rounded-md text-sm text-foreground">
+            <div className="p-3 bg-gray-50 rounded-md text-sm text-gray-700">
               {proof.delivery_notes}
             </div>
           </div>
@@ -117,7 +117,7 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
           <div className="relative max-w-4xl w-full">
             <button
               onClick={() => setShowPhotoModal(false)}
-              className="absolute top-4 right-4 p-2 bg-background rounded-full hover:bg-accent transition-colors z-10"
+              className="absolute top-4 right-4 p-2 bg-white rounded-full hover:bg-gray-100 transition-colors z-10"
             >
               <X className="h-5 w-5" />
             </button>
@@ -139,10 +139,10 @@ export function ProofOfDeliveryDisplay({ proof }: ProofOfDeliveryDisplayProps) {
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
           onClick={() => setShowSignatureModal(false)}
         >
-          <div className="relative max-w-2xl w-full bg-background rounded-xl p-4">
+          <div className="relative max-w-2xl w-full bg-white rounded-lg p-4">
             <button
               onClick={() => setShowSignatureModal(false)}
-              className="absolute top-4 right-4 p-2 bg-secondary rounded-full hover:bg-muted transition-colors"
+              className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
             >
               <X className="h-5 w-5" />
             </button>

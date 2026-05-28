@@ -37,12 +37,12 @@ export default async function DriverRoutesPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">My Routes</h1>
-        <p className="text-muted-foreground">View and manage your delivery routes</p>
+        <p className="text-gray-600">View and manage your delivery routes</p>
       </div>
 
       {!routes || routes.length === 0 ? (
-        <div className="bg-background border border-border rounded-xl p-12 text-center">
-          <div className="text-muted-foreground mb-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-12 text-center">
+          <div className="text-gray-400 mb-4">
             <svg
               className="w-16 h-16 mx-auto"
               fill="none"
@@ -57,15 +57,15 @@ export default async function DriverRoutesPage() {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             No Active Routes
           </h3>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-gray-600 mb-4">
             You don&apos;t have any active routes assigned yet.
           </p>
           <Link
             href="/driver"
-            className="inline-block px-6 py-3 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-md transition-colors"
+            className="inline-block px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
           >
             View Deliveries
           </Link>
@@ -76,12 +76,12 @@ export default async function DriverRoutesPage() {
             <Link
               key={route.id}
               href={`/driver/routes/${route.id}`}
-              className="block bg-background border border-border rounded-xl p-6 hover:border-border transition-all"
+              className="block bg-white border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-xl font-semibold mb-1">{route.name}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     {route.total_stops} stops •{' '}
                     {route.total_distance_miles?.toFixed(1)} miles •{' '}
                     {route.total_duration_minutes} min
@@ -90,10 +90,10 @@ export default async function DriverRoutesPage() {
                 <span
                   className={`px-3 py-1 text-sm font-medium rounded-full ${
                     route.status === 'active'
-                      ? 'bg-success/20 text-success'
+                      ? 'bg-green-100 text-green-800'
                       : route.status === 'draft'
-                        ? 'bg-secondary text-foreground'
-                        : 'bg-info/20 text-info'
+                        ? 'bg-gray-100 text-gray-800'
+                        : 'bg-blue-100 text-blue-800'
                   }`}
                 >
                   {route.status.charAt(0).toUpperCase() + route.status.slice(1)}
@@ -103,14 +103,14 @@ export default async function DriverRoutesPage() {
               {/* Progress Bar */}
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-muted-foreground">Progress</span>
+                  <span className="text-gray-600">Progress</span>
                   <span className="font-medium">
                     {route.completed_stops} / {route.total_stops} stops
                   </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-success h-2 rounded-full transition-all"
+                    className="bg-green-600 h-2 rounded-full transition-all"
                     style={{ width: `${route.completion_percentage}%` }}
                   />
                 </div>
@@ -118,9 +118,9 @@ export default async function DriverRoutesPage() {
 
               {/* Current Stop */}
               {route.current_stop_number && (
-                <div className="flex items-center text-sm text-muted-foreground mb-2">
+                <div className="flex items-center text-sm text-gray-600 mb-2">
                   <svg
-                    className="w-5 h-5 mr-2 text-warning"
+                    className="w-5 h-5 mr-2 text-orange-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -143,8 +143,8 @@ export default async function DriverRoutesPage() {
               )}
 
               {/* View Route Button */}
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="flex items-center text-brand font-medium">
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex items-center text-blue-600 font-medium">
                   View Route Details
                   <svg
                     className="w-5 h-5 ml-2"

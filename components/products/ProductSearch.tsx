@@ -38,7 +38,7 @@ export function ProductSearch({ initialSearch = '' }: ProductSearchProps) {
   return (
     <form onSubmit={handleSearch} className="flex gap-2 max-w-2xl">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           type="text"
           placeholder="Search products by name, description, or category..."
@@ -50,7 +50,7 @@ export function ProductSearch({ initialSearch = '' }: ProductSearchProps) {
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
             <X className="h-4 w-4" />
           </button>

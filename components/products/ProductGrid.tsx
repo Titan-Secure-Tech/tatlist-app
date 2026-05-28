@@ -111,18 +111,18 @@ export default function ProductGrid({
         >
           {/* Search Bar */}
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search products by name, brand, category..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-all"
+              className="w-full pl-10 pr-10 py-2.5 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -134,30 +134,30 @@ export default function ProductGrid({
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveFilter('all')}
-                className={`px-4 py-2 text-sm font-medium border rounded-xl transition-colors ${
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
                   activeFilter === 'all'
-                    ? 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground border-transparent'
-                    : 'text-foreground bg-background border-border hover:bg-accent'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 All Products
               </button>
               <button
                 onClick={() => setActiveFilter('new')}
-                className={`px-4 py-2 text-sm font-medium border rounded-xl transition-colors ${
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
                   activeFilter === 'new'
-                    ? 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground border-transparent'
-                    : 'text-foreground bg-background border-border hover:bg-accent'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 New Arrivals
               </button>
               <button
                 onClick={() => setActiveFilter('bestsellers')}
-                className={`px-4 py-2 text-sm font-medium border rounded-xl transition-colors ${
+                className={`px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
                   activeFilter === 'bestsellers'
-                    ? 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground border-transparent'
-                    : 'text-foreground bg-background border-border hover:bg-accent'
+                    ? 'bg-black text-white border-black'
+                    : 'text-gray-700 bg-white border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 Best Sellers
@@ -168,7 +168,7 @@ export default function ProductGrid({
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value as SortType)}
-                className="px-4 py-2 text-sm font-medium text-foreground bg-background border border-border rounded-xl hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-brand cursor-pointer appearance-none pr-10"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-black cursor-pointer appearance-none pr-10"
                 style={{ minWidth: '200px' }}
               >
                 <option value="featured">Sort by: Featured</option>
@@ -176,7 +176,7 @@ export default function ProductGrid({
                 <option value="price-high">Price: High to Low</option>
                 <option value="newest">Newest First</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-foreground">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
                 <svg
                   className="h-4 w-4 fill-current"
                   xmlns="http://www.w3.org/2000/svg"
@@ -205,9 +205,9 @@ export default function ProductGrid({
       {/* Empty State */}
       {filteredAndSortedProducts.length === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-secondary rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
             <svg
-              className="w-10 h-10 text-muted-foreground"
+              className="w-10 h-10 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -220,8 +220,8 @@ export default function ProductGrid({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-foreground mb-2">No products found</h3>
-          <p className="text-muted-foreground mb-4">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+          <p className="text-gray-500 mb-4">
             {searchQuery
               ? `No products match your search "${searchQuery}"`
               : activeFilter !== 'all'
@@ -234,7 +234,7 @@ export default function ProductGrid({
                 setSearchQuery('')
                 setActiveFilter('all')
               }}
-              className="px-4 py-2 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl hover:opacity-90 transition-opacity"
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               Clear Filters
             </button>

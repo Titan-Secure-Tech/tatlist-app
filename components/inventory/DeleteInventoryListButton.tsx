@@ -36,14 +36,14 @@ export default function DeleteInventoryListButton({
   if (showConfirm) {
     return (
       <div className="flex items-center gap-2" onClick={e => e.preventDefault()}>
-        <span className="text-sm text-muted-foreground">Delete &ldquo;{listName}&rdquo;?</span>
+        <span className="text-sm text-gray-600">Delete &ldquo;{listName}&rdquo;?</span>
         <button
           onClick={e => {
             e.preventDefault()
             handleDelete()
           }}
           disabled={isDeleting}
-          className="px-3 py-1 bg-destructive text-white text-sm rounded-xl hover:bg-destructive/90 disabled:opacity-50"
+          className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-50"
         >
           {isDeleting ? 'Deleting...' : 'Confirm'}
         </button>
@@ -53,7 +53,7 @@ export default function DeleteInventoryListButton({
             setShowConfirm(false)
           }}
           disabled={isDeleting}
-          className="px-3 py-1 bg-muted text-foreground text-sm rounded-xl hover:bg-accent"
+          className="px-3 py-1 bg-gray-200 text-gray-800 text-sm rounded hover:bg-gray-300"
         >
           Cancel
         </button>
@@ -67,7 +67,7 @@ export default function DeleteInventoryListButton({
         e.preventDefault()
         setShowConfirm(true)
       }}
-      className="text-destructive hover:text-destructive transition-colors"
+      className="text-red-600 hover:text-red-700 transition-colors"
       title="Delete list"
     >
       <Trash2 className="h-5 w-5" />

@@ -51,7 +51,7 @@ export default async function NotificationPreferencesPage() {
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Notification Preferences</h1>
-        <p className="text-muted-foreground">
+        <p className="text-gray-600">
           Manage how you receive delivery alerts and notifications
         </p>
       </div>

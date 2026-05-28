@@ -80,14 +80,14 @@ export default async function DriverRouteDetailPage({
     stops.find((s: any) => s.status === 'pending');
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-background border-b border-border">
+      <div className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">{routeData.name}</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 {total_stops} stops • {routeData.total_distance_miles?.toFixed(1)}{' '}
                 miles • {routeData.total_duration_minutes} min
               </p>
@@ -95,8 +95,8 @@ export default async function DriverRouteDetailPage({
             <span
               className={`px-4 py-2 text-sm font-medium rounded-full ${
                 routeData.status === 'active'
-                  ? 'bg-success/20 text-success'
-                  : 'bg-secondary text-foreground'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-gray-100 text-gray-800'
               }`}
             >
               {routeData.status.charAt(0).toUpperCase() +
@@ -107,14 +107,14 @@ export default async function DriverRouteDetailPage({
           {/* Progress Bar */}
           <div className="mt-4">
             <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Progress</span>
+              <span className="text-gray-600">Progress</span>
               <span className="font-medium">
                 {completed_stops} / {total_stops} completed
               </span>
             </div>
-            <div className="w-full bg-muted rounded-full h-3">
+            <div className="w-full bg-gray-200 rounded-full h-3">
               <div
-                className="bg-success h-3 rounded-full transition-all"
+                className="bg-green-600 h-3 rounded-full transition-all"
                 style={{ width: `${completion_percentage}%` }}
               />
             </div>

@@ -23,8 +23,8 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <div className="bg-background border border-border rounded-xl transition-shadow duration-200">
-      <div className="aspect-square relative overflow-hidden rounded-t-xl bg-secondary">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+      <div className="aspect-square relative overflow-hidden rounded-t-lg bg-gray-100">
         {product.imageSrc ? (
           <Image
             src={product.imageSrc}
@@ -34,7 +34,7 @@ export function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
+          <div className="flex items-center justify-center h-full text-gray-400">
             <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -47,12 +47,12 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-foreground mb-2 line-clamp-2">{product.title}</h3>
-        {product.vendor && <p className="text-sm text-muted-foreground mb-2">{product.vendor}</p>}
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.title}</h3>
+        {product.vendor && <p className="text-sm text-gray-600 mb-2">{product.vendor}</p>}
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-foreground">{formatPrice(product.price)}</span>
+          <span className="text-lg font-bold text-black">{formatPrice(product.price)}</span>
           {product.type && (
-            <span className="text-xs bg-secondary text-foreground px-2 py-1 rounded">
+            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
               {product.type}
             </span>
           )}

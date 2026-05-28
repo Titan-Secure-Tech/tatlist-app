@@ -205,8 +205,8 @@ function CheckoutContent() {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading checkout...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading checkout...</p>
         </div>
       </div>
     )
@@ -363,7 +363,7 @@ function CheckoutContent() {
                       }}
                       placeholder="Start typing your address..."
                       required
-                      className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-brand"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                     />
                   </div>
                   <div className="space-y-2">
@@ -467,17 +467,17 @@ function CheckoutContent() {
 
                   {/* Validation Success */}
                   {addressValidation.isValid === true && (
-                    <div className="flex items-start gap-2 p-3 bg-success/10 border border-success/30 rounded-md">
-                      <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-success">
+                    <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-green-800">
                         <p className="font-medium">Address validated</p>
                         {addressValidation.distance && addressValidation.distance > 0 ? (
-                          <p className="text-success">
+                          <p className="text-green-700">
                             {addressValidation.distance.toFixed(1)} miles from our delivery center.
                             Delivery available!
                           </p>
                         ) : (
-                          <p className="text-success">
+                          <p className="text-green-700">
                             Your address is in our Tampa Bay delivery area.
                           </p>
                         )}
@@ -487,11 +487,11 @@ function CheckoutContent() {
 
                   {/* Validation Error */}
                   {addressValidation.isValid === false && (
-                    <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-md">
-                      <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-destructive">
+                    <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                      <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-red-800">
                         <p className="font-medium">Delivery not available</p>
-                        <p className="text-destructive">{addressValidation.error}</p>
+                        <p className="text-red-700">{addressValidation.error}</p>
                       </div>
                     </div>
                   )}
@@ -578,7 +578,7 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         <CheckoutContent />
 

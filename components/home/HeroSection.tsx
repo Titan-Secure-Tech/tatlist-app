@@ -44,11 +44,11 @@ export default function HeroSection() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-white to-gray-50"
     >
       {/* Parallax Background */}
       <motion.div className="absolute inset-0 z-0" style={{ y }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-muted/50 via-transparent to-muted/50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-100/50 via-transparent to-gray-100/50" />
       </motion.div>
 
       {/* Main Content */}
@@ -64,7 +64,7 @@ export default function HeroSection() {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-sm font-medium text-muted-foreground mb-6"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 text-sm font-medium text-gray-700 mb-6"
             >
               <Truck className="w-4 h-4" />
               Tampa&apos;s Premier Tattoo Supply Delivery Service
@@ -75,7 +75,7 @@ export default function HeroSection() {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="text-5xl lg:text-7xl font-light text-foreground mb-6 leading-tight"
+              className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight"
             >
               Tattoo Supply Delivery for Greater Tampa Bay Artists
             </motion.h1>
@@ -85,7 +85,7 @@ export default function HeroSection() {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="text-lg text-muted-foreground mb-8 max-w-md mx-auto lg:mx-0"
+              className="text-lg text-gray-600 mb-8 max-w-md mx-auto lg:mx-0"
             >
               The official delivery platform for Tattoo Supplies. Same-day delivery of professional
               tattoo inks, needles, machines, and studio supplies to licensed tattoo shops across
@@ -101,7 +101,7 @@ export default function HeroSection() {
             >
               <Link href="/login">
                 <motion.button
-                  className="group px-8 py-4 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2"
+                  className="group px-8 py-4 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -112,7 +112,7 @@ export default function HeroSection() {
 
               <Link href="/features">
                 <motion.button
-                  className="px-8 py-4 border border-border text-foreground rounded-xl font-medium hover:bg-secondary transition-all duration-300"
+                  className="px-8 py-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -127,27 +127,27 @@ export default function HeroSection() {
               initial="hidden"
               animate="visible"
               variants={textVariants}
-              className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-border"
+              className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-gray-200"
             >
               <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-muted-foreground" />
+                <MapPin className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">Tampa Bay</div>
-                  <div className="text-sm text-muted-foreground">Hillsborough County</div>
+                  <div className="text-2xl font-semibold text-gray-900">Tampa Bay</div>
+                  <div className="text-sm text-gray-600">Hillsborough County</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-muted-foreground" />
+                <Clock className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">Fast</div>
-                  <div className="text-sm text-muted-foreground">Local Delivery</div>
+                  <div className="text-2xl font-semibold text-gray-900">Fast</div>
+                  <div className="text-sm text-gray-600">Local Delivery</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-muted-foreground" />
+                <Shield className="w-5 h-5 text-gray-400" />
                 <div>
-                  <div className="text-2xl font-semibold text-foreground">Professional</div>
-                  <div className="text-sm text-muted-foreground">Artists Only</div>
+                  <div className="text-2xl font-semibold text-gray-900">Professional</div>
+                  <div className="text-sm text-gray-600">Artists Only</div>
                 </div>
               </div>
             </motion.div>
@@ -167,7 +167,7 @@ export default function HeroSection() {
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-[4/5] bg-secondary rounded-2xl overflow-hidden relative group">
+                <div className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative group">
                   <Image
                     src="/assets/images/benjamin-lehman-5t4qCgtaLGU-unsplash.jpg"
                     alt="Tattoo artwork"
@@ -180,7 +180,7 @@ export default function HeroSection() {
                     <p className="text-white text-xs">Photo by Benjamin Lehman</p>
                   </div>
                 </div>
-                <div className="aspect-square bg-secondary rounded-2xl overflow-hidden relative group">
+                <div className="aspect-square bg-gray-200 rounded-2xl overflow-hidden relative group">
                   <Image
                     src="/assets/images/fallon-michael-EQucs66pts0-unsplash.jpg"
                     alt="Tattoo art supplies"
@@ -200,7 +200,7 @@ export default function HeroSection() {
                 animate={{ y: [10, -10, 10] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <div className="aspect-square bg-secondary rounded-2xl overflow-hidden relative group">
+                <div className="aspect-square bg-gray-200 rounded-2xl overflow-hidden relative group">
                   <Image
                     src="/assets/images/maxim-hopman-52Kf36w124Y-unsplash.jpg"
                     alt="Professional tattoo studio"
@@ -212,7 +212,7 @@ export default function HeroSection() {
                     <p className="text-white text-xs">Photo by Maxim Hopman</p>
                   </div>
                 </div>
-                <div className="aspect-[4/5] bg-secondary rounded-2xl overflow-hidden relative group">
+                <div className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative group">
                   <Image
                     src="/assets/images/siednji-leon-j5FVVaCkxq4-unsplash.jpg"
                     alt="Tattoo artist at work"
@@ -229,7 +229,7 @@ export default function HeroSection() {
 
             {/* Decorative Elements */}
             <motion.div
-              className="absolute -top-4 -right-4 w-24 h-24 bg-brand/20 rounded-full blur-2xl"
+              className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400/20 rounded-full blur-2xl"
               animate={{
                 scale: [1, 1.2, 1],
                 opacity: [0.5, 0.8, 0.5],
@@ -241,7 +241,7 @@ export default function HeroSection() {
               }}
             />
             <motion.div
-              className="absolute -bottom-4 -left-4 w-32 h-32 bg-brand/10 rounded-full blur-2xl"
+              className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl"
               animate={{
                 scale: [1.2, 1, 1.2],
                 opacity: [0.5, 0.8, 0.5],
@@ -267,7 +267,7 @@ export default function HeroSection() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="flex flex-col items-center gap-2 text-muted-foreground"
+          className="flex flex-col items-center gap-2 text-gray-400"
         >
           <span className="text-xs font-medium">Scroll to explore</span>
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

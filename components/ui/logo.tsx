@@ -30,7 +30,7 @@ export function Logo({ className }: LogoProps) {
               .tagline {
                 font-family: Arial, sans-serif;
                 font-size: 8px;
-                fill: var(--muted-foreground, #a3a3a3);
+                fill: #666666;
                 letter-spacing: 1px;
               }
             `}
@@ -48,8 +48,8 @@ export function Logo({ className }: LogoProps) {
         </text>
 
         {/* Decorative elements */}
-        <rect x="10" y="25" width="20" height="4" fill="var(--brand, #ffba20)" rx="2" />
-        <rect x="170" y="25" width="20" height="4" fill="var(--brand, #ffba20)" rx="2" />
+        <rect x="10" y="25" width="20" height="4" fill="#FFB347" rx="2" />
+        <rect x="170" y="25" width="20" height="4" fill="#FFB347" rx="2" />
       </svg>
     </Link>
   )

@@ -135,7 +135,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const shuffledRelated = relatedProducts.slice(0, 8)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Breadcrumb */}
       <div className="border-b bg-muted/20">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -309,7 +309,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {shuffledRelated.map(relatedProduct => (
                 <Card
                   key={relatedProduct.id}
-                  className="group overflow-hidden hover:border-brand transition-all"
+                  className="group overflow-hidden hover:shadow-lg transition-all"
                 >
                   <Link href={`/shop/${collectionSlug}/${categorySlug}/${relatedProduct.sku}`}>
                     <div className="aspect-square relative overflow-hidden bg-muted">
@@ -322,7 +322,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       />
                       {relatedProduct.compare_at_price &&
                         relatedProduct.compare_at_price > relatedProduct.price && (
-                          <Badge className="absolute top-2 right-2 bg-destructive">
+                          <Badge className="absolute top-2 right-2 bg-red-600">
                             Save{' '}
                             {Math.round(
                               ((relatedProduct.compare_at_price - relatedProduct.price) /

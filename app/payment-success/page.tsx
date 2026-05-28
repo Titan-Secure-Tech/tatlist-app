@@ -50,10 +50,10 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
   return (
     <CartProvider>
       <ClearCartClient />
-      <main className="min-h-screen bg-background">
+      <main className="min-h-screen bg-white">
         <PaymentSuccessConfetti />
 
-        <nav className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
+        <nav className="border-b bg-white/95 backdrop-blur sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Link href="/" className="text-xl font-bold">
@@ -74,10 +74,10 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
         <div className="max-w-2xl mx-auto px-4 py-16">
           <Card className="text-center">
             <CardHeader className="pb-4">
-              <div className="mx-auto w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle className="w-10 h-10 text-success" />
+              <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle className="w-10 h-10 text-green-600" />
               </div>
-              <CardTitle className="text-2xl text-success">
+              <CardTitle className="text-2xl text-green-600">
                 {order ? 'Order Confirmed!' : 'Payment Successful!'}
               </CardTitle>
             </CardHeader>
@@ -91,23 +91,23 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               </p>
 
               {displayOrderNumber && (
-                <div className="bg-secondary rounded-xl p-4">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm text-muted-foreground mb-1">Order Number</div>
                   <div className="font-mono text-lg font-medium">{displayOrderNumber}</div>
                 </div>
               )}
 
               {displayTotal && (
-                <div className="bg-secondary rounded-xl p-4">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <div className="text-sm text-muted-foreground mb-1">Total Paid</div>
-                  <div className="text-xl font-bold text-success">
+                  <div className="text-xl font-bold text-green-600">
                     ${typeof displayTotal === 'number' ? displayTotal.toFixed(2) : displayTotal}
                   </div>
                 </div>
               )}
 
               {order && order.items && (
-                <div className="bg-secondary rounded-xl p-4 text-left">
+                <div className="bg-gray-50 rounded-lg p-4 text-left">
                   <div className="text-sm text-muted-foreground mb-3">Order Items</div>
                   <div className="space-y-2">
                     {(order.items as Array<Record<string, unknown>>).map(
@@ -137,7 +137,7 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               )}
 
               {order?.delivery_address && (
-                <div className="bg-secondary rounded-xl p-4 text-left">
+                <div className="bg-gray-50 rounded-lg p-4 text-left">
                   <div className="text-sm text-muted-foreground mb-2">Delivery Address</div>
                   <div className="text-sm">
                     <div className="font-medium">{order.customer_name}</div>
@@ -154,12 +154,12 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
                 </div>
               )}
 
-              <div className="border border-border rounded-xl p-4 bg-info/10">
+              <div className="border rounded-lg p-4 bg-blue-50">
                 <div className="flex items-center gap-3 mb-2">
-                  <Package className="w-5 h-5 text-info" />
-                  <div className="font-medium text-foreground">What happens next?</div>
+                  <Package className="w-5 h-5 text-blue-600" />
+                  <div className="font-medium text-blue-900">What happens next?</div>
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-blue-700">
                   <ul className="space-y-1 text-left">
                     <li>
                       • You&apos;ll receive an order confirmation email
@@ -173,10 +173,10 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               </div>
 
               {error && (
-                <div className="border border-border rounded-xl p-4 bg-warning/10">
+                <div className="border rounded-lg p-4 bg-yellow-50">
                   <div className="flex items-center gap-3">
-                    <AlertCircle className="w-5 h-5 text-warning" />
-                    <div className="text-sm text-muted-foreground">{error}</div>
+                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                    <div className="text-sm text-yellow-700">{error}</div>
                   </div>
                 </div>
               )}
@@ -197,7 +197,7 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
               <div className="text-xs text-muted-foreground pt-4">
                 <p>
                   Need help? Contact us at{' '}
-                  <a href="mailto:support@tatlist.com" className="text-brand hover:underline">
+                  <a href="mailto:support@tatlist.com" className="text-blue-600 hover:underline">
                     support@tatlist.com
                   </a>
                 </p>

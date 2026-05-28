@@ -79,10 +79,10 @@ export function RouteMap({ route, stops, currentStop }: RouteMapProps) {
         el.innerHTML = `
           <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg ${
             isCompleted
-              ? 'bg-success text-white'
+              ? 'bg-green-600 text-white'
               : isCurrent
                 ? 'bg-orange-500 text-white'
-                : 'bg-background text-foreground border-2 border-border'
+                : 'bg-white text-gray-900 border-2 border-gray-300'
           }">
             ${stop.stop_number}
           </div>
@@ -95,14 +95,14 @@ export function RouteMap({ route, stops, currentStop }: RouteMapProps) {
             new mapboxgl.Popup({ offset: 25 }).setHTML(`
               <div class="p-2">
                 <p class="font-semibold mb-1">Stop #${stop.stop_number}</p>
-                <p class="text-sm text-muted-foreground">${(stop.address as any)?.formatted_address || 'Address'}</p>
+                <p class="text-sm text-gray-600">${(stop.address as any)?.formatted_address || 'Address'}</p>
                 <p class="text-xs mt-1">
                   <span class="inline-block px-2 py-1 rounded ${
                     isCompleted
-                      ? 'bg-success/10 text-success'
+                      ? 'bg-green-100 text-green-800'
                       : isCurrent
                         ? 'bg-orange-100 text-orange-800'
-                        : 'bg-secondary text-foreground'
+                        : 'bg-gray-100 text-gray-800'
                   }">
                     ${stop.status}
                   </span>
@@ -135,7 +135,7 @@ export function RouteMap({ route, stops, currentStop }: RouteMapProps) {
   }, [route, stops, currentStop]);
 
   return (
-    <div className="bg-background rounded-xl border border-border overflow-hidden">
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       <div
         ref={mapContainer}
         className="w-full h-[500px]"
@@ -143,19 +143,19 @@ export function RouteMap({ route, stops, currentStop }: RouteMapProps) {
       />
 
       {/* Legend */}
-      <div className="p-4 border-t border-border bg-muted">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center justify-center gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-success" />
-            <span className="text-foreground">Completed</span>
+            <div className="w-6 h-6 rounded-full bg-green-600" />
+            <span className="text-gray-700">Completed</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-orange-500" />
-            <span className="text-foreground">Current</span>
+            <span className="text-gray-700">Current</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-background border-2 border-border" />
-            <span className="text-foreground">Pending</span>
+            <div className="w-6 h-6 rounded-full bg-white border-2 border-gray-300" />
+            <span className="text-gray-700">Pending</span>
           </div>
         </div>
       </div>

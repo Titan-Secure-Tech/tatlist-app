@@ -105,12 +105,12 @@ export function SignatureCapture({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-foreground">{label}</label>
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
         {hasSignature && (
           <button
             type="button"
             onClick={clearSignature}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
           >
             <RotateCcw className="h-4 w-4" />
             Clear
@@ -118,7 +118,7 @@ export function SignatureCapture({
         )}
       </div>
 
-      <div className="relative border-2 border-border rounded-xl overflow-hidden bg-background">
+      <div className="relative border-2 border-gray-300 rounded-lg overflow-hidden bg-white">
         <canvas
           ref={canvasRef}
           onMouseDown={startDrawing}
@@ -134,7 +134,7 @@ export function SignatureCapture({
 
         {!hasSignature && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="flex items-center gap-2 text-muted-foreground">
+            <div className="flex items-center gap-2 text-gray-400">
               <Pencil className="h-5 w-5" />
               <span className="text-sm">Sign here</span>
             </div>
@@ -142,7 +142,7 @@ export function SignatureCapture({
         )}
       </div>
 
-      <p className="text-xs text-muted-foreground">Draw your signature using your finger or mouse</p>
+      <p className="text-xs text-gray-500">Draw your signature using your finger or mouse</p>
     </div>
   )
 }

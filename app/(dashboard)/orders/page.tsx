@@ -40,12 +40,12 @@ export default async function OrdersPage() {
   if (!user) {
     return (
       <div className="text-center py-12">
-        <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold text-foreground mb-4">Sign In Required</h1>
-        <p className="text-muted-foreground mb-8">Please sign in to view your orders</p>
+        <Package className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-black mb-4">Sign In Required</h1>
+        <p className="text-gray-600 mb-8">Please sign in to view your orders</p>
         <Link
           href="/login"
-          className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-colors"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
         >
           Sign In
         </Link>
@@ -80,8 +80,8 @@ export default async function OrdersPage() {
     console.error('Error fetching orders:', error)
     return (
       <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-foreground mb-4">Error Loading Orders</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="text-2xl font-bold text-black mb-4">Error Loading Orders</h1>
+        <p className="text-gray-600 mb-8">
           There was a problem loading your orders. Please try again later.
         </p>
       </div>
@@ -91,12 +91,12 @@ export default async function OrdersPage() {
   if (!orders || orders.length === 0) {
     return (
       <div className="text-center py-12">
-        <Package className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h1 className="text-2xl font-bold text-foreground mb-4">No Orders Yet</h1>
-        <p className="text-muted-foreground mb-8">When you make your first purchase, it will appear here</p>
+        <Package className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-black mb-4">No Orders Yet</h1>
+        <p className="text-gray-600 mb-8">When you make your first purchase, it will appear here</p>
         <Link
           href="/products"
-          className="inline-block bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground px-6 py-3 rounded-xl hover:opacity-90 transition-colors"
+          className="inline-block bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors"
         >
           Start Shopping
         </Link>
@@ -106,10 +106,10 @@ export default async function OrdersPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-foreground mb-6">My Orders</h1>
+      <h1 className="text-2xl font-bold text-black mb-6">My Orders</h1>
 
-      <div className="bg-background border border-border rounded-xl overflow-hidden">
-        <div className="divide-y divide-border">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="divide-y divide-gray-200">
           {orders.map((order: Order) => {
             const itemCount = order.order_items?.reduce((sum, item) => sum + item.quantity, 0) || 0
             const orderTotal = order.total || order.subtotal + order.delivery_fee + order.tax_amount
@@ -118,14 +118,14 @@ export default async function OrdersPage() {
               <Link
                 key={order.id}
                 href={`/orders/${order.id}`}
-                className="block p-6 hover:bg-accent transition-colors"
+                className="block p-6 hover:bg-gray-50 transition-colors"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-foreground mb-1">
+                    <h3 className="font-semibold text-black mb-1">
                       Order #{order.order_number || order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-gray-600">
                       {new Date(order.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -135,7 +135,7 @@ export default async function OrdersPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-foreground mb-1">${orderTotal.toFixed(2)}</p>
+                    <p className="font-semibold text-black mb-1">${orderTotal.toFixed(2)}</p>
                     <OrderStatusBadge status={order.status} size="sm" />
                   </div>
                 </div>

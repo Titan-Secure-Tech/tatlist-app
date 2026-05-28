@@ -66,7 +66,7 @@ export default function EventsPage() {
           </div>
 
           {/* Registration QR Code Placeholder */}
-          <div className="bg-background p-4 rounded-xl mb-6">
+          <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
             <div className="w-24 h-24 bg-black flex items-center justify-center text-white text-xs text-center">
               QR CODE
               <br />

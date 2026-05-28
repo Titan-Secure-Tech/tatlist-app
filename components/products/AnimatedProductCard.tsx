@@ -158,7 +158,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
   return (
     <>
       <motion.div
-        className="group relative bg-background rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300"
+        className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -171,7 +171,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
       >
         {/* Image Container */}
         <Link href={`/products/${product.id}`} className="block">
-          <div className="relative aspect-square bg-gradient-to-br from-muted to-secondary overflow-hidden">
+          <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
             <AnimatePresence mode="wait">
               {product.images && product.images.length > 0 && !imageError ? (
                 <motion.div
@@ -203,7 +203,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-muted-foreground"
+                    className="text-gray-300"
                   >
                     <ShoppingBag className="w-20 h-20" />
                   </motion.div>
@@ -218,7 +218,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                   <motion.div
                     key={idx}
                     className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                      idx === currentImageIndex ? 'bg-foreground w-4' : 'bg-muted-foreground'
+                      idx === currentImageIndex ? 'bg-black w-4' : 'bg-gray-400'
                     }`}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
@@ -240,14 +240,14 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                   toggleInventory()
                 }}
                 type="button"
-                className="p-2 bg-background rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer flex items-center justify-center"
+                className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow relative z-10 cursor-pointer flex items-center justify-center"
                 whileTap={{ scale: 0.95 }}
                 aria-label={isInInventory ? 'Remove from inventory' : 'Add to inventory'}
               >
                 {isInInventory ? (
-                  <CircleMinus className="h-4 w-4 text-foreground transition-colors" />
+                  <CircleMinus className="h-4 w-4 text-black transition-colors" />
                 ) : (
-                  <CirclePlus className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                  <CirclePlus className="h-4 w-4 text-gray-400 hover:text-black transition-colors" />
                 )}
               </motion.button>
               <AnimatePresence>
@@ -262,10 +262,10 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                       e.stopPropagation()
                       setShowQuickView(true)
                     }}
-                    className="p-2 bg-background rounded-full shadow-md hover:shadow-lg transition-shadow z-10 flex items-center justify-center"
+                    className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow z-10 flex items-center justify-center"
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Eye className="h-4 w-4 text-muted-foreground" />
+                    <Eye className="h-4 w-4 text-gray-600" />
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -277,7 +277,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
         <div className="p-4">
           <Link href={`/products/${product.id}`}>
             <motion.h3
-              className="font-medium text-foreground line-clamp-2 mb-1 hover:underline"
+              className="font-medium text-gray-900 line-clamp-2 mb-1 hover:underline"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
@@ -287,7 +287,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
           </Link>
 
           <motion.p
-            className="text-sm text-muted-foreground mb-2"
+            className="text-sm text-gray-500 mb-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -301,9 +301,9 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <span className="text-lg font-semibold text-foreground">${product.price}</span>
+            <span className="text-lg font-semibold text-gray-900">${product.price}</span>
             {product.stock_quantity && (
-              <span className="text-xs text-muted-foreground">{product.stock_quantity} in stock</span>
+              <span className="text-xs text-gray-500">{product.stock_quantity} in stock</span>
             )}
           </motion.div>
 
@@ -317,10 +317,10 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
                 transition={{ duration: 0.2 }}
                 onClick={handleAddToCart}
                 disabled={!product.in_stock}
-                className={`w-full py-2 px-4 rounded-xl font-medium transition-colors ${
+                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                   product.in_stock
-                    ? 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground hover:opacity-90'
-                    : 'bg-secondary text-muted-foreground cursor-not-allowed'
+                    ? 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
                 whileTap={product.in_stock ? { scale: 0.98 } : {}}
               >
@@ -342,7 +342,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
             onClick={() => setShowQuickView(false)}
           >
             <motion.div
-              className="bg-background rounded-2xl max-w-2xl w-full mx-4 p-6 relative"
+              className="bg-white rounded-2xl max-w-2xl w-full mx-4 p-6 relative"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -350,7 +350,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
             >
               <button
                 onClick={() => setShowQuickView(false)}
-                className="absolute top-4 right-4 p-2 hover:bg-accent rounded-full"
+                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -363,7 +363,7 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
               </button>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="aspect-square bg-secondary rounded-xl overflow-hidden">
+                <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                   {product.images && product.images.length > 0 && !imageError && (
                     <Image
                       src={product.images[0]}
@@ -377,25 +377,25 @@ export default function AnimatedProductCard({ product, index = 0 }: AnimatedProd
 
                 <div>
                   <h2 className="text-2xl font-semibold mb-2">{product.name}</h2>
-                  <p className="text-muted-foreground mb-4">{product.brand}</p>
+                  <p className="text-gray-600 mb-4">{product.brand}</p>
                   <p className="text-3xl font-bold mb-4">${product.price}</p>
-                  <p className="text-muted-foreground mb-6">{product.description}</p>
+                  <p className="text-gray-600 mb-6">{product.description}</p>
 
                   <div className="flex gap-3">
                     <button
                       onClick={handleAddToCart}
                       disabled={!product.in_stock}
-                      className={`flex-1 py-3 px-6 rounded-xl font-medium transition-colors ${
+                      className={`flex-1 py-3 px-6 rounded-lg font-medium transition-colors ${
                         product.in_stock
-                          ? 'bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground hover:opacity-90'
-                          : 'bg-secondary text-muted-foreground cursor-not-allowed'
+                          ? 'bg-black text-white hover:bg-gray-800'
+                          : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       }`}
                     >
                       {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
                     </button>
                     <Link
                       href={`/products/${product.id}`}
-                      className="px-6 py-3 border border-border rounded-xl font-medium hover:bg-accent transition-colors"
+                      className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                     >
                       View Details
                     </Link>

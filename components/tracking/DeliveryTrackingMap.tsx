@@ -171,10 +171,10 @@ export function DeliveryTrackingMap({
 
   if (loading) {
     return (
-      <div className="w-full h-[400px] bg-secondary rounded-xl flex items-center justify-center">
+      <div className="w-full h-[400px] bg-gray-100 rounded-lg flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">Loading tracking...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600">Loading tracking...</p>
         </div>
       </div>
     )
@@ -182,10 +182,10 @@ export function DeliveryTrackingMap({
 
   if (error) {
     return (
-      <div className="w-full h-[400px] bg-destructive/10 border border-destructive/20 rounded-xl flex items-center justify-center p-6">
+      <div className="w-full h-[400px] bg-red-50 border border-red-200 rounded-lg flex items-center justify-center p-6">
         <div className="text-center">
-          <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
-          <p className="text-sm text-destructive">{error}</p>
+          <AlertCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <p className="text-sm text-red-800">{error}</p>
         </div>
       </div>
     )
@@ -193,10 +193,10 @@ export function DeliveryTrackingMap({
 
   if (!tracking?.trackable) {
     return (
-      <div className="w-full h-[400px] bg-muted border border-border rounded-xl flex items-center justify-center p-6">
+      <div className="w-full h-[400px] bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center p-6">
         <div className="text-center">
-          <MapPin className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">{tracking?.message || 'Tracking not available'}</p>
+          <MapPin className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600">{tracking?.message || 'Tracking not available'}</p>
         </div>
       </div>
     )
@@ -204,18 +204,18 @@ export function DeliveryTrackingMap({
 
   if (!tracking.has_location) {
     return (
-      <div className="w-full h-[400px] bg-info/10 border border-info/20 rounded-xl flex items-center justify-center p-6">
+      <div className="w-full h-[400px] bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center p-6">
         <div className="text-center">
-          <Truck className="h-8 w-8 text-info mx-auto mb-2" />
-          <p className="text-sm font-medium text-info mb-1">Driver Assigned</p>
-          <p className="text-sm text-info/80">{tracking.message}</p>
+          <Truck className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+          <p className="text-sm font-medium text-blue-900 mb-1">Driver Assigned</p>
+          <p className="text-sm text-blue-700">{tracking.message}</p>
           {tracking.driver && (
-            <div className="mt-4 p-3 bg-background rounded-md">
-              <p className="text-sm font-medium text-foreground">{tracking.driver.name}</p>
+            <div className="mt-4 p-3 bg-white rounded-md">
+              <p className="text-sm font-medium text-gray-900">{tracking.driver.name}</p>
               {tracking.driver.phone && (
                 <a
                   href={`tel:${tracking.driver.phone}`}
-                  className="text-sm text-brand hover:text-brand/80"
+                  className="text-sm text-blue-600 hover:text-blue-700"
                 >
                   {tracking.driver.phone}
                 </a>
@@ -230,28 +230,28 @@ export function DeliveryTrackingMap({
   return (
     <div className="space-y-4">
       {/* Map Container */}
-      <div ref={mapContainer} className="w-full h-[400px] rounded-xl border border-border" />
+      <div ref={mapContainer} className="w-full h-[400px] rounded-lg border border-gray-200" />
 
       {/* Tracking Info */}
       {tracking.driver_location && (
-        <div className="bg-background border border-border rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-lg p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-black rounded-lg">
                 <Truck className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="font-medium text-foreground">Your driver is on the way</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="font-medium text-gray-900">Your driver is on the way</p>
+                <p className="text-sm text-gray-600">
                   Last updated {new Date(tracking.driver_location.updated_at).toLocaleTimeString()}
                 </p>
                 {tracking.driver && (
                   <div className="mt-2">
-                    <p className="text-sm font-medium text-foreground">{tracking.driver.name}</p>
+                    <p className="text-sm font-medium text-gray-700">{tracking.driver.name}</p>
                     {tracking.driver.phone && (
                       <a
                         href={`tel:${tracking.driver.phone}`}
-                        className="text-sm text-brand hover:text-brand/80"
+                        className="text-sm text-blue-600 hover:text-blue-700"
                       >
                         {tracking.driver.phone}
                       </a>
@@ -262,8 +262,8 @@ export function DeliveryTrackingMap({
             </div>
             {tracking.estimated_arrival && (
               <div className="text-right">
-                <p className="text-sm text-muted-foreground">ETA</p>
-                <p className="font-semibold text-foreground">
+                <p className="text-sm text-gray-600">ETA</p>
+                <p className="font-semibold text-gray-900">
                   {new Date(tracking.estimated_arrival).toLocaleTimeString('en-US', {
                     hour: 'numeric',
                     minute: '2-digit',

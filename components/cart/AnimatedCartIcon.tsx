@@ -18,7 +18,7 @@ export function AnimatedCartIcon({ className }: AnimatedCartIconProps) {
     <>
       <motion.button
         onClick={() => setIsDrawerOpen(true)}
-        className={`relative p-3 hover:bg-accent rounded-xl transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${className}`}
+        className={`relative p-3 hover:bg-gray-100 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${className}`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label={`Open cart (${cartCount || 0} items)`}
@@ -31,7 +31,7 @@ export function AnimatedCartIcon({ className }: AnimatedCartIconProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -right-1 -top-1 h-5 w-5 bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground rounded-full text-xs flex items-center justify-center font-medium"
+              className="absolute -right-1 -top-1 h-5 w-5 bg-black text-white rounded-full text-xs flex items-center justify-center font-medium"
             >
               <motion.span
                 key={cartCount}

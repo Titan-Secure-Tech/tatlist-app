@@ -94,15 +94,15 @@ export const viewport: Viewport = {
   maximumScale: 5,
   userScalable: true,
   viewportFit: 'cover',
-  themeColor: '#141414',
+  themeColor: '#FFB347',
 }
 
 function SiteHeaderFallback() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center">
-          <div className="animate-pulse h-8 w-32 bg-muted rounded"></div>
+          <div className="animate-pulse h-8 w-32 bg-gray-200 rounded"></div>
         </div>
       </div>
     </header>
@@ -115,7 +115,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} antialiased`}
       >

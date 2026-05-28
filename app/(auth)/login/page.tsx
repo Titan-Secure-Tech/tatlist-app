@@ -15,6 +15,7 @@ function LoginForm() {
   const supabase = createClient()
 
   useEffect(() => {
+    // Check for error from OAuth callback
     const errorParam = searchParams.get('error')
     if (errorParam) {
       setError(decodeURIComponent(errorParam))
@@ -64,6 +65,7 @@ function LoginForm() {
         throw error
       }
 
+      // The browser will redirect to Google OAuth
       console.log('OAuth initiated, redirecting to provider...')
     } catch (error) {
       console.error('Google login error:', error)
@@ -73,10 +75,10 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="w-full max-w-md p-8">
-        <div className="bg-secondary rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-center mb-6 text-foreground">Login</h1>
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -86,7 +88,7 @@ function LoginForm() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
@@ -98,21 +100,17 @@ function LoginForm() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full px-4 py-3 bg-input border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-brand"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
             </div>
 
-            {error && (
-              <div className="text-destructive text-sm bg-destructive/10 p-2 rounded-xl">
-                {error}
-              </div>
-            )}
+            {error && <div className="text-red-600 text-sm bg-red-50 p-2 rounded">{error}</div>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-b from-[var(--brand-gradient-from)] to-[var(--brand-gradient-to)] text-primary-foreground font-medium py-3 px-4 rounded-xl disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md disabled:opacity-50"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -128,10 +126,10 @@ function LoginForm() {
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
+                <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-secondary px-2 text-muted-foreground">or</span>
+                <span className="bg-white px-2 text-gray-500">or</span>
               </div>
             </div>
 
@@ -139,7 +137,7 @@ function LoginForm() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="mt-4 w-full bg-secondary-gradient text-foreground font-medium py-3 px-4 rounded-xl border border-border flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
+              className="mt-4 w-full bg-white hover:bg-gray-50 text-gray-900 font-medium py-2 px-4 rounded-md border border-gray-300 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -172,10 +170,10 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="w-full max-w-md p-8">
-            <div className="bg-secondary rounded-xl p-6">
-              <h1 className="text-2xl font-bold text-center mb-6 text-foreground">Loading...</h1>
+            <div className="bg-white shadow-md rounded-lg p-6">
+              <h1 className="text-2xl font-bold text-center mb-6">Loading...</h1>
             </div>
           </div>
         </div>

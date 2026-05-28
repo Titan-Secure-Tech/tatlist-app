@@ -44,13 +44,13 @@ const DELIVERY_STATUS_CONFIG: Record<
 > = {
   pending: {
     label: 'Pending',
-    color: 'text-foreground',
-    bgColor: 'bg-secondary',
+    color: 'text-gray-700',
+    bgColor: 'bg-gray-100',
   },
   assigned: {
     label: 'Assigned',
-    color: 'text-info',
-    bgColor: 'bg-info/10',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
   },
   in_progress: {
     label: 'In Progress',
@@ -59,13 +59,13 @@ const DELIVERY_STATUS_CONFIG: Record<
   },
   completed: {
     label: 'Completed',
-    color: 'text-success',
-    bgColor: 'bg-success/10',
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
   },
   failed: {
     label: 'Failed',
-    color: 'text-destructive',
-    bgColor: 'bg-destructive/10',
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
   },
 }
 
@@ -108,38 +108,38 @@ export function DeliveryCard({ delivery }: DeliveryCardProps) {
   return (
     <Link
       href={`/driver/deliveries/${delivery.delivery_id}`}
-      className="block bg-background border border-border rounded-xl p-6 hover:border-foreground/20 transition-colors"
+      className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-foreground mb-1">
+          <h3 className="text-lg font-semibold text-black mb-1">
             Order #{delivery.order_number || delivery.order_id.slice(0, 8).toUpperCase()}
           </h3>
-          <p className="text-sm text-muted-foreground">{delivery.customer_name}</p>
+          <p className="text-sm text-gray-600">{delivery.customer_name}</p>
         </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        <ChevronRight className="h-5 w-5 text-gray-400" />
       </div>
 
       {/* Address */}
       <div className="flex items-start gap-2 mb-3">
-        <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-        <p className="text-sm text-foreground flex-1">{formatAddress()}</p>
+        <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
+        <p className="text-sm text-gray-700 flex-1">{formatAddress()}</p>
       </div>
 
       {/* Items and Total */}
       <div className="flex items-center gap-4 mb-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
           <Package className="h-4 w-4" />
           <span>
             {delivery.item_count} {delivery.item_count === 1 ? 'item' : 'items'}
           </span>
         </div>
-        <span className="text-sm font-semibold text-foreground">${delivery.total.toFixed(2)}</span>
+        <span className="text-sm font-semibold text-black">${delivery.total.toFixed(2)}</span>
       </div>
 
       {/* Estimated Time */}
       {delivery.estimated_delivery_time && (
-        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
           <Clock className="h-4 w-4" />
           <span>{formatEstimatedTime()}</span>
         </div>
